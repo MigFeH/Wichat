@@ -26,7 +26,7 @@ The application must be developed according to some constraints that were define
 | *Constraint* | *Description*
 | Documentation in Arc42 | The documentation must follow the Arc42 template
 |===
-
+,
 *Wireframes*
 
 image::wireframe-XXX.png[align="center", title="XXX Wireframe"]
