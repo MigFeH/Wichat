@@ -3,10 +3,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
 .Contents
 A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes
 
@@ -30,5 +26,17 @@ Refer to details in the following sections.
 
 See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
 
-****
-endif::arc42help[]
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PLANTILLA DE ESTILO
+
+== Solution Strategy
+
+What follows is a short summary and explanation of the fundamental decisions and solution strategies, that shape our system's architecture
+
+=== Technology
+
+=== High-level decomposition 
+
+=== Approaches to achieve quality objectives
+
+=== Relevant organizational decisions
