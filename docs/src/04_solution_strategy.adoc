@@ -42,22 +42,22 @@ What follows is a short summary and explanation of the fundamental decisions and
 |===
 === High-level decomposition 
 |===
-| *Constraint* | *Description* 
-| C1 | D1
-| C2 | D2
-| C3 | D3
+| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
+| A | A | A | A
+| B | B | B | B
+| C | C | C | C
 |===
 === Approaches to achieve quality objectives
 |===
-| *Constraint* | *Description* 
-| C1 | D1
-| C2 | D2
-| C3 | D3
+| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
+| A | A | A | A
+| B | B | B | B
+| C | C | C | C
 |===
 === Relevant organizational decisions
 |===
-| *Constraint* | *Description* 
-| C1 | D1
-| C2 | D2
-| C3 | D3
+| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
+| A | A | A | A
+| B | B | B | B
+| C | C | C | C
 |===
