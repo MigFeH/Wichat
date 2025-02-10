@@ -26,17 +26,38 @@ Refer to details in the following sections.
 
 See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-PLANTILLA DE ESTILO
+
+= PLANTILLA DE ESTILO
 
 == Solution Strategy
 
 What follows is a short summary and explanation of the fundamental decisions and solution strategies, that shape our system's architecture
 
 === Technology
-
+|===
+| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
+| A | A | A | A
+| B | B | B | B
+| C | C | C | C
+|===
 === High-level decomposition 
-
+|===
+| *Constraint* | *Description* 
+| C1 | D1
+| C2 | D2
+| C3 | D3
+|===
 === Approaches to achieve quality objectives
-
+|===
+| *Constraint* | *Description* 
+| C1 | D1
+| C2 | D2
+| C3 | D3
+|===
 === Relevant organizational decisions
+|===
+| *Constraint* | *Description* 
+| C1 | D1
+| C2 | D2
+| C3 | D3
+|===
