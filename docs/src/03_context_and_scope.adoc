@@ -73,8 +73,52 @@ together with a mapping table showing the relationships between channels and inp
 ****
 endif::arc42help[]
 
-**<Diagram or Table>**
+**Diagram or Table**
 
-**<optionally: Explanation of technical interfaces>**
+![](docs/images/3.2_Technical_Context.png)
+
+**Explanation of technical interfaces**
+
+The application follows a **hexagonal architecture pattern**, with the following components:
+
+### 1. **Agent User (External User)**
+- The user interacts with the **Web App**, which serves as the frontend interface.
+
+### 2. **Web App (Frontend Layer)**
+- Sends **requests** to and receives **responses** from the **Gateway Service**.
+- Acts as a bridge between the external user and the backend services.
+
+### 3. **Gateway Service (API Gateway & Central Layer)**
+- Central hub that manages communication between different services.
+- Handles authentication, user management, and interaction with external components.
+- Uses **JPA (Java Persistence API)** to interact with the **MySQL database**.
+
+### 4. **Domain (Business Logic Layer)**
+- Contains core business logic.
+- Works closely with the **Gateway Service** to process requests.
+
+### 5. **Services Layer (Microservices Architecture)**
+- **User Service**: Manages user-related operations.
+- **Auth Service**: Handles authentication and authorization.
+- **LLM Service**: Interfaces with a Large Language Model (LLM) for AI-driven responses.
+
+### 6. **Database Layer (Persistent Storage)**
+- **MySQL Database**: Stores application data, accessed via **JPA**.
+
+## **Technical Interfaces**
+- **Web App ↔ Gateway Service**: HTTP Requests/Responses.
+- **Gateway Service ↔ Services Layer (User, Auth, LLM Services)**: REST API or gRPC communication.
+- **Gateway Service ↔ MySQL**: JPA-based database interaction.
+- **Gateway Service ↔ Domain**: Internal service calls.
 
 **<Mapping Input/Output to Channels>**
+[cols="3", options="header"]
+|===
+| Component | Input | Output
+| Web App | User Requests | UI Responses
+| Gateway Service | API Calls | Processed Data
+| User Service | User Data Requests | User Data Responses
+| Auth Service | Authentication Requests | Auth Tokens
+| LLM Service | AI Queries | AI Responses
+| MySQL Database | Queries via JPA | Stored Data
+|===
