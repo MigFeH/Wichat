@@ -3,10 +3,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-technical-risks]]
 == Risks and Technical Debts
 
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
 .Contents
 A list of identified technical risks or technical debts, ordered by priority
 
@@ -23,5 +19,4 @@ List of risks and/or technical debts, probably including suggested measures to m
 
 See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 documentation.
 
-****
-endif::arc42help[]
+= PLANTILLA DE ESTILO
