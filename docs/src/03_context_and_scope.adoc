@@ -75,7 +75,7 @@ endif::arc42help[]
 
 **Diagram or Table**
 
-![](docs/images/3.2_Technical_Context.png)
+image::3.2_Technical_Context.png[]
 
 ### **Explanation of technical interfaces** 📃
 
