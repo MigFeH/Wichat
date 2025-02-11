@@ -50,6 +50,8 @@ In any case the tree should include links to the scenarios of the following sect
 ****
 endif::arc42help[]
 
+image::10.1_Quality_Tree.png[]
+
 === Quality Scenarios
 
 ifdef::arc42help[]
