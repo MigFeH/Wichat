@@ -8,25 +8,30 @@ The application must be developed according to some constraints that were define
 *Technical constraints*
 |===
 | *Constraint* | *Description* 
-| C1 | D1
-| C2 | D2
-| C3 | D3
+| Webbapp accesibility | The application must be accesible throgh a browser
+| Wikidata | The validity of questions and the questions themselves must be obtained through their Api
+| Github | It is imperative that we use Github for the recording of all of our work
+| Registry | It is obligatory that the program saves and stores data on the different users through a profile
+| Use of LLM model | We are to build a chatbot for the practice, wich means utilizing an LLM
 |===
 
 *Organizational constraints*
 |===
 | *Constraint* | *Description* 
-| C1 | D1
-| C2 | D2
-| C3 | D3
+| Meetings | The team is due to an obligatory meeting per week at the time of Software Architecture class
+| Deliveries | There are three separate times where the project will be presented and those times are set.
+| Github | The use of Issues and Pull Requests for the proyects organization is highly sought to the point of necesity
 |===
 
 *Conventional constraints*
 |===
 | *Constraint* | *Description*
 | Documentation in Arc42 | The documentation must follow the Arc42 template
+| Language | It was agreed beforehand that english would be the language chosen for the proyect
+| Github | As the platform we work on we are obligated to learn Githubs conventions
 |===
 
 *Wireframes*
 
 image::wireframe-XXX.png[align="center", title="XXX Wireframe"]
+
