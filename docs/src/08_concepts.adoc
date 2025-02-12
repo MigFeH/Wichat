@@ -57,18 +57,52 @@ See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-=== _<Concept 1>_
+== 8.1. Application Architecture
+[cols="1,2", options="header"]
+|===
+| **Concept** | **Description**
 
-_<explanation>_
+| 8.1.1. Hexagonal Architecture
+| The application follows a hexagonal architecture pattern, separating the different layers: frontend, business logic, microservices, and persistent storage.
+
+| 8.1.2. Communication Between Components
+| Each component, such as the web app, Gateway Service, and microservices, communicates using technologies like HTTP and REST. This ensures smooth, scalable interaction.
+
+| 8.1.3. Presentation Layer
+| web app serves as the entry point for external users, allowing interaction with the application and routing requests through the Gateway Service.
+|===
+
+== 8.2. Integration with Microservices
+[cols="1,2", options="header"]
+|===
+| **Concept** | **Description**
+
+| 8.2.1. Communication Between Microservices
+| Microservices communicate via REST, enabling flexible integration and handling different functionalities.
+
+| 8.2.2. Scalability Through Microservices
+| Microservices architecture allows independent scaling of services without affecting other parts of the app.
+|===
+
+== 8.3. Data Persistence and Management
+[cols="1,2", options="header"]
+|===
+| **Concept** | **Description**
+
+| 8.3.1. Database Interaction
+| The Gateway Service uses JPA to interact with MySQL, ensuring efficient and secure data management.
+
+| 8.3.2. Data Backup
+| The MySQL database should be configured for automatic backups, ensuring data integrity and recovery in case of failure.
+|===
+
+== 8.4.1. LLM Service
+[cols="1,2", options="header"]
+|===
+| **Concept** | **Description**
+
+| 8.4.1. LLM Service
+| The LLM Service is a microservice that interacts with a Large Language Model, generating text or performing language-related tasks based on user input.
+|===
 
 
-
-=== _<Concept 2>_
-
-_<explanation>_
-
-...
-
-=== _<Concept n>_
-
-_<explanation>_
