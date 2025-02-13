@@ -2,27 +2,11 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-technical-risks]]
 == Risks and Technical Debts
-
-.Contents
-A list of identified technical risks or technical debts, ordered by priority
-
-.Motivation
-“Risk management is project management for grown-ups” (Tim Lister, Atlantic Systems Guild.) 
-
-This should be your motto for systematic detection and evaluation of risks and technical debts in the architecture, which will be needed by management stakeholders (e.g. project managers, product owners) as part of the overall risk analysis and measurement planning.
-
-.Form
-List of risks and/or technical debts, probably including suggested measures to minimize, mitigate or avoid risks or reduce technical debts.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 documentation.
-
-= PLANTILLA DE ESTILO
 |===
 | *Risk* | *Explanation* | *Mitigation proposed* 
-| C1 | D1 | E1
-| C2 | D2 | E2
-| C3 | D3 | E3
+| Little knowledge of the technologies to be used | For all group members, this is the first time developing software that requires implementing an LLM | Search for knowledge on developing applications integrated with LLMs, along with the tools used for this.
+Consult the code and documentation of last year's projects to observe the decisions that were made and the technologies they used for the rest of the development
+| Lack of time | We may face time constraints in fulfilling all the requirements for each deliverable and meeting every deadline | Try to maintain a steady and sustainable development pace. Prioritize building functional components initially, then iterate and enhance from there
+| Coordination and responsability problems | It is probably the first time involvement in developing a project from scratch, including decisions on architecture, design, and implementation, introduces various challenges. Misunderstandings regarding tasks and version control management errors can result in individuals inadvertently disrupting the work of others. Additionally, the necessity to make numerous decisions and reach agreements increases the likelihood of errors, potentially consuming significant time and effort | To ensure effective collaboration and organization, follow the teachers' instructions regarding GitHub, including the use of features such as issues, pull requests, and maintain a disciplined approach to work from all team members, using a Kanban methodology integrated as a feature in GitHub
+| A | B | C
 |===
