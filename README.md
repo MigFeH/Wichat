@@ -9,7 +9,7 @@
   </tr>
   <tr>
     <td>José Martínez de Zuvillaga</td>
-    <td><a href="https://github.com/uo294061">José's github profile</a></td>
+    <td><a href="https://github.com/josemzuvi">José's github profile</a></td>
   </tr>
   <tr>
     <td>Ignacio Fernández Suárez</td>
