@@ -96,7 +96,7 @@ endif::arc42help[]
 | The MySQL database should be configured for automatic backups, ensuring data integrity and recovery in case of failure.
 |===
 
-== 8.4.1. LLM Service
+== 8.4. LLM Service
 [cols="1,2", options="header"]
 |===
 | **Concept** | **Description**
@@ -104,5 +104,44 @@ endif::arc42help[]
 | 8.4.1. LLM Service
 | The LLM Service is a microservice that interacts with a Large Language Model, generating text or performing language-related tasks based on user input.
 |===
+
+== 8.5. Testeability
+[cols="3,2", options="header"]
+|===
+| **Concept** | **Description**
+
+| 8.5.1. Unit Tests
+| Verify that each individual unit or component of the application functions correctly.
+| 8.5.2. Integration Tests
+| Check the interaction between different units or components of the application.
+| 8.5.3. Functional Tests
+| Verify that the application meets the specified functional requirements.
+| 8.5.4. Security Tests
+| Identify vulnerabilities and ensure the protection of sensitive data.
+|===
+
+== 8.6. Usability
+[cols="1,2", options="header"]
+|===
+| **Concept** | **Description**
+
+| 8.6.1. Usability
+| Usability ensures products are easy and efficient to use, leading to user satisfaction.  We'll prioritize an intuitive design, clear navigation, and accessibility, with a particular focus on making our app user-friendly and requiring a low learning curve.
+|===
+
+== 8.7. Maintainability & Scalability
+[cols="2,2", options="header"]
+|===
+| **Concept** | **Description**
+
+| 8.7.1. Maintainability
+| Focuses on how easily software can be modified, fixed, or improved over time. Good maintainability reduces costs and effort for future changes.
+| 8.7.2. Scalability
+| Addresses the ability of a system to handle increased load or growth. A scalable system can adapt to more users, data, or transactions without significant performance degradation.
+|===
+
+
+
+
 
 
