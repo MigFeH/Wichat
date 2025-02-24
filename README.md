@@ -1,3 +1,25 @@
+# wichat_es2b
+
+[![Actions Status](https://github.com/arquisoft/wichat_es2b/workflows/CI%20for%20wichat_es2b/badge.svg)](https://github.com/arquisoft/wichat_es2b/actions)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2b&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2b)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2b&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2b)
+
+<p float="left">
+<img src="https://blog.wildix.com/wp-content/uploads/2020/06/react-logo.jpg" height="100">
+<img src="https://miro.medium.com/max/365/1*Jr3NFSKTfQWRUyjblBSKeg.png" height="100">
+</p>
+
+This is a base project for the Software Architecture course in 2024/2025. It is a basic application composed of several components.
+
+- **User service**. Express service that handles the insertion of new users in the system.
+- **Auth service**. Express service that handles the authentication of users.
+- **LLM service**. Express service that handles the communication with the LLM.
+- **Gateway service**. Express service that is exposed to the public and serves as a proxy to the two previous ones.
+- **Webapp**. React web application that uses the gateway service to allow basic login and new user features.
+
+Both the user and auth service share a Mongo database that is accessed with mongoose.
+
+## Members
 <table>
   <tr>
     <th>Contributor 👤</th>
@@ -24,27 +46,6 @@
     <td><a href="https://github.com/danigpt">Daniel's github profile</a></td>
   </tr>
 </table>
-
-# wichat_es2b
-
-[![Actions Status](https://github.com/arquisoft/wichat_es2b/workflows/CI%20for%20wichat_es2b/badge.svg)](https://github.com/arquisoft/wichat_es2b/actions)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2b&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2b)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2b&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2b)
-
-<p float="left">
-<img src="https://blog.wildix.com/wp-content/uploads/2020/06/react-logo.jpg" height="100">
-<img src="https://miro.medium.com/max/365/1*Jr3NFSKTfQWRUyjblBSKeg.png" height="100">
-</p>
-
-This is a base project for the Software Architecture course in 2024/2025. It is a basic application composed of several components.
-
-- **User service**. Express service that handles the insertion of new users in the system.
-- **Auth service**. Express service that handles the authentication of users.
-- **LLM service**. Express service that handles the communication with the LLM.
-- **Gateway service**. Express service that is exposed to the public and serves as a proxy to the two previous ones.
-- **Webapp**. React web application that uses the gateway service to allow basic login and new user features.
-
-Both the user and auth service share a Mongo database that is accessed with mongoose.
 
 ## Quick start guide
 
