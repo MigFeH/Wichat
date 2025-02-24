@@ -51,11 +51,22 @@ The title of the table is the name of your system, the three columns contain the
 ****
 endif::arc42help[]
 
-**<Diagram or Table>**
+The following table describes the business context, outlining the key actors interacting with the system and their relationships.
 
-**<optionally: Explanation of external domain interfaces>**
+[options="header"]
+|===
+| Actor | Type | Description | Interaction with the System
+| Players | External | Users who access the application to play the game. | Interact with the web interface, receive random locations, request hints from the LLM, and submit guesses.
+| LLM Provider | External | API service providing AI-generated hints for players. | Receives user queries and returns contextual hints about the player's location.
+| Web Application | Internal | The frontend React-based web application. | Displays the game interface, processes user interactions, and communicates with backend services.
+| Gateway Service | Internal | API gateway handling requests between the frontend and backend services. | Routes user requests, manages authentication, and forwards LLM-related queries.
+| Authentication Service | Internal | Manages user authentication and access control. | Handles user login, registration, and session management.
+| User Service | Internal | Manages user-related data, including game history and scores. | Stores and retrieves user data, including past game records.
+| Database | Internal | MongoDB instance storing user and game data. | Stores user accounts, game sessions, and interaction logs.
+| Deployment Platform | External | Cloud-based hosting service (e.g., AWS, Azure, or DigitalOcean). | Hosts the web application, backend services, and database.
+|===  
 
-=== 3.2 Technical Context
+=== Technical Context
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -77,40 +88,40 @@ endif::arc42help[]
 
 image::3.2_Technical_Context.png[]
 
-### **Explanation of technical interfaces** 📃
+#### **Explanation of technical interfaces** 📃
 
 The application follows a **hexagonal architecture pattern**, with the following components:
 
-#### **Agent User (External User)**
+##### **Agent User (External User)**
 
 - The user interacts with the **Web App**, which serves as the frontend interface.
 
-#### **Web App (Frontend Layer)**
+##### **Web App (Frontend Layer)**
 
 - Sends **requests** to and receives **responses** from the **Gateway Service**.
 - Acts as a bridge between the external user and the backend services.
 
-#### **Gateway Service (API Gateway & Central Layer)**
+##### **Gateway Service (API Gateway & Central Layer)**
 
 - Central hub that manages communication between different services.
 - Handles authentication, user management, and interaction with external components.
 - Uses **JPA (Java Persistence API)** to interact with the **MySQL database**.
 
-#### **Domain (Business Logic Layer)**
+##### **Domain (Business Logic Layer)**
 
 - Contains core business logic.
 - Works closely with the **Gateway Service** to process requests.
 
-#### **Services Layer (Microservices Architecture)**
+##### **Services Layer (Microservices Architecture)**
 
 - **User Service**: Manages user-related operations.
 - **Auth Service**: Handles authentication and authorization.
 - **LLM Service**: Interfaces with a Large Language Model (LLM) for AI-driven responses.
 
-#### **Database Layer (Persistent Storage)**
+##### **Database Layer (Persistent Storage)**
 - **MySQL Database**: Stores application data, accessed via **JPA**.
 
-#### **Technical Interfaces**
+##### **Technical Interfaces**
 - **Web App & Gateway Service**: HTTP Requests/Responses.
 - **Gateway Service & Services Layer (User, Auth, LLM Services)**: REST API or gRPC communication.
 - **Gateway Service & MySQL**: JPA-based database interaction.
