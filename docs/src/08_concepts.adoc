@@ -96,7 +96,7 @@ endif::arc42help[]
 | The MySQL database should be configured for automatic backups, ensuring data integrity and recovery in case of failure.
 |===
 
-== 8.4. LLM Service
+=== LLM Service
 [cols="1,2", options="header"]
 |===
 | **Concept** | **Description**
@@ -120,7 +120,7 @@ endif::arc42help[]
 | Identify vulnerabilities and ensure the protection of sensitive data.
 |===
 
-== 8.6. Usability
+=== Usability
 [cols="1,2", options="header"]
 |===
 | **Concept** | **Description**
