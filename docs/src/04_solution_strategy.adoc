@@ -3,32 +3,33 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
+What follows is a short summary and explanation of the fundamental decisions and solution strategies, that shape our system's architecture
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-A short summary and explanation of the fundamental decisions and solution strategies, that shape system architecture. It includes
+=== Technology
+* **Visual Studio Code** as a framework due to its versatility in developing applications with different programming languages and its compatibility with Git.
 
-* technology decisions
-* decisions about the top-level decomposition of the system, e.g. usage of an architectural pattern or design pattern
-* decisions on how to achieve key quality goals
-* relevant organizational decisions, e.g. selecting a development process or delegating certain tasks to third parties.
+* **Docker** for deploying the project.
 
-.Motivation
-These decisions form the cornerstones for your architecture. They are the foundation for many other detailed decisions or implementation rules.
+* **GitHub Pages** for deploying the documentation.
 
-.Form
-Keep the explanations of such key decisions short.
+=== High-level decomposition
 
-Motivate what was decided and why it was decided that way,
-based upon problem statement, quality goals and key constraints.
-Refer to details in the following sections.
+|===
+| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
+| A | A | A | A
+| B | B | B | B
+| C | C | C | C
+|===
+=== Approaches to achieve quality objectives
+|===
+| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
+| A | A | A | A
+| B | B | B | B
+| C | C | C | C
+|===
+=== Relevant organizational decisions
+Currently, we have been meeting once a week, although this may change in the future depending on the team's needs to address different topics during development.
 
+In most meetings, if not all, all group members participate, and we discuss opinions on different designs and implementations of the application.
 
-.Further Information
-
-See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentation.
-
-****
-endif::arc42help[]
+We also have a WhatsApp group as a fast messaging channel.
