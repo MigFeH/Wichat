@@ -1,12 +1,26 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AddUser from './components/AddUser';
 import Login from './components/Login';
-import CssBaseline from '@mui/material/CssBaseline';
+import Home from './components/Home';
+
+/*import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import Link from '@mui/material/Link';*/
 
-function App() {
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </Router>
+  );
+};
+
+/*function App() {
   const [showLogin, setShowLogin] = useState(true);
 
   const handleToggleView = () => {
@@ -33,6 +47,6 @@ function App() {
       </Typography>
     </Container>
   );
-}
+}*/
 
 export default App;
