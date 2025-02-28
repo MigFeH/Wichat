@@ -1,20 +1,24 @@
-// src/components/AddUser.js
+// src/components/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
-const AddUser = () => {
+const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
+  const navigate = useNavigate();
+
   const addUser = async () => {
     try {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
+      navigate('/home'); // tras un registro correcto, redirigimos a la página de inicio
     } catch (error) {
       setError(error.response.data.error);
     }
@@ -57,4 +61,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default Register;

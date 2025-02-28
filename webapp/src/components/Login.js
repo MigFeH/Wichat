@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
 import { Typewriter } from "react-simple-typewriter";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -16,12 +17,22 @@ const Login = () => {
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
   const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
 
+  const navigate = useNavigate();
+
   const loginUser = async () => {
     try {
+      if(!username)
+      {
+        setError({ field: "username", message: "Username is required" });
+      } else if(!password)
+      {
+        setError({ field: "password", message: "Password is required" });
+      }
+
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
       const question = "Please, generate a greeting message for a student called " + username + " that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.";
-      const model = "empathy"
+      const model = "empathy";
 
       if (apiKey==='None'){
         setMessage("LLM API key is not set. Cannot contact the LLM.");
@@ -35,8 +46,9 @@ const Login = () => {
 
       setCreatedAt(userCreatedAt);
       setLoginSuccess(true);
-
       setOpenSnackbar(true);
+
+      navigate("/menu"); // tras un login correcto, redirigimos al menú (donde está el juego, ver estadísticas, etc.)
     } catch (error) {
       setError(error.response.data.error);
     }
