@@ -1,52 +1,23 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AddUser from './components/AddUser';
-import Login from './components/Login';
-import Home from './components/Home';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';  
+import { Box } from '@mui/material'; 
 
-/*import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';*/
+import Home from './components/Menu';
+import Register from './components/Register';
+import Login from './components/Login';
+import Menu from './components/Menu';
 
 const App = () => {
   return (
-    <Router>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/menu" element={<Menu />} />
       </Routes>
-    </Router>
+    </Box>
   );
 };
-
-/*function App() {
-  const [showLogin, setShowLogin] = useState(true);
-
-  const handleToggleView = () => {
-    setShowLogin(!showLogin);
-  };
-
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Typography component="h1" variant="h5" align="center" sx={{ marginTop: 2 }}>
-        Welcome to the 2025 edition of the Software Architecture course
-      </Typography>
-      {showLogin ? <Login /> : <AddUser />}
-      <Typography component="div" align="center" sx={{ marginTop: 2 }}>
-        {showLogin ? (
-          <Link name="gotoregister" component="button" variant="body2" onClick={handleToggleView}>
-            Don't have an account? Register here.
-          </Link>
-        ) : (
-          <Link component="button" variant="body2" onClick={handleToggleView}>
-            Already have an account? Login here.
-          </Link>
-        )}
-      </Typography>
-    </Container>
-  );
-}*/
 
 export default App;

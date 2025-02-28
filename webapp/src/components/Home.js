@@ -1,34 +1,39 @@
-import React from 'react';
-import { Container, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Container, CssBaseline, Typography, Link } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Register from './components/Register';
+import Login from './components/Login';
 
-const Home = () => {
+function Home() {
+  const [showLogin, setShowLogin] = useState(true);
 
-    const navigate = useNavigate();
+  const handleToggleView = () => {
+    setShowLogin(!showLogin);
+  };
 
-    const handlePageChange = (page) => () => {
-        navigate(`/${page}`);
-    }
-
-    return (
-        <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
-            <Typography component="h1" variant="h4">
-                Welcome to the home page
-            </Typography>
-            
-            <Typography component="p" variant="body1" sx={{ marginTop: 2 }}>
-                Press start to play.
-            </Typography>
-
-            <Button variant="contained" color="primary" onClick={handlePageChange("game")}>
-                Start
-            </Button>
-
-            <Button variant="contained" color="primary" onClick={handlePageChange("stadistics")}>
-                Stadistics
-            </Button>
-        </Container>
-    );
-};
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Typography component="h1" variant="h5" align="center" sx={{ marginTop: 2 }}>
+        Welcome to the 2025 edition of the Software Architecture course
+      </Typography>
+      {showLogin ? <Login /> : <Register />}
+      <Typography component="div" align="center" sx={{ marginTop: 2 }}>
+        {showLogin ? (
+          <Link name="gotoregister" component="button" variant="body2" onClick={handleToggleView}>
+            Don't have an account? Register here.
+          </Link>
+        ) : (
+          <Link component="button" variant="body2" onClick={handleToggleView}>
+            Already have an account? Login here.
+          </Link>
+        )}
+      </Typography>
+    </Container>
+  );
+}
 
 export default Home;
