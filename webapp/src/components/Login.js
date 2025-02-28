@@ -48,7 +48,7 @@ const Login = () => {
       setLoginSuccess(true);
       setOpenSnackbar(true);
 
-      navigate("/home"); // tras un logueo correcto, redirigimos a la página de inicio
+      navigate("/menu"); // tras un login correcto, redirigimos al menú (donde está el juego, ver estadísticas, etc.)
     } catch (error) {
       setError(error.response.data.error);
     }

@@ -18,7 +18,7 @@ const Register = () => {
     try {
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
-      navigate('/'); // tras un registro correcto, redirigimos a la página de inicio
+      navigate('/home'); // tras un registro correcto, redirigimos a la página de inicio
     } catch (error) {
       setError(error.response.data.error);
     }
