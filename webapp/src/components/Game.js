@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { Container, Typography } from '@mui/material';
-import '../../../Wikidata/wikidataPresentation/estilo.css'; // Asegúrate de que el archivo de estilo esté en la ubicación correcta
+import '../Wikidata/wikidataPresentation/estilo.css';
 
 const Game = () => {
   useEffect(() => {
     // Importa y ejecuta el script de presentación de preguntas
-    import('../../../Wikidata/wikidataPresentation/QuestionPresentation.js');
+    import('../Wikidata/wikidataPresentation/QuestionPresentation.js');
   }, []);
 
   return (
