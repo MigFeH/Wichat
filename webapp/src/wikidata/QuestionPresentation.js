@@ -1,7 +1,9 @@
 import QuestionGeneration from './QuestionGeneration.js';
 
 class QuestionPresentation {
-    constructor() {
+    constructor(container, navigate) {
+        this.container = container;
+        this.navigate = navigate; // Guarda la función de navegación
         this.game = new QuestionGeneration(this);
         this.createBaseLayout();
         this.correctAnswers = 0;
@@ -12,7 +14,7 @@ class QuestionPresentation {
     }
 
     createBaseLayout() {
-        document.body.innerHTML = `
+        this.container.innerHTML = `
             <div id="quiz-container">
                 <h1>Adivina la Ciudad 🌍</h1>
                 <img id="city-image" src="" alt="Imagen de ciudad">
@@ -27,7 +29,7 @@ class QuestionPresentation {
         const cityImage = document.getElementById("city-image");
         const optionsDiv = document.getElementById("options");
 
-        cityImage.src = answers[correct];
+                cityImage.src = answers[correct];
         optionsDiv.innerHTML = "";
 
         Object.keys(answers).forEach(city => {
@@ -59,7 +61,7 @@ class QuestionPresentation {
         if (this.rounds < this.maxRounds) {
             setTimeout(() => {
                 this.game.fetchQuestions();
-            }, 2000);
+            }, 3000); // Ajusta el tiempo de espera a 3 segundos
         } else {
             this.showFinalScore();
         }
@@ -72,13 +74,18 @@ class QuestionPresentation {
     }
 
     showFinalScore() {
-        document.getElementById("quiz-container").innerHTML = `
+        this.container.innerHTML = `
             <h1>Resultados Finales</h1>
             <p>Respuestas correctas: ${this.correctAnswers}</p>
             <p>Respuestas incorrectas: ${this.incorrectAnswers}</p>
+            <button id="menu-button">Volver al menú principal</button>
         `;
+
+        // Añade un evento de clic al botón para redirigir al usuario al menú
+        document.getElementById("menu-button").onclick = () => {
+            this.navigate('/menu');
+        };
     }
 }
 
-// Instancia de la presentación del juego
-let c = new QuestionPresentation();
+export default QuestionPresentation;
