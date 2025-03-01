@@ -29,7 +29,7 @@ class QuestionPresentation {
         const cityImage = document.getElementById("city-image");
         const optionsDiv = document.getElementById("options");
 
-        cityImage.src = answers[correct];
+                cityImage.src = answers[correct];
         optionsDiv.innerHTML = "";
 
         Object.keys(answers).forEach(city => {
@@ -61,7 +61,7 @@ class QuestionPresentation {
         if (this.rounds < this.maxRounds) {
             setTimeout(() => {
                 this.game.fetchQuestions();
-            }, 2000);
+            }, 3000); // Ajusta el tiempo de espera a 3 segundos
         } else {
             this.showFinalScore();
         }
