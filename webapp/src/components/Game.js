@@ -1,22 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Container, Typography } from '@mui/material';
-import '../Wikidata/wikidataPresentation/estilo.css';
+import { useNavigate } from 'react-router-dom';
+import '../wikidata/estilo.css';
+import QuestionPresentation from '../wikidata/QuestionPresentation.js';
 
 const Game = () => {
+  const quizContainerRef = useRef(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // Importa y ejecuta el script de presentación de preguntas
-    import('../Wikidata/wikidataPresentation/QuestionPresentation.js');
-  }, []);
+    // Instancia y ejecuta el script de presentación de preguntas
+    if (quizContainerRef.current) {
+      new QuestionPresentation(quizContainerRef.current, navigate);
+    }
+  }, [navigate]);
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
       <Typography component="h1" variant="h4">
         Welcome to the Game Page
       </Typography>
-      <Typography component="p" variant="body1" sx={{ marginTop: 2 }}>
-        Here you can start playing the game.
-      </Typography>
-      {/* El contenido del script se ejecutará aquí */}
+      <div ref={quizContainerRef}></div> {/* Contenedor para el juego */}
     </Container>
   );
 };

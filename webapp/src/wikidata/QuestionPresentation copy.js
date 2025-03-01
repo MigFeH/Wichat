@@ -1,7 +1,8 @@
-import QuestionGeneration from './QuestionGeneration.js';
+import QuestionGeneration from './questionGeneration/QuestionGeneration.js';
 
 class QuestionPresentation {
-    constructor() {
+    constructor(container) {
+        this.container = container;
         this.game = new QuestionGeneration(this);
         this.createBaseLayout();
         this.correctAnswers = 0;
@@ -12,7 +13,7 @@ class QuestionPresentation {
     }
 
     createBaseLayout() {
-        document.body.innerHTML = `
+        this.container.innerHTML = `
             <div id="quiz-container">
                 <h1>Adivina la Ciudad 🌍</h1>
                 <img id="city-image" src="" alt="Imagen de ciudad">
@@ -80,5 +81,4 @@ class QuestionPresentation {
     }
 }
 
-// Instancia de la presentación del juego
-let c = new QuestionPresentation();
+export default QuestionPresentation;
