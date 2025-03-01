@@ -1,8 +1,9 @@
-import QuestionGeneration from './questionGeneration/QuestionGeneration.js';
+import QuestionGeneration from './QuestionGeneration.js';
 
 class QuestionPresentation {
-    constructor(container) {
+    constructor(container, navigate) {
         this.container = container;
+        this.navigate = navigate; // Guarda la función de navegación
         this.game = new QuestionGeneration(this);
         this.createBaseLayout();
         this.correctAnswers = 0;
@@ -73,11 +74,17 @@ class QuestionPresentation {
     }
 
     showFinalScore() {
-        document.getElementById("quiz-container").innerHTML = `
+        this.container.innerHTML = `
             <h1>Resultados Finales</h1>
             <p>Respuestas correctas: ${this.correctAnswers}</p>
             <p>Respuestas incorrectas: ${this.incorrectAnswers}</p>
+            <button id="menu-button">Volver al menú principal</button>
         `;
+
+        // Añade un evento de clic al botón para redirigir al usuario al menú
+        document.getElementById("menu-button").onclick = () => {
+            this.navigate('/menu');
+        };
     }
 }
 

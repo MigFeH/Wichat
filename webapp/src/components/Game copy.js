@@ -1,17 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 import { Container, Typography } from '@mui/material';
-import '../wikidata/wikidataPresentation/estilo.css';
+import { useNavigate } from 'react-router-dom';
+import '../wikidata/estilo.css';
 import QuestionPresentation from '../wikidata/QuestionPresentation.js';
 
 const Game = () => {
   const quizContainerRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Instancia y ejecuta el script de presentación de preguntas
     if (quizContainerRef.current) {
-      new QuestionPresentation(quizContainerRef.current);
+      new QuestionPresentation(quizContainerRef.current, navigate);
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
