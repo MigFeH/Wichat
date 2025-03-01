@@ -66,7 +66,5 @@ export default class QuestionGeneration {
     }
 }
 
-    
-
 
 new QuestionGeneration();
