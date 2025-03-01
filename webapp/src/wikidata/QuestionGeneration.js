@@ -69,4 +69,4 @@ export default class QuestionGeneration {
     
 
 
-let c = new QuestionGeneration();
+new QuestionGeneration();
