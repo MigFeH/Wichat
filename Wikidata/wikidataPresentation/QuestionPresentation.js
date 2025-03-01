@@ -34,7 +34,7 @@ class QuestionPresentation {
             let btn = document.createElement("button");
             btn.innerText = city;
             btn.classList.add("option");
-
+            
             // Evento de clic con desactivación
             btn.onclick = () => {
                 this.disableButtons(); // Desactivar botones
@@ -82,5 +82,3 @@ class QuestionPresentation {
 
 // Instancia de la presentación del juego
 let c = new QuestionPresentation();
-
-
