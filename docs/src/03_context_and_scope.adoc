@@ -90,51 +90,47 @@ image::3.2_Technical_Context.png[]
 
 #### **Explanation of technical interfaces** 📃
 
-The application follows a **hexagonal architecture pattern**, with the following components:
+The application follows an **MVC (Model-View-Controller) architectural pattern** using **Node.js** and **MongoDB**, with the following components:
 
 ##### **Agent User (External User)**
 
 - The user interacts with the **Web App**, which serves as the frontend interface.
 
-##### **Web App (Frontend Layer)**
+##### **Web App (View Layer - Frontend)**
 
-- Sends **requests** to and receives **responses** from the **Gateway Service**.
+- Sends **requests** to and receives **responses** from the **Backend (Controller Layer)**.
 - Acts as a bridge between the external user and the backend services.
 
-##### **Gateway Service (API Gateway & Central Layer)**
+##### **Backend (Controller Layer - Node.js API)**
 
-- Central hub that manages communication between different services.
+- Central hub that manages communication between different components.
 - Handles authentication, user management, and interaction with external components.
-- Uses **JPA (Java Persistence API)** to interact with the **MySQL database**.
+- Routes requests and calls appropriate services in the **Service Layer**.
 
-##### **Domain (Business Logic Layer)**
+##### **Service Layer (Business Logic)**
 
 - Contains core business logic.
-- Works closely with the **Gateway Service** to process requests.
+- Processes requests received from the **Controller Layer**.
+- Interfaces with the **Model Layer** to retrieve or store data.
 
-##### **Services Layer (Microservices Architecture)**
+##### **Model Layer (Database & Data Access Layer)**
 
-- **User Service**: Manages user-related operations.
-- **Auth Service**: Handles authentication and authorization.
-- **LLM Service**: Interfaces with a Large Language Model (LLM) for AI-driven responses.
-
-##### **Database Layer (Persistent Storage)**
-- **MySQL Database**: Stores application data, accessed via **JPA**.
+- Uses **Mongoose ORM** to interact with the **MongoDB database**.
+- Defines schemas and handles database operations.
 
 ##### **Technical Interfaces**
-- **Web App & Gateway Service**: HTTP Requests/Responses.
-- **Gateway Service & Services Layer (User, Auth, LLM Services)**: REST API or gRPC communication.
-- **Gateway Service & MySQL**: JPA-based database interaction.
-- **Gateway Service & Domain**: Internal service calls.
+- **Web App & Backend**: HTTP Requests/Responses (REST API).
+- **Backend & Service Layer**: Internal function calls.
+- **Service Layer & Model Layer**: Database queries.
+- **Model Layer & MongoDB**: Data storage and retrieval.
 
 **<Mapping Input/Output to Channels>**
 [cols="3", options="header"]
 |===
 | Component | Input | Output
 | Web App | User Requests | UI Responses
-| Gateway Service | API Calls | Processed Data
-| User Service | User Data Requests | User Data Responses
-| Auth Service | Authentication Requests | Auth Tokens
-| LLM Service | AI Queries | AI Responses
-| MySQL Database | Queries via JPA | Stored Data
+| Backend (Controller Layer) | API Calls | Processed Data
+| Service Layer | Business Logic Requests | Business Logic Responses
+| Model Layer | Database Queries | Stored/Retrieved Data
+| MongoDB | Queries | Stored Data
 |===
