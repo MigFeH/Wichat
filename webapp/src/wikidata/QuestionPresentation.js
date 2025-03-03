@@ -61,7 +61,7 @@ class QuestionPresentation {
         if (this.rounds < this.maxRounds) {
             setTimeout(() => {
                 this.game.fetchQuestions();
-            }, 1000); // Ajusta el tiempo de espera a 3 segundos
+            }, 1000); // Ajusta el tiempo de espera a 1 segundo
         } else {
             this.showFinalScore();
         }
