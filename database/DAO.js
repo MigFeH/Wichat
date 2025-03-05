@@ -1,0 +1,85 @@
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost:27017/usersDB', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+const gameSchema = new mongoose.Schema({
+  time: { type: Date, default: Date.now },
+  correctAnswers: Number,
+  incorrectAnswers: Number,
+  responseTimes: [Number]
+});
+
+const userSchema = new mongoose.Schema({
+  username: { type: String, unique: true, required: true },
+  realName: String,
+  lastName: String,
+  password: String,
+  games: [gameSchema]
+});
+
+const User = mongoose.model('User', userSchema);
+
+class UserService {
+  static async createUser(userData) {
+    try {
+      const user = new User(userData);
+      return await user.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getUsers() {
+    try {
+      return await User.find();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getUserById(id) {
+    try {
+      return await User.findById(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async updateUser(id, newData) {
+    try {
+      return await User.findByIdAndUpdate(id, newData, { new: true });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteUser(id) {
+    try {
+      return await User.findByIdAndDelete(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async registerGame(userId, correctAnswers, incorrectAnswers, responseTimes) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) throw new Error('User not found');
+      
+      user.games.push({
+        correctAnswers,
+        incorrectAnswers,
+        responseTimes
+      });
+      
+      return await user.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+
+module.exports = UserService;

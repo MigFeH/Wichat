@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
 import { Typewriter } from "react-simple-typewriter";
 import { useNavigate } from 'react-router-dom';
+import UserService from '../database/DAO';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -25,6 +26,19 @@ const Login = () => {
         setError({ field: "username", message: "Username is required" });
       } else if (!password) {
         setError({ field: "password", message: "Password is required" });
+      }
+
+      try {
+        const existingUser = await checkIfUserExists(username);
+        if (!existingUser) {
+          const newUser = await createNewUser(username, password);
+          setCreatedAt(newUser.createdAt);
+        } else {
+          setCreatedAt(existingUser.createdAt);
+        }
+      } catch (error) {
+        setError({ field: 'error', message: "Error checking or creating user" });
+        return;
       }
 
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
@@ -60,6 +74,31 @@ const Login = () => {
     }
   };
 
+  // DataBase - Check id user exists
+  const checkIfUserExists = async (username) => {
+    try {
+      const user = await UserService.getUserById(username);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // DataBase - Create a new user
+  const createNewUser = async (username, password) => {
+    try {
+      const userData = { username, password };
+      const newUser = await UserService.createUser(userData);
+      return newUser;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const displayCreationDate = (createdAt) => {
+    return new Date(createdAt).toLocaleDateString();
+  };
+
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
@@ -75,7 +114,7 @@ const Login = () => {
               typeSpeed={50} // Typing speed in ms
             />
             <Typography component="p" variant="body1" sx={{ textAlign: 'center', marginTop: 2 }}>
-              Your account was created on {new Date(createdAt).toLocaleDateString()}.
+              Your account was created on {displayCreationDate(createdAt)}.
             </Typography>
           </div>
         ) : (
