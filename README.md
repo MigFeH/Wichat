@@ -20,14 +20,14 @@ This is a base project for the Software Architecture course in 2024/2025. It is 
 Both the user and auth service share a Mongo database that is accessed with mongoose.
 
 ## Members
-<table align="center">
+<table>
   <tr>
     <th>Contributor 👤</th>
     <th>Contact 📞</th>
     <th colspan="4">Self reports ✒️</th>
   </tr>
   <tr>
-    <td font-size="0.5em">Leonardo Carone Menes</td>
+    <td>Leonardo Carone Menes</td>
     <td><a href="https://github.com/UnioviLCM27">Leonardo's github profile</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/34">Self report 1</a></td>
     <td><a href="...">Self report 2</a></td>
