@@ -47,6 +47,18 @@ Both the user and auth service share a Mongo database that is accessed with mong
   </tr>
 </table>
 
+## <a href='https://github.com/Arquisoft/wichat_es2b/issues?q=is%3Aissue%20state%3Aclosed%20label%3A"self%20report"'>Self reports</a>
+<ul>
+     <li><a href='https://github.com/Arquisoft/wichat_es2b/issues?q=is%3Aissue%20state%3Aclosed%20label%3A"self%20report"%20AND%20label%3A"sprint%201"%20'>Sprint 1</a>
+       <ul>
+         <li><a href='https://github.com/Arquisoft/wichat_es2b/issues/28'>Miguel</a></li>
+         <li><a href='https://github.com/Arquisoft/wichat_es2b/issues/30'>Ignacio</a></li>
+         <li><a href='https://github.com/Arquisoft/wichat_es2b/issues/34'>Leonardo</a></li>
+         <li><a href='https://github.com/Arquisoft/wichat_es2b/issues/42'>José</a></li>
+         <li><a href='https://github.com/Arquisoft/wichat_es2b/issues/45'>Daniel</a></li>
+       </ul></li>
+</ul>
+
 ## Quick start guide
 
 First, clone the project:
