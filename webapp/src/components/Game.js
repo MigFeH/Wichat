@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Container, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import '../wikidata/estilo.css';
-import QuestionPresentation from 'wikidataComponents/QuestionPresentation.jsx';
-import QuestionGeneration from "/wikidataComponents/QuestionGeneration.js";
+import './wikidataComponents/estilo.css';
+import QuestionPresentation from './wikidataComponents/QuestionPresentation.jsx';
+import QuestionGeneration from "./wikidataComponents/QuestionGeneration.js";
 
 const Game = () => {
   const quizContainerRef = useRef(null);
