@@ -16,30 +16,46 @@ class QuestionGeneration {
     }
 
     async generateQuestions() {
-        const WikidataUrl = "https://query.wikidata.org/sparql";
-        const sparqlQuery = `
-        SELECT ?city ?cityLabel ?image WHERE {
-            ?city wdt:P31 wd:Q515.
-            ?city wdt:P18 ?image.
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-        }
-        ORDER BY RAND()
-        LIMIT 40`;
-
-        try {
-            const response = await fetch(WikidataUrl + "?query=" + encodeURIComponent(sparqlQuery) + "&format=json", {
-                headers: { 'Accept': 'application/sparql-results+json' }
+        async function generateQuestions() {
+            const WikidataUrl = "https://query.wikidata.org/sparql";
+            const sparqlQuery = `
+                SELECT ?city ?cityLabel ?image WHERE {
+                    ?city wdt:P31 wd:Q515.
+                    ?city wdt:P18 ?image.
+                    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+                }
+                LIMIT 40`;
+        
+            const url = new URL(WikidataUrl);
+            url.search = new URLSearchParams({
+                query: sparqlQuery,
+                format: "json"
             });
-            const data = await response.json();
-
-            return data.results.bindings.map(item => ({
-                city: item.cityLabel.value,
-                image: item.image.value
-            }));
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return [];
+        
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Accept': 'application/sparql-results+json' }
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+        
+                return data.results.bindings
+                    .map(item => ({
+                        city: item.cityLabel.value,
+                        image: item.image.value
+                    }))
+                    .sort(() => Math.random() - 0.5);
+        
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return [];
+            }
         }
+        
     }
 
     getNextQuestion() {
