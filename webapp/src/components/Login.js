@@ -29,7 +29,7 @@ const Login = () => {
       }
 
       try {
-        const existingUser = await checkIfUserExists(username);
+        const existingUser = await checkIfUserExists(username); // revisar
         if (!existingUser) {
           const newUser = await createNewUser(username, password);
           setCreatedAt(newUser.createdAt);
