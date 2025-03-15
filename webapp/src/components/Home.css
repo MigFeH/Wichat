@@ -1,0 +1,31 @@
+.logo {
+    display: block;
+    margin: 0 auto;
+    height: auto;
+}
+
+.wave-container {
+    width: 100%;
+    position: absolute;
+    bottom: -3em;
+    left: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.wave {
+    width: 200%;
+    display: block;
+    position: relative;
+    animation: waveAnimation 8s infinite linear;
+    opacity: 0.6;
+}
+
+@keyframes waveAnimation {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}

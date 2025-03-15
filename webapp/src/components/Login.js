@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
 import { Typewriter } from "react-simple-typewriter";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -15,6 +16,8 @@ const Login = () => {
 
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
   const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+
+  const navigate = useNavigate();
 
   const loginUser = async () => {
     try {
@@ -35,6 +38,8 @@ const Login = () => {
 
       setCreatedAt(userCreatedAt);
       setLoginSuccess(true);
+
+      navigate('/menu');
 
       setOpenSnackbar(true);
     } catch (error) {
