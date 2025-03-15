@@ -12,7 +12,7 @@ const Menu = () => {
     return (
         <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
             <Typography component="h1" variant="h4">
-                Welcome to the principal page
+                Hey!! Are you ready? 🌊
             </Typography>
             
             <Typography component="p" variant="body1" sx={{ marginTop: 2 }}>

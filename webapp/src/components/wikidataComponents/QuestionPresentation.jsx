@@ -7,10 +7,27 @@ const QuestionPresentation = ({ game, navigate, question }) => {
     const maxRounds = 10;
 
     useEffect(() => {
-        if (game && !question) {
-            game.fetchQuestions();
+        const saveStats = async () => {
+        try {
+            const response = await fetch('http://localhost:8010/api/stats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  correctAnswers: score.correct,
+                  incorrectAnswers: score.incorrect,
+                  totalRounds: maxRounds
+                })
+            });
+            
+            if (!response.ok) throw new Error('Error al guardar estadísticas');
+            
+        } catch (error) {
+            console.error('Error:', error);
         }
-    }, [game, question]);
+        };
+
+        if (score.rounds >= maxRounds) saveStats();
+    }, [score]);
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
