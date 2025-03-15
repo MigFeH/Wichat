@@ -20,7 +20,7 @@ const Menu = () => {
             </Typography>
 
             <Button variant="contained" color="primary" onClick={handlePageChange("game")}>
-                Start
+                Start!
             </Button>
 
             <Button variant="contained" color="primary" onClick={handlePageChange("stadistics")}>
