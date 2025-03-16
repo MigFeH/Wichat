@@ -3,80 +3,77 @@ class QuestionGeneration {
         this.setQuestion = setQuestion;
         this.questionsCache = [];
         this.currentIndex = 0;
+        this.isFetching = false;
     }
 
     async fetchQuestions() {
-        if (this.questionsCache.length === 0) {
-            this.questionsCache = await this.generateQuestions();
-            this.currentIndex = 0;
-        }
+        if (this.isFetching) return;
+        this.isFetching = true;
 
-        const { answers, correct } = this.getNextQuestion();
-        this.setQuestion({ answers, correct });
+        try {
+            if (this.questionsCache.length === 0) {
+                this.questionsCache = await this.generateQuestions();
+                this.currentIndex = 0;
+            }
+
+            if (this.questionsCache.length > 0) {
+                const question = this.getNextQuestion();
+                if (question) this.setQuestion(question);
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error);
+        } finally {
+            this.isFetching = false;
+        }
     }
 
     async generateQuestions() {
-        async function generateQuestions() {
-            const WikidataUrl = "https://query.wikidata.org/sparql";
-            const sparqlQuery = `
-                SELECT ?city ?cityLabel ?image WHERE {
-                    ?city wdt:P31 wd:Q515.
-                    ?city wdt:P18 ?image.
-                    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-                }
-                LIMIT 40`;
-        
-            const url = new URL(WikidataUrl);
-            url.search = new URLSearchParams({
-                query: sparqlQuery,
-                format: "json"
-            });
-        
-            try {
-                const response = await fetch(url, {
-                    headers: { 'Accept': 'application/sparql-results+json' }
-                });
-        
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-        
-                const data = await response.json();
-        
-                return data.results.bindings
-                    .map(item => ({
-                        city: item.cityLabel.value,
-                        image: item.image.value
-                    }))
-                    .sort(() => Math.random() - 0.5);
-        
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                return [];
-            }
+        const WikidataUrl = "https://query.wikidata.org/sparql";
+        const sparqlQuery = `
+        SELECT DISTINCT ?city ?cityLabel ?image WHERE {
+            ?city wdt:P31 wd:Q515.
+            ?city wdt:P18 ?image.
+            SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+            FILTER(CONTAINS(STR(?image), "http"))
         }
-        
+        ORDER BY RAND()
+        LIMIT 40`;
+
+        try {
+            const response = await fetch(`${WikidataUrl}?query=${encodeURIComponent(sparqlQuery)}&format=json`, {
+                headers: { 'Accept': 'application/sparql-results+json' }
+            });
+            const data = await response.json();
+            
+            return data.results.bindings
+                .filter(item => item.image?.value)
+                .map(item => ({
+                    city: item.cityLabel.value,
+                    image: item.image.value
+                }));
+        } catch (error) {
+            console.error("API Error:", error);
+            return [];
+        }
     }
 
     getNextQuestion() {
-        if (this.currentIndex + 4 > this.questionsCache.length) {
-            console.warn("Recargando preguntas...");
+        if (!this.questionsCache.length || this.currentIndex + 4 > this.questionsCache.length) {
             this.questionsCache = [];
-            this.fetchQuestions();
-            return { answers: {}, correct: null };
+            return null;
         }
 
-        let options = this.questionsCache.slice(this.currentIndex, this.currentIndex + 4);
+        const options = this.questionsCache.slice(this.currentIndex, this.currentIndex + 4);
         this.currentIndex += 4;
+        const correctCity = options[Math.floor(Math.random() * options.length)];
 
-        let correctCity = options[Math.floor(Math.random() * options.length)];
-
-        let answers = options.reduce((acc, item) => {
-            acc[item.city] = item.image;
-            return acc;
-        }, {});
-
-        return { answers, correct: correctCity.city };
+        return {
+            answers: options.reduce((acc, item) => {
+                acc[item.city] = item.image;
+                return acc;
+            }, {}),
+            correct: correctCity.city
+        };
     }
 }
 
