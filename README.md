@@ -30,7 +30,7 @@ Both the user and auth service share a Mongo database that is accessed with mong
     <td>Leonardo Carone Menes</td>
     <td><a href="https://github.com/UnioviLCM27">Leonardo's github</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/34">Self report 1</a></td>
-    <td><a href="...">Self report 2</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/100">Self report 2</a></td>
     <td><a href="...">Self report 3</a></td>
     <td><a href="...">Self report 4</a></td>
   </tr>
@@ -38,7 +38,7 @@ Both the user and auth service share a Mongo database that is accessed with mong
     <td>José Martínez de Zuvillaga</td>
     <td><a href="https://github.com/josemzuvi">José's github</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/42">Self report 1</a></td>
-    <td><a href="...">Self report 2</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/101">Self report 2</a></td>
     <td><a href="...">Self report 3</a></td>
     <td><a href="...">Self report 4</a></td>
   </tr>
