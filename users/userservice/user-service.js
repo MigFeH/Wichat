@@ -20,15 +20,6 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri)
   .then(async () => {
     console.log('Conectado a MongoDB');
-    
-    // Comprobamos si la colección 'stats' existe, si no, la creamos.
-    const collections = await mongoose.connection.db.listCollections({ name: 'stats' }).toArray();
-    if (collections.length === 0) {
-      await mongoose.connection.db.createCollection('stats');
-      console.log("Colección 'stats' creada con éxito.");
-    } else {
-      console.log("Colección 'stats' ya existe.");
-    }
   })
   .catch(err => console.error('Error de conexión a MongoDB:', err.message));
 
