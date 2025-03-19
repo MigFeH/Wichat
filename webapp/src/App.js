@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-
 import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -16,9 +15,15 @@ const App = () => {
       <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <ProtectedRoute path="/menu" component={Menu} /> {/* Ruta protegida */}
-      <ProtectedRoute path="/game" component={Game} /> {/* Ruta protegida */}
-      <ProtectedRoute path="/stadistics" component={Stadistics} /> {/* Ruta protegida */}
+      <Route path="/menu" element={
+        <ProtectedRoute element={<Menu />} />
+      } />
+      <Route path="/game" element={
+        <ProtectedRoute element={<Game />} />
+      } />
+      <Route path="/stadistics" element={
+        <ProtectedRoute element={<Stadistics />} />
+      } />
     </Routes>
   );
 };
