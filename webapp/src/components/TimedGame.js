@@ -1,9 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TimedQuestionPresentation from './wikidataComponents/QuestionPresentation.jsx';
 import QuestionGeneration from "./wikidataComponents/QuestionGeneration.js";
 
+
+const TimedProgress = () => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setProgress((oldProgress) => {
+                const newProgress = oldProgress + 1;
+                return newProgress >= 100 ? 100 : newProgress;
+            });
+        }, 100); // Se incrementa 1% cada 100ms → 10 segundos en total
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return <CircularProgress variant="determinate" value={progress} />;
+};
 
 const Game = () => {
   const navigate = useNavigate();
@@ -24,6 +41,7 @@ const Game = () => {
         navigate={navigate}
         question={currentQuestion}
       />
+        {TimedProgress}
     </Container>
   );
 };
