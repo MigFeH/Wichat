@@ -33,13 +33,16 @@ const Login = () => {
         setMessage(message.data.answer);
       }
 
-      const { createdAt: userCreatedAt, token } = response.data;
+      const { createdAt: userCreatedAt, token, username } = response.data;
 
       setCreatedAt(userCreatedAt);
       setLoginSuccess(true);
 
       if (token) {
         localStorage.setItem('authToken', token);
+      }
+
+      if (username) {
         localStorage.setItem('username', username);
       }
 

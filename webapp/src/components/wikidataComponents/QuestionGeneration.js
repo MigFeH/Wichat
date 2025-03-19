@@ -1,22 +1,3 @@
-import axios from 'axios';
-
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
-
-const saveStats = async (username, score, correctAnswers, incorrectAnswers, totalRounds) => {
-  try {
-    const response = await axios.post(`${apiEndpoint}/api/stats`, {
-      username,
-      score,
-      correctAnswers,
-      incorrectAnswers,
-      totalRounds
-    });
-    console.log('Statistics saved:', response.data);
-  } catch (error) {
-    console.error('Failed to save statistics:', error);
-  }
-};
-
 class QuestionGeneration {
     constructor(setQuestion) {
         this.setQuestion = setQuestion;

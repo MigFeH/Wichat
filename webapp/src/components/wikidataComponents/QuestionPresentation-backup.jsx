@@ -14,22 +14,26 @@ const QuestionPresentation = ({ game, navigate, question }) => {
     useEffect(() => {
         const saveStats = async () => {
             try {
-                const response = await axios.post(`${apiEndpoint}/api/stats`, {
-                    username: username,
-                    score: (score.correct - score.incorrect) * 100,
-                    correctAnswers: score.correct,
-                    incorrectAnswers: score.incorrect,
-                    totalRounds: maxRounds
+                const response = await fetch(`${apiEndpoint}/api/stats`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        score: (score.correct - score.incorrect) * 100,
+                        correctAnswers: score.correct,
+                        incorrectAnswers: score.incorrect,
+                        totalRounds: maxRounds
+                    })
                 });
-
+    
                 if (!response.ok) throw new Error('Error al guardar estadísticas');
             } catch (error) {
                 console.error('Error:', error);
             }
         };
-
+    
         if (score.rounds === maxRounds) saveStats();
-    }, [score, username]);
+    }, [score]);
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;

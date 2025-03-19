@@ -84,16 +84,10 @@ app.post('/api/stats', async (req, res) => {
 // Ruta para obtener estadísticas (se obtienen de la colección 'stats')
 app.get('/api/stats', async (req, res) => {
   try {
-    const { username } = req.query;
-    if (!username) {
-      return res.status(400).json({
-        error: 'Bad Request',
-        message: 'Falta el parámetro requerido: username'
-      });
-    }
-
+    const limit = parseInt(req.query.limit) || 10;
     const stats = await GameStats.find({ username })
-      .sort({ timestamp: -1 });
+      .sort({ timestamp: -1 })
+      .limit(limit);
 
     res.json(stats);
 
