@@ -34,16 +34,13 @@ const Login = () => {
       }
 
       console.log(response.data);
-      const { createdAt: userCreatedAt, token, username } = response.data;
+      const { createdAt: userCreatedAt, token } = response.data;
 
       setCreatedAt(userCreatedAt);
       setLoginSuccess(true);
 
       if (token) {
         localStorage.setItem('authToken', token);
-      }
-
-      if (username) {
         localStorage.setItem('username', username);
       }
 
