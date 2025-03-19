@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
 import axios from 'axios';
 
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+
 const Ranking = () => {
   const [ranking, setRanking] = useState([]);
   const [error, setError] = useState('');
@@ -9,7 +11,7 @@ const Ranking = () => {
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const data = await axios.get("/api/stats");
+        const data = await axios.get(`${apiEndpoint}/api/stats`);
         setRanking(data);
       } catch (error) {
         setError('Failed to fetch ranking data');
