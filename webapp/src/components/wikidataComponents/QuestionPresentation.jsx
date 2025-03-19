@@ -7,7 +7,8 @@ const QuestionPresentation = ({ game, navigate, question, username }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
     const [feedback, setFeedback] = useState(null);
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
-    const maxRounds = 10;
+    //const maxRounds = 10;
+    const maxRounds = 2;
 
     useEffect(() => {
         const saveStats = async () => {
