@@ -12,6 +12,8 @@ const Ranking = () => {
     const fetchRanking = async () => {
       try {
         const response = await axios.get(`${apiEndpoint}/api/stats`);
+        console.log(response);
+        console.log(response.data);
         if (response.data && Array.isArray(response.data.data)) {
           setRanking(response.data.data);
         } else {
