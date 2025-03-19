@@ -33,7 +33,6 @@ const Login = () => {
         setMessage(message.data.answer);
       }
 
-      console.log(response.data);
       const { createdAt: userCreatedAt, token } = response.data;
 
       setCreatedAt(userCreatedAt);

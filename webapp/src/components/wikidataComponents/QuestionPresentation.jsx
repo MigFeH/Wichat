@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
-
-const apiEndpoint = 'http://localhost:8001';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
     const [feedback, setFeedback] = useState(null);
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
-    const username = localStorage.getItem('username');
-    //const maxRounds = 10;
-    const maxRounds = 2;
+    const maxRounds = 10;
 
     useEffect(() => {
         const saveStats = async () => {
             try {
-                const response = await axios.post(`${apiEndpoint}/api/stats`, {
-                    username: username,
-                    score: (score.correct - score.incorrect) * 100,
-                    correctAnswers: score.correct,
-                    incorrectAnswers: score.incorrect,
-                    totalRounds: maxRounds
+                const response = await fetch('http://localhost:8001/api/stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: localStorage.getItem('username'),
+                        score: score.correct,
+                        correctAnswers: score.correct,
+                        incorrectAnswers: score.incorrect,
+                        totalRounds: maxRounds
+                    })
                 });
-
+    
                 if (!response.ok) throw new Error('Error al guardar estadísticas');
             } catch (error) {
                 console.error('Error:', error);
             }
         };
-
+    
         if (score.rounds === maxRounds) saveStats();
-    }, [score, username]);
+    }, [score]);
+    
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
