@@ -84,8 +84,7 @@ app.post('/api/stats', async (req, res) => {
 // Ruta para obtener estadísticas (se obtienen de la colección 'stats')
 app.get('/api/stats', async (req, res) => {
   try {
-    const username = localStorage.getItem('username');
-    //const { username } = req.query;
+    const { username } = req.query;
     if (!username) {
       return res.status(400).json({
         error: 'Bad Request',
