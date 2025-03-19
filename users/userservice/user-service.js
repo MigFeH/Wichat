@@ -85,7 +85,7 @@ app.post('/api/stats', async (req, res) => {
 app.get('/api/stats', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
-    const stats = await GameStats.find()
+    const stats = await GameStats.find({ username })
       .sort({ timestamp: -1 })
       .limit(limit);
 
