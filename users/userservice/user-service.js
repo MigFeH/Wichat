@@ -52,15 +52,17 @@ app.post('/adduser', async (req, res) => {
 // Ruta para guardar estadísticas (se guarda en la colección 'stats')
 app.post('/api/stats', async (req, res) => {
   try {
-    const { correctAnswers, incorrectAnswers, totalRounds } = req.body;
-    if (!correctAnswers || !incorrectAnswers || !totalRounds) {
+    const { username, score, correctAnswers, incorrectAnswers, totalRounds } = req.body;
+    if (!username || !score || !correctAnswers || !incorrectAnswers || !totalRounds) {
       return res.status(400).json({
         error: 'Bad Request',
-        message: 'Faltan campos requeridos: correctAnswers, incorrectAnswers, totalRounds'
+        message: 'Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds'
       });
     }
 
     const newStats = new GameStats({
+      username,
+      score,
       correctAnswers,
       incorrectAnswers,
       totalRounds,
@@ -82,10 +84,16 @@ app.post('/api/stats', async (req, res) => {
 // Ruta para obtener estadísticas (se obtienen de la colección 'stats')
 app.get('/api/stats', async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
-    const stats = await GameStats.find()
-      .sort({ timestamp: -1 })
-      .limit(limit);
+    const { username } = req.query;
+    if (!username) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Falta el parámetro requerido: username'
+      });
+    }
+
+    const stats = await GameStats.find({ username })
+      .sort({ timestamp: -1 });
 
     res.json(stats);
 

@@ -7,6 +7,7 @@ import Menu from './components/Menu';
 import Game from './components/Game';
 import Stadistics from './components/Stadistics';
 import ProtectedRoute from './auth/ProtectedRoute';
+import Ranking from './components/Ranking';
 
 const App = () => {
   return (
@@ -23,6 +24,9 @@ const App = () => {
       } />
       <Route path="/stadistics" element={
         <ProtectedRoute element={<Stadistics />} />
+      } />
+      <Route path="/ranking" element={
+        <ProtectedRoute element={<Ranking />} />
       } />
     </Routes>
   );

@@ -40,6 +40,7 @@ const Login = () => {
 
       if (token) {
         localStorage.setItem('authToken', token);
+        localStorage.setItem('username', username);
       }
 
       navigate('/menu');
