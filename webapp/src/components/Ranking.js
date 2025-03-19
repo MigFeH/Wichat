@@ -11,8 +11,12 @@ const Ranking = () => {
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const data = await axios.get(`${apiEndpoint}/api/stats`);
-        setRanking(data);
+        const response = await axios.get(`${apiEndpoint}/api/stats`);
+        if (response.data && Array.isArray(response.data.data)) {
+          setRanking(response.data.data);
+        } else {
+          setError('Invalid data format');
+        }
       } catch (error) {
         setError('Failed to fetch ranking data');
       }
@@ -42,7 +46,7 @@ const Ranking = () => {
           </TableHead>
           <TableBody>
             {ranking.map((user, index) => (
-              <TableRow key={user.username}>
+              <TableRow key={user._id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.score}</TableCell>
