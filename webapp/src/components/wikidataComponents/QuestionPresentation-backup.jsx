@@ -7,7 +7,6 @@ const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
     const [feedback, setFeedback] = useState(null);
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
-    const username = localStorage.getItem('username');
     //const maxRounds = 10;
     const maxRounds = 2;
 
@@ -18,8 +17,6 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username,
-                        score: (score.correct - score.incorrect) * 100,
                         correctAnswers: score.correct,
                         incorrectAnswers: score.incorrect,
                         totalRounds: maxRounds

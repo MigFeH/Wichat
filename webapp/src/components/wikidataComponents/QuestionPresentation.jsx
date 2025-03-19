@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+const apiEndpoint = 'http://localhost:8001';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
