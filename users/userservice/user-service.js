@@ -52,15 +52,17 @@ app.post('/adduser', async (req, res) => {
 // Ruta para guardar estadísticas (se guarda en la colección 'stats')
 app.post('/api/stats', async (req, res) => {
   try {
-    const { correctAnswers, incorrectAnswers, totalRounds } = req.body;
-    if (!correctAnswers || !incorrectAnswers || !totalRounds) {
+    const { username, score, correctAnswers, incorrectAnswers, totalRounds } = req.body;
+    if (!username || !score || !correctAnswers || !incorrectAnswers || !totalRounds) {
       return res.status(400).json({
         error: 'Bad Request',
-        message: 'Faltan campos requeridos: correctAnswers, incorrectAnswers, totalRounds'
+        message: 'Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds'
       });
     }
 
     const newStats = new GameStats({
+      username,
+      score,
       correctAnswers,
       incorrectAnswers,
       totalRounds,

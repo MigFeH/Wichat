@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 
-const QuestionPresentation = ({ game, navigate, question }) => {
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+
+const QuestionPresentation = ({ game, navigate, question, username }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
     const [feedback, setFeedback] = useState(null);
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
@@ -9,25 +12,22 @@ const QuestionPresentation = ({ game, navigate, question }) => {
     useEffect(() => {
         const saveStats = async () => {
             try {
-                const response = await fetch('http://localhost:8001/api/stats', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        correctAnswers: score.correct,
-                        incorrectAnswers: score.incorrect,
-                        totalRounds: maxRounds
-                    })
+                const response = await axios.post(`${apiEndpoint}/api/stats`, {
+                    username,
+                    score: score.correct,
+                    correctAnswers: score.correct,
+                    incorrectAnswers: score.incorrect,
+                    totalRounds: maxRounds
                 });
-    
+
                 if (!response.ok) throw new Error('Error al guardar estadísticas');
             } catch (error) {
                 console.error('Error:', error);
             }
         };
-    
+
         if (score.rounds === maxRounds) saveStats();
-    }, [score]);
-    
+    }, [score, username]);
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
