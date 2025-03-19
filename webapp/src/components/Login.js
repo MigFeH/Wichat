@@ -24,25 +24,24 @@ const Login = () => {
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
       const question = "Hey!! " + username + " who is going?";
-      const model = "empathy"
+      const model = "empathy";
 
-      if (apiKey==='None'){
+      if (apiKey === 'None') {
         setMessage("LLM API key is not set. Cannot contact the LLM.");
-      }
-      else{
-        const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey })
+      } else {
+        const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey });
         setMessage(message.data.answer);
       }
-      // Extract data from the response
-      const { createdAt: userCreatedAt } = response.data;
+
+      const { createdAt: userCreatedAt, token } = response.data;
 
       setCreatedAt(userCreatedAt);
       setLoginSuccess(true);
 
-      // Store the token in localStorage
-      localStorage.setItem('authToken', token);
+      if (token) {
+        localStorage.setItem('authToken', token);
+      }
 
-      // Redirect to the menu
       navigate('/menu');
 
       setOpenSnackbar(true);
@@ -60,10 +59,10 @@ const Login = () => {
       {loginSuccess ? (
         <div>
           <Typewriter
-            words={[message]} // Pass your message as an array of strings
+            words={[message]}
             cursor
             cursorStyle="|"
-            typeSpeed={50} // Typing speed in ms
+            typeSpeed={50}
           />
           <Typography component="p" variant="body1" sx={{ textAlign: 'center', marginTop: 2 }}>
             Your account was created on {new Date(createdAt).toLocaleDateString()}.
