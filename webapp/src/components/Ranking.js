@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
-import RankingService from '../services/RankingService';
 import axios from 'axios';
 
 const Ranking = () => {
