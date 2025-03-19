@@ -9,11 +9,14 @@ const Stadistics = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState([]);
   const [error, setError] = useState('');
+  const username = localStorage.getItem('username');
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get(`${apiEndpoint}/api/stats`);
+        const response = await axios.get(`${apiEndpoint}/api/stats`, {
+          params: { username }
+        });
         if (response.data && Array.isArray(response.data)) {
           setStats(response.data);
         } else {
@@ -25,7 +28,7 @@ const Stadistics = () => {
     };
 
     fetchStats();
-  }, []);
+  }, [username]);
 
   const handleBackClick = () => {
     navigate('/menu');

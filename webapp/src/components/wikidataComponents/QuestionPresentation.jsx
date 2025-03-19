@@ -16,7 +16,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
             try {
                 const response = await axios.post(`${apiEndpoint}/api/stats`, {
                     username,
-                    score: score.correct,
+                    score: (score.correct - score.incorrect) * 100,
                     correctAnswers: score.correct,
                     incorrectAnswers: score.incorrect,
                     totalRounds: maxRounds
