@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Menu from './components/Menu';
 import Game from './components/Game';
 import Stadistics from './components/Stadistics';
+import ProtectedRoute from './auth/ProtectedRoute';
 
 const App = () => {
   return (
@@ -15,9 +16,9 @@ const App = () => {
       <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/menu" element={<Menu />} />
-      <Route path="/game" element={<Game />} />
-      <Route path="/stadistics" element={<Stadistics />} />
+      <ProtectedRoute path="/menu" component={Menu} /> {/* Ruta protegida */}
+      <ProtectedRoute path="/game" component={Game} /> {/* Ruta protegida */}
+      <ProtectedRoute path="/stadistics" component={Stadistics} /> {/* Ruta protegida */}
     </Routes>
   );
 };

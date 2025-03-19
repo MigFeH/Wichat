@@ -23,7 +23,7 @@ const Login = () => {
     try {
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
-      const question = "Please, generate a greeting message for a student called " + username + " that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.";
+      const question = "Hey!! " + username + " who is going?";
       const model = "empathy"
 
       if (apiKey==='None'){
@@ -39,6 +39,10 @@ const Login = () => {
       setCreatedAt(userCreatedAt);
       setLoginSuccess(true);
 
+      // Store the token in localStorage
+      localStorage.setItem('authToken', token);
+
+      // Redirect to the menu
       navigate('/menu');
 
       setOpenSnackbar(true);
