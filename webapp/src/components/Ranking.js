@@ -11,7 +11,9 @@ const Ranking = () => {
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const response = await axios.get(`${apiEndpoint}/api/stats`);
+        const response = await axios.get(`${apiEndpoint}/ranking`, {});
+
+        console.log(response.data);
         if (response.data && Array.isArray(response.data)) {
           setRanking(response.data);
         } else {
@@ -21,10 +23,11 @@ const Ranking = () => {
         setError('Failed to fetch ranking data');
       }
     };
-
+  
     fetchRanking();
   }, []);
-
+    
+  console.log(ranking);
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
       <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
@@ -48,7 +51,7 @@ const Ranking = () => {
             {ranking.map((user, index) => (
               <TableRow key={user._id}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                <TableCell>{user._id}</TableCell>
                 <TableCell>{user.score}</TableCell>
               </TableRow>
             ))}

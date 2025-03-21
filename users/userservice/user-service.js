@@ -85,23 +85,15 @@ app.post('/api/stats', async (req, res) => {
 app.get('/api/stats', async (req, res) => {
   try {
     const { username } = req.query;
-    if (!username /* Comprobacion de que no sea null */ 
-      || typeof username !== 'string' /* Comprobacion de que no sea de cualquier otro tipo distinto de string */
-      || username.trim() === '' /* Comprobacion de que no sea un string vacio */) {
+    if (!username) {
       return res.status(400).json({
         error: 'Bad Request',
         message: 'Falta el parámetro requerido: username'
       });
     }
 
-    var stats = undefined;
-    if(username !== "all") {
-      stats = await GameStats.find({ username })
-        .sort({ timestamp: -1 });
-    } else {
-      stats = await GameStats.find()
-        .sort({ timestamp: -1 });
-    }
+    const stats = await GameStats.find({ username })
+      .sort({ timestamp: -1 });
 
     res.json(stats);
   } catch (error) {
@@ -111,6 +103,23 @@ app.get('/api/stats', async (req, res) => {
       message: error.message
     });
   }
+});
+
+// Ruta para obtener todo el ranking
+app.get('/ranking', async (req, res) => {
+  const stats = await GameStats.aggregate([
+    {
+      $group: {
+        _id: '$username',
+        score: { $max: '$score' }
+      }
+    },
+    {
+      $sort: { score: -1 }
+    }
+  ]);
+
+  res.json(stats);
 });
 
 const server = app.listen(port, () => {
