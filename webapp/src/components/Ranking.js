@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
 
 const Ranking = () => {
+  const navigate = useNavigate();
   const [ranking, setRanking] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchRanking = async () => {
       try {
-        const response = await axios.get(`${apiEndpoint}/api/stats`);
+        const response = await axios.get(`${apiEndpoint}/ranking`, {});
+
         if (response.data && Array.isArray(response.data)) {
           setRanking(response.data);
         } else {
@@ -21,12 +24,23 @@ const Ranking = () => {
         setError('Failed to fetch ranking data');
       }
     };
-
+  
     fetchRanking();
   }, []);
 
+  const handleBackClick = () => {
+    navigate('/menu');
+  };
+    
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
+      <Button 
+        variant="contained" 
+        onClick={handleBackClick}
+        sx={{ marginBottom: 2 }}
+      >
+        Back to Menu
+      </Button>
       <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
         Ranking
       </Typography>
@@ -48,7 +62,7 @@ const Ranking = () => {
             {ranking.map((user, index) => (
               <TableRow key={user._id}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                <TableCell>{user._id}</TableCell>
                 <TableCell>{user.score}</TableCell>
               </TableRow>
             ))}

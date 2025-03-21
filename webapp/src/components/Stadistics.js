@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
+import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
@@ -36,6 +36,13 @@ const Stadistics = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
+      <Button 
+        variant="contained" 
+        onClick={handleBackClick}
+        sx={{ marginBottom: 2 }}
+      >
+        Back to Menu
+      </Button>
       <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
         Statistics
       </Typography>
@@ -70,7 +77,6 @@ const Stadistics = () => {
           </TableBody>
         </Table>
       </Paper>
-      <button onClick={handleBackClick}>Volver</button>
     </Container>
   );
 };
