@@ -85,18 +85,25 @@ app.post('/api/stats', async (req, res) => {
 app.get('/api/stats', async (req, res) => {
   try {
     const { username } = req.query;
-    if (!username) {
+    if (!username /* Comprobacion de que no sea null */ 
+      || typeof username !== 'string' /* Comprobacion de que no sea de cualquier otro tipo distinto de string */
+      || username.trim() === '' /* Comprobacion de que no sea un string vacio */) {
       return res.status(400).json({
         error: 'Bad Request',
         message: 'Falta el parámetro requerido: username'
       });
     }
 
-    const stats = await GameStats.find({ username })
-      .sort({ timestamp: -1 });
+    var stats = undefined;
+    if(username !== "all") {
+      stats = await GameStats.find({ username })
+        .sort({ timestamp: -1 });
+    } else {
+      stats = await GameStats.find()
+        .sort({ timestamp: -1 });
+    }
 
     res.json(stats);
-
   } catch (error) {
     console.error('Error obteniendo estadísticas:', error);
     res.status(500).json({
