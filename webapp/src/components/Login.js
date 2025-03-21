@@ -21,6 +21,15 @@ const Login = () => {
 
   const loginUser = async () => {
     try {
+      if (username.trim().length < 3 ) {
+        setError('Username must have at least 3 characters');
+        return;
+      }
+      if (password.trim().length < 3) {
+        setError('Password must have at least 3 characters');
+        return;
+      }
+
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
       const question = "Hey!! " + username + " who is going?";

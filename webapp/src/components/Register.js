@@ -16,6 +16,15 @@ const Register = () => {
 
   const addUser = async () => {
     try {
+      if (username.trim().length < 3 ) {
+        setError('Username must have at least 3 characters');
+        return;
+      }
+      if (password.trim().length < 3) {
+        setError('Password must have at least 3 characters');
+        return;
+      }
+
       await axios.post(`${apiEndpoint}/adduser`, { username, password });
       setOpenSnackbar(true);
       navigate('/login');
