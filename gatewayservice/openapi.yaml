@@ -81,6 +81,27 @@ paths:
                     type: string
                     description: Health status.
                     example: OK
+  /game/questions:
+    get:
+      summary: Obtiene una nueva pregunta del juego
+      responses:
+        '200':
+          description: Pregunta generada con respuestas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answers:
+                    type: object
+                    additionalProperties:
+                      type: string
+                      example: "https://example.com/image.jpg"
+                  correct:
+                    type: string
+                    example: "Paris"
+        '500':
+          description: Error al generar preguntas
   /login:
     post:
       summary: Log in to the system.
