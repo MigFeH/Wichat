@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container, Typography, Link } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 import Register from './Register';
 import Login from './Login';
@@ -9,7 +8,6 @@ import './Home.css';
 
 function Home() {
   const [showLogin, setShowLogin] = useState(true);
-  const navigate = useNavigate();
 
   const handleToggleView = () => {
     setShowLogin(!showLogin);
@@ -24,11 +22,11 @@ function Home() {
 
     <Typography component="div" align="center" sx={{ marginTop: 2 }}>
       {showLogin ? (
-        <Link name="gotoregister" component="button" variant="body2" onClick={/*handleToggleView*/ navigate('/register')}>
+        <Link name="gotoregister" component="button" variant="body2" onClick={handleToggleView}>
           Don't have an account? Register here.
         </Link>
       ) : (
-        <Link component="button" variant="body2" onClick={/*handleToggleView*/ navigate('/login')}>
+        <Link component="button" variant="body2" onClick={handleToggleView}>
           Already have an account? Login here.
         </Link>
       )}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-//import Home from './components/Home';
+import Home from './components/Home';
 import Register from './components/Register';
 import Login from './components/Login';
 import Menu from './components/Menu';
@@ -12,7 +12,8 @@ import Ranking from './components/Ranking';
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/menu" element={
