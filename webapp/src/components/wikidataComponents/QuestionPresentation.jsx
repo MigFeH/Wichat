@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button } from '@mui/material';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
@@ -59,11 +60,13 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
         return (
             <div>
-                <h1>Resultados Finales</h1>
-                <p>Correctas: {score.correct}</p>
-                <p>Incorrectas: {score.incorrect}</p>
+                <h1>Final results</h1>
+                <p>Correct answers: {score.correct}</p>
+                <p>Incorrect answers: {score.incorrect}</p>
                 <p>Ratio: {ratio}%</p>
-                <button onClick={() => navigate("/menu")}>Menú principal</button>
+                <Button variant="contained" color="primary" onClick={() => navigate("/menu")}>
+                    Back to menu
+                </Button>
             </div>
         );
     }
