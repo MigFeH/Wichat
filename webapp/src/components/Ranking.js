@@ -13,7 +13,6 @@ const Ranking = () => {
       try {
         const response = await axios.get(`${apiEndpoint}/ranking`, {});
 
-        console.log(response.data);
         if (response.data && Array.isArray(response.data)) {
           setRanking(response.data);
         } else {
@@ -27,7 +26,6 @@ const Ranking = () => {
     fetchRanking();
   }, []);
     
-  console.log(ranking);
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
       <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
