@@ -53,7 +53,11 @@ app.post('/adduser', async (req, res) => {
 app.post('/api/stats', async (req, res) => {
   try {
     const { username, score, correctAnswers, incorrectAnswers, totalRounds } = req.body;
-    if (!username || !score || !correctAnswers || !incorrectAnswers || !totalRounds) {
+    if (username === undefined || 
+      score === undefined ||
+      correctAnswers === undefined ||
+      incorrectAnswers === undefined ||
+      totalRounds === undefined) {
       return res.status(400).json({
         error: 'Bad Request',
         message: 'Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds'
@@ -66,7 +70,7 @@ app.post('/api/stats', async (req, res) => {
       correctAnswers,
       incorrectAnswers,
       totalRounds,
-      accuracy: parseFloat(((correctAnswers / totalRounds) * 100).toFixed(2))
+      accuracy: correctAnswers == 0 ? 0 : parseFloat(((correctAnswers / totalRounds) * 100).toFixed(2))
     });
 
     const savedStats = await newStats.save();
