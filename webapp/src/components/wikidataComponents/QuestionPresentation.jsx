@@ -36,7 +36,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         if (!question || buttonsDisabled) return;
 
         const isCorrect = selected === question.correct;
-        setFeedback(isCorrect ? "✅ Respuesta correcta" : "❌ Respuesta incorrecta");
+        setFeedback(isCorrect ? "✅ Correct answer" : "❌ Incorrect answer");
         setButtonsDisabled(true);
 
         setScore(prev => ({
@@ -73,7 +73,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
     return (
         <div>
-            <h1>Adivina la Ciudad 🌍</h1>
+            <h1>Guess the City 🌍</h1>
             {question ? (
                 <>
                     <div style={{ margin: '20px 0' }}>
