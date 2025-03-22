@@ -36,14 +36,13 @@ app.post('/login',  [
     let password =req.body.password.toString();
     
     const user = await User.findOne({ username });
-    
 
     if (user && await bcrypt.compare(password, user.password)) {
       const token = jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
       res.json({ token: token, username: username, createdAt: user.createdAt });
       
     } else {
-      res.status(401).json({ error: 'Invalid credentials' });
+      res.status(401).json({ error: 'The username or password is incorrect.' });
     }
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });

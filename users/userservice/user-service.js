@@ -35,6 +35,12 @@ function validateRequiredFields(req, requiredFields) {
 app.post('/adduser', async (req, res) => {
     try {
         validateRequiredFields(req, ['username', 'password']);
+
+        const checkUsernameAlreadyExists = await User.findOne({ username: req.body.username });
+        if (checkUsernameAlreadyExists) {
+          throw new Error('Username already exists, please choose another one');
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const newUser = new User({
@@ -52,19 +58,25 @@ app.post('/adduser', async (req, res) => {
 // Ruta para guardar estadísticas (se guarda en la colección 'stats')
 app.post('/api/stats', async (req, res) => {
   try {
-    const { correctAnswers, incorrectAnswers, totalRounds } = req.body;
-    if (!correctAnswers || !incorrectAnswers || !totalRounds) {
+    const { username, score, correctAnswers, incorrectAnswers, totalRounds } = req.body;
+    if (username === undefined || 
+      score === undefined ||
+      correctAnswers === undefined ||
+      incorrectAnswers === undefined ||
+      totalRounds === undefined) {
       return res.status(400).json({
         error: 'Bad Request',
-        message: 'Faltan campos requeridos: correctAnswers, incorrectAnswers, totalRounds'
+        message: 'Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds'
       });
     }
 
     const newStats = new GameStats({
+      username,
+      score,
       correctAnswers,
       incorrectAnswers,
       totalRounds,
-      accuracy: parseFloat(((correctAnswers / totalRounds) * 100).toFixed(2))
+      accuracy: correctAnswers == 0 ? 0 : parseFloat(((correctAnswers / totalRounds) * 100).toFixed(2))
     });
 
     const savedStats = await newStats.save();
@@ -82,13 +94,18 @@ app.post('/api/stats', async (req, res) => {
 // Ruta para obtener estadísticas (se obtienen de la colección 'stats')
 app.get('/api/stats', async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
-    const stats = await GameStats.find()
-      .sort({ timestamp: -1 })
-      .limit(limit);
+    const { username } = req.query;
+    if (!username) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Falta el parámetro requerido: username'
+      });
+    }
+
+    const stats = await GameStats.find({ username })
+      .sort({ timestamp: -1 });
 
     res.json(stats);
-
   } catch (error) {
     console.error('Error obteniendo estadísticas:', error);
     res.status(500).json({
@@ -96,6 +113,23 @@ app.get('/api/stats', async (req, res) => {
       message: error.message
     });
   }
+});
+
+// Ruta para obtener todo el ranking
+app.get('/ranking', async (req, res) => {
+  const stats = await GameStats.aggregate([
+    {
+      $group: {
+        _id: '$username',
+        score: { $max: '$score' }
+      }
+    },
+    {
+      $sort: { score: -1 }
+    }
+  ]);
+
+  res.json(stats);
 });
 
 const server = app.listen(port, () => {
