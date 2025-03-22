@@ -3,6 +3,9 @@ module.exports = {
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
   },
+  moduleNameMapper: {
+    '\\.(css|less)$': '<rootDir>/jest.mock.js',
+  },
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['js', 'jsx'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
