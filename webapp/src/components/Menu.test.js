@@ -1,4 +1,3 @@
-// Menu.test.js
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Menu from './Menu';
@@ -13,7 +12,7 @@ jest.mock('react-router-dom', () => ({
 
 describe('Componente Menu', () => {
   beforeEach(() => {
-    // Reiniciamos el mock antes de cada test para evitar llamadas acumuladas
+    // Reiniciamos el mock antes de cada test para evitar llamadas acumuladas !!!
     mockedUsedNavigate.mockReset();
   });
 
@@ -24,11 +23,9 @@ describe('Componente Menu', () => {
       </BrowserRouter>
     );
 
-    // Verificamos que se muestre el título y el mensaje
     expect(screen.getByRole('heading', { name: /hey!! are you ready\?/i })).toBeInTheDocument();
     expect(screen.getByText(/press start to play/i)).toBeInTheDocument();
     
-    // Verificamos que se rendericen los tres botones
     expect(screen.getByRole('button', { name: /start!/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /stadistics/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /ranking/i })).toBeInTheDocument();
