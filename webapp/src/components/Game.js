@@ -3,6 +3,7 @@ import { Container, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import QuestionPresentation from './wikidataComponents/QuestionPresentation.jsx';
 import QuestionGeneration from "./wikidataComponents/QuestionGeneration.js";
+import ChatLLM from './ChatLLM';
 
 const Game = () => {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ const Game = () => {
         navigate={navigate}
         question={currentQuestion}
       />
+
+      <ChatLLM />
 
       <div className="wave-container">
         <svg className="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
