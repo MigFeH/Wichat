@@ -92,14 +92,29 @@ paths:
               schema:
                 type: object
                 properties:
+                  question:
+                    type: string
+                    example: "https://example.com/image.jpg"
                   answers:
-                    type: object
-                    additionalProperties:
-                      type: string
-                      example: "https://example.com/image.jpg"
+                    type: string
+                    example: "Milán"
                   correct:
                     type: string
                     example: "Paris"
+        '500':
+          description: Error al generar preguntas
+  /users/statistics:
+    get:
+      summary: Obtiene las estadísticas de un jugador
+      responses:
+        '200':
+          description: Estadísticas del jugador
+          content:
+            application/json:
+              schema:
+                type: object
+
+
         '500':
           description: Error al generar preguntas
   /login:
