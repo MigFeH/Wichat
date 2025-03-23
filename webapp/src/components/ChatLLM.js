@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
 
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+
 const ChatLLM = () => {
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -16,11 +19,12 @@ const ChatLLM = () => {
     setChatHistory((prev) => [...prev, userMessage]);
 
     try {
-      const response = await axios.post('http://localhost:8000/askllm', {
+      const response = await axios.post(`${apiEndpoint}/hintllm`, {
         question: userInput,
-        model: 'gemini' // Cambia si usas otro modelo
+        model: 'gemini',
+        apiKey: apiKey
       });
-
+      
       const botMessage = { role: 'bot', content: response.data.answer };
 
       // Agregar la respuesta del bot al historial
