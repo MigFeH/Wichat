@@ -56,6 +56,24 @@ app.post('/askllm', async (req, res) => {
   }
 });
 
+app.post('/hintllm', async (req, res) => {
+  console.log("🔍 Solicitud recibida en /hintllm:", req.body);
+  
+  try {
+    console.log("➡️ Reenviando solicitud a:", `${llmServiceUrl}/hint`);
+    
+    const llmResponse = await axios.post(`${llmServiceUrl}/hint`, req.body, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    console.log("✅ Respuesta del LLM recibida:", llmResponse.data);
+    res.json(llmResponse.data);
+  } catch (error) {
+    console.error("❌ Error en la solicitud al LLM:", error.message);
+    res.status(error.response?.status || 500).json({ error: "Error interno en hintllm" });
+  }
+});
+
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'
 if (fs.existsSync(openapiPath)) {
