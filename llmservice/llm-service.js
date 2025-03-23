@@ -76,13 +76,41 @@ app.post('/ask', async (req, res) => {
     validateRequiredFields(req, ['question', 'model', 'apiKey']);
 
     const { question, model, apiKey } = req.body;
-    const answer = await sendQuestionToLLM(question, apiKey, model);
+    const answer = await sendQuestionToLLM(question, apiKey);
     res.json({ answer });
 
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
+
+app.post('/hint', async (req, res) => {
+  try {
+    console.log('Received request:', req.body);
+
+    // Check if required fields are present in the request body
+    console.log('Validating required fields...');
+    validateRequiredFields(req, ['question', 'model', 'apiKey']);
+    console.log('Validation passed.');
+
+    const { question, model, apiKey } = req.body;
+    console.log(`Question: ${question}`);
+    console.log(`Model: ${model}`);
+    console.log(`API Key: ${apiKey}`);
+
+    console.log('Sending question to LLM...');
+    const answer = await sendQuestionToLLM(question, apiKey, model);
+    console.log('Received answer from LLM:', answer);
+
+    res.json({ answer });
+    console.log('Response sent.');
+
+  } catch (error) {
+    console.log('Error occurred:', error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
+
 
 const server = app.listen(port, () => {
   console.log(`LLM Service listening at http://localhost:${port}`);
