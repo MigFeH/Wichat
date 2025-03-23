@@ -7,9 +7,13 @@ import Game from './components/Game';
 import Stadistics from './components/Stadistics';
 import ProtectedRoute from './auth/ProtectedRoute';
 import Ranking from './components/Ranking';
+import Navbar from './components/Navbar';
+
 
 const App = () => {
   return (
+    <>
+    <Navbar />
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
@@ -27,6 +31,7 @@ const App = () => {
         <ProtectedRoute element={<Ranking />} />
       } />
     </Routes>
+    </>
   );
 };
 
