@@ -25,7 +25,7 @@ const lightTheme = createTheme({
 });
 
 const App = () => {
-  const [theme, setTheme] = useState(darkTheme);
+  const [theme, setTheme] = useState(lightTheme);
 
   const toggleDarkTheme = () => {
     setTheme(darkTheme);
@@ -38,11 +38,8 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Navbar />
+      <Navbar toggleDarkTheme={toggleDarkTheme} toggleLightTheme={toggleLightTheme} />
       <main>
-        <Button onClick={toggleDarkTheme}>Modo Oscuro</Button>
-        <Button onClick={toggleLightTheme}>Modo Claro</Button>
-        <div>Esta aplicación está usando el {theme.palette.mode} mode</div>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
