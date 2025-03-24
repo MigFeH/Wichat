@@ -1,22 +1,28 @@
-// user-service.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const User = require('./user-model')
+const cors = require('cors');
+const User = require('./user-model');
+const GameStats = require('./game-stats-model');
 
 const app = express();
-const port = 8001;
+const port = process.env.PORT || 8001;
 
-// Middleware to parse JSON in request body
 app.use(express.json());
 
-// Connect to MongoDB
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
-mongoose.connect(mongoUri);
+mongoose.connect(mongoUri)
+  .then(async () => {
+    console.log('Conectado a MongoDB');
+  })
+  .catch(err => console.error('Error de conexión a MongoDB:', err.message));
 
-
-
-// Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
     for (const field of requiredFields) {
       if (!(field in req.body)) {
@@ -25,12 +31,16 @@ function validateRequiredFields(req, requiredFields) {
     }
 }
 
+// Ruta para crear un usuario (se guarda en la colección 'users')
 app.post('/adduser', async (req, res) => {
     try {
-        // Check if required fields are present in the request body
         validateRequiredFields(req, ['username', 'password']);
 
-        // Encrypt the password before saving it
+        const checkUsernameAlreadyExists = await User.findOne({ username: req.body.username });
+        if (checkUsernameAlreadyExists) {
+          throw new Error('Username already exists, please choose another one');
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const newUser = new User({
@@ -42,16 +52,92 @@ app.post('/adduser', async (req, res) => {
         res.json(newUser);
     } catch (error) {
         res.status(400).json({ error: error.message }); 
-    }});
+    }
+});
+
+// Ruta para guardar estadísticas (se guarda en la colección 'stats')
+app.post('/api/stats', async (req, res) => {
+  try {
+    const { username, score, correctAnswers, incorrectAnswers, totalRounds } = req.body;
+    if (username === undefined || 
+      score === undefined ||
+      correctAnswers === undefined ||
+      incorrectAnswers === undefined ||
+      totalRounds === undefined) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds'
+      });
+    }
+
+    const newStats = new GameStats({
+      username,
+      score,
+      correctAnswers,
+      incorrectAnswers,
+      totalRounds,
+      accuracy: correctAnswers == 0 ? 0 : parseFloat(((correctAnswers / totalRounds) * 100).toFixed(2))
+    });
+
+    const savedStats = await newStats.save();
+    res.status(201).json(savedStats);
+
+  } catch (error) {
+    console.error('Error guardando estadísticas:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message
+    });
+  }
+});
+
+// Ruta para obtener estadísticas (se obtienen de la colección 'stats')
+app.get('/api/stats', async (req, res) => {
+  try {
+    const { username } = req.query;
+    if (!username) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Falta el parámetro requerido: username'
+      });
+    }
+
+    const stats = await GameStats.find({ username })
+      .sort({ timestamp: -1 });
+
+    res.json(stats);
+  } catch (error) {
+    console.error('Error obteniendo estadísticas:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message
+    });
+  }
+});
+
+// Ruta para obtener todo el ranking
+app.get('/ranking', async (req, res) => {
+  const stats = await GameStats.aggregate([
+    {
+      $group: {
+        _id: '$username',
+        score: { $max: '$score' }
+      }
+    },
+    {
+      $sort: { score: -1 }
+    }
+  ]);
+
+  res.json(stats);
+});
 
 const server = app.listen(port, () => {
   console.log(`User Service listening at http://localhost:${port}`);
 });
 
-// Listen for the 'close' event on the Express.js server
 server.on('close', () => {
-    // Close the Mongoose connection
-    mongoose.connection.close();
-  });
+  mongoose.connection.close();
+});
 
-module.exports = server
+module.exports = server;

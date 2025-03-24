@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button } from '@mui/material';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
@@ -8,32 +9,34 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
     useEffect(() => {
         const saveStats = async () => {
-        try {
-            const response = await fetch('http://localhost:8010/api/stats', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  correctAnswers: score.correct,
-                  incorrectAnswers: score.incorrect,
-                  totalRounds: maxRounds
-                })
-            });
-            
-            if (!response.ok) throw new Error('Error al guardar estadísticas');
-            
-        } catch (error) {
-            console.error('Error:', error);
-        }
+            try {
+                const response = await fetch('http://localhost:8001/api/stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: localStorage.getItem('username'),
+                        score: score.correct,
+                        correctAnswers: score.correct,
+                        incorrectAnswers: score.incorrect,
+                        totalRounds: maxRounds
+                    })
+                });
+    
+                if (!response.ok) throw new Error('Error al guardar estadísticas');
+            } catch (error) {
+                console.error('Error:', error);
+            }
         };
-
-        if (score.rounds >= maxRounds) saveStats();
-    }, [score]);
+    
+        if (score.rounds === maxRounds) saveStats();
+    }, [score, maxRounds]);
+    
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
 
         const isCorrect = selected === question.correct;
-        setFeedback(isCorrect ? "✅ Respuesta correcta" : "❌ Respuesta incorrecta");
+        setFeedback(isCorrect ? "✅ Correct answer" : "❌ Incorrect answer");
         setButtonsDisabled(true);
 
         setScore(prev => ({
@@ -57,18 +60,20 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
         return (
             <div>
-                <h1>Resultados Finales</h1>
-                <p>Correctas: {score.correct}</p>
-                <p>Incorrectas: {score.incorrect}</p>
+                <h1>Final results</h1>
+                <p>Correct answers: {score.correct}</p>
+                <p>Incorrect answers: {score.incorrect}</p>
                 <p>Ratio: {ratio}%</p>
-                <button onClick={() => navigate("/menu")}>Menú principal</button>
+                <Button variant="contained" color="primary" onClick={() => navigate("/menu")}>
+                    Back to menu
+                </Button>
             </div>
         );
     }
 
     return (
         <div>
-            <h1>Adivina la Ciudad 🌍</h1>
+            <h1>Guess the City 🌍</h1>
             {question ? (
                 <>
                     <div style={{ margin: '20px 0' }}>
