@@ -6,9 +6,9 @@ import { Home, SportsEsports, BarChart, Leaderboard, ExitToApp } from '@mui/icon
 
 const Navbar = () => {
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
+    <AppBar position="static" sx={{ backgroundColor: '#009efc', boxShadow: 'none' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {/* Contenedor de los botones de navegación */}
+        {}
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button color="inherit" component={Link} to="/menu" startIcon={<Home />}>
             Menu
