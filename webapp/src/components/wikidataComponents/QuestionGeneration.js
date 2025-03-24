@@ -4,6 +4,7 @@ class QuestionGeneration {
         this.questionsCache = [];
         this.currentIndex = 0;
         this.isFetching = false;
+        this.currentCity = null; // Guardará la ciudad actual
     }
 
     async fetchQuestions() {
@@ -18,7 +19,10 @@ class QuestionGeneration {
 
             if (this.questionsCache.length > 0) {
                 const question = this.getNextQuestion();
-                if (question) this.setQuestion(question);
+                if (question) {
+                    this.setQuestion(question);
+                    this.currentCity = question.correct; // Guardamos la ciudad seleccionada
+                }
             }
         } catch (error) {
             console.error("Error fetching questions:", error);
@@ -67,6 +71,8 @@ class QuestionGeneration {
         this.currentIndex += 4;
         const correctCity = options[Math.floor(Math.random() * options.length)];
 
+        this.currentCity = correctCity.city;
+
         return {
             answers: options.reduce((acc, item) => {
                 acc[item.city] = item.image;
@@ -74,6 +80,10 @@ class QuestionGeneration {
             }, {}),
             correct: correctCity.city
         };
+    }
+
+    getCurrentCity() {
+        return this.currentCity;
     }
 }
 
