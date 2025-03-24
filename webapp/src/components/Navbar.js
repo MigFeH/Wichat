@@ -4,11 +4,10 @@ import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Home, SportsEsports, BarChart, Leaderboard, ExitToApp } from '@mui/icons-material';
 
-const Navbar = () => {
+const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
   return (
     <AppBar position="static" sx={{ backgroundColor: '#009efc', boxShadow: 'none' }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {}
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button color="inherit" component={Link} to="/menu" startIcon={<Home />}>
             Menu
@@ -24,10 +23,13 @@ const Navbar = () => {
           </Button>
         </Box>
 
-        {/* Botón de Logout alineado a la derecha */}
-        <Button color="inherit" component={Link} to="/login" startIcon={<ExitToApp />}>
-          Logout
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button onClick={toggleLightTheme} color="inherit" sx={{ fontSize: '1.5rem' }}>☀️</Button>
+          <Button onClick={toggleDarkTheme} color="inherit" sx={{ fontSize: '1.5rem' }}>🌙</Button>
+          <Button color="inherit" component={Link} to="/login" startIcon={<ExitToApp />}>
+            Logout
+          </Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );
