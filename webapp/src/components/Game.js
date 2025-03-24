@@ -9,10 +9,17 @@ const Game = () => {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [questionGenerator] = useState(() => new QuestionGeneration(setCurrentQuestion));
+  const [currentCity, setCurrentCity] = useState(null);
 
   useEffect(() => {
     questionGenerator.fetchQuestions();
   }, [questionGenerator]);
+
+  useEffect(() => {
+    if (currentQuestion) {
+      setCurrentCity(currentQuestion.correct); // ← Guarda la ciudad actual basada en la pregunta
+    }
+  }, [currentQuestion]);
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
@@ -22,7 +29,7 @@ const Game = () => {
         question={currentQuestion}
       />
 
-      <ChatLLM />
+      <ChatLLM currentCity={currentCity} />
 
       <div className="wave-container">
         <svg className="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">

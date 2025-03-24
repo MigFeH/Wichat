@@ -7,12 +7,25 @@ const port = 8003;
 // Middleware to parse JSON in request body
 app.use(express.json());
 
+const gameSystemInstruction = "Actuarás como un juego de adivinanzas de ciudades. Recibirás mensajes con el siguiente formato: '<Ciudad>:<Mensaje del usuario>'. Tu objetivo es ayudar al usuario a adivinar la ciudad oculta, proporcionando pistas útiles y relevantes basadas en sus preguntas. Bajo ninguna circunstancia debes revelar el nombre de la ciudad. Mantén las respuestas concisas y enfocadas en proporcionar pistas que ayuden al usuario a deducir la ciudad. Si el usuario hace una pregunta que no está relacionada con la adivinanza, responde de forma educada y vuelve a enfocar la conversación en el juego.";
+
 // Define configurations for different LLM APIs
 const llmConfigs = {
   gemini: {
     url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    transformRequest: (question) => ({
-      contents: [{ parts: [{ text: question }] }]
+    transformRequest: (systemInstruction,question) => ({
+      contents: [
+        {
+          parts: [
+            {
+              text: systemInstruction
+            },
+            {
+              text: question
+            }
+          ]
+        }
+      ]
     }),
     transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
   },
@@ -45,7 +58,7 @@ function validateRequiredFields(req, requiredFields) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
+async function sendQuestionToLLM(question, apiKey, model = 'gemini',systemInstruction = '') {
   try {
     const config = llmConfigs[model];
     if (!config) {
@@ -53,7 +66,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
     }
 
     const url = config.url(apiKey);
-    const requestData = config.transformRequest(question);
+    const requestData = config.transformRequest(systemInstruction,question);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -99,7 +112,7 @@ app.post('/hint', async (req, res) => {
     console.log(`API Key: ${apiKey}`);
 
     console.log('Sending question to LLM...');
-    const answer = await sendQuestionToLLM(question, apiKey, model);
+    const answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
     console.log('Received answer from LLM:', answer);
 
     res.json({ answer });

@@ -5,7 +5,7 @@ import axios from 'axios';
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
 
-const ChatLLM = () => {
+const ChatLLM = ({ currentCity }) => {  // ← Recibe la ciudad actual como prop
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
 
@@ -20,11 +20,11 @@ const ChatLLM = () => {
 
     try {
       const response = await axios.post(`${apiEndpoint}/hintllm`, {
-        question: userInput,
+        question: `${currentCity || "ciudad desconocida"}:${userInput}`,
         model: 'gemini',
         apiKey: apiKey
       });
-      
+
       const botMessage = { role: 'bot', content: response.data.answer };
 
       // Agregar la respuesta del bot al historial
