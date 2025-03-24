@@ -24,28 +24,82 @@ Both the user and auth service share a Mongo database that is accessed with mong
   <tr>
     <th>Contributor 👤</th>
     <th>Contact 📞</th>
+    <th colspan="4">Self reports ✒️</th>
   </tr>
   <tr>
     <td>Leonardo Carone Menes</td>
-    <td><a href="https://github.com/UnioviLCM27">Leonardo's github profile</a></td>
+    <td><a href="https://github.com/UnioviLCM27">Leonardo's github</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/34">Self report 1</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/100">Self report 2</a></td>
+    <td><a href="...">Self report 3</a></td>
+    <td><a href="...">Self report 4</a></td>
   </tr>
   <tr>
     <td>José Martínez de Zuvillaga</td>
-    <td><a href="https://github.com/josemzuvi">José's github profile</a></td>
+    <td><a href="https://github.com/josemzuvi">José's github</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/42">Self report 1</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/101">Self report 2</a></td>
+    <td><a href="...">Self report 3</a></td>
+    <td><a href="...">Self report 4</a></td>
   </tr>
   <tr>
     <td>Ignacio Fernández Suárez</td>
-    <td><a href="https://github.com/nack-fs">Ignacio's github profile</a></td>
+    <td><a href="https://github.com/nack-fs">Ignacio's github</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/30">Self report 1</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/98">Self report 2</a></td>
+    <td><a href="...">Self report 3</a></td>
+    <td><a href="...">Self report 4</a></td>
   </tr>
   <tr>
     <td>Miguel Fernández Huerta</td>
-    <td><a href="https://github.com/MigFeH">Miguel's github profile</a></td>
+    <td><a href="https://github.com/MigFeH">Miguel's github</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/28">Self report 1</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/95">Self report 2</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/104">Self report 3</a></td>
+    <td><a href="...">Self report 4</a></td>
   </tr>
   <tr>
     <td>Daniel González Pérez</td>
-    <td><a href="https://github.com/danigpt">Daniel's github profile</a></td>
+    <td><a href="https://github.com/danigpt">Daniel's github</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/45">Self report 1</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/102">Self report 2</a></td>
+    <td><a href="...">Self report 3</a></td>
+    <td><a href="...">Self report 4</a></td>
   </tr>
 </table>
+
+## Resources used
+<ul>
+  <li>Front-end:
+    <ul>
+      <li><a href="https://mui.com/material-ui/">Material UI</a></li>
+    </ul>  
+  </li>
+
+  <li>Back-end:
+    <ul>
+      <li><a href="...">...</a></li>
+    </ul>
+  </li>
+
+  <li>DDBB:
+    <ul>
+      <li><a href="https://www.mongodb.com/products/tools/compass">MongoDB Compass</a></li>
+    </ul>
+  </li>
+  
+  <li>LLM:
+    <ul>
+      <li><a href="...">...</a></li>
+    </ul>
+  </li>
+
+  <li>Wikidata:
+    <ul>
+      <li><a href="...">...</a></li>
+    </ul>
+  </li>
+</ul>
 
 ## Quick start guide
 
