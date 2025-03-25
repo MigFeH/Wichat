@@ -22,7 +22,11 @@ const Menu = () => {
             </Typography>
 
             <Button variant="contained" color="primary" onClick={handlePageChange("game")}>
-                Start!
+                Non Timed game!
+            </Button>
+
+            <Button variant="contained" color="primary" onClick={handlePageChange("timedGame")}>
+                Timed game!
             </Button>
 
             <Button variant="contained" color="primary" onClick={handlePageChange("stadistics")}>

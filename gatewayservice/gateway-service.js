@@ -26,7 +26,17 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-app.post('/login', async (req, res) => {
+app.get('/game/questions', async (req, res) => {
+  try {
+    // Petición al servicio de preguntas
+    const questionResponse = await axios.get("http://localhost:8004/questions");
+    res.json(questionResponse.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error fetching questions' });
+  }
+});
+
+app.post('${apiEndpoint}/login', async (req, res) => {
   try {
     // Forward the login request to the authentication service
     const authResponse = await axios.post(authServiceUrl+'/login', req.body);
