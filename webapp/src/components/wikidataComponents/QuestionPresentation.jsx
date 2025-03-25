@@ -13,10 +13,10 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  username: localStorage.getItem('username'),
-                  correctAnswers: score.correct,
-                  incorrectAnswers: score.incorrect,
-                  totalRounds: maxRounds
+                    username: localStorage.getItem('username'),
+                    correctAnswers: score.correct,
+                    incorrectAnswers: score.incorrect,
+                    totalRounds: maxRounds
                 })
             });
             
@@ -34,7 +34,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         if (!question || buttonsDisabled) return;
 
         const isCorrect = selected === question.correct;
-        setFeedback(isCorrect ? "✅ Respuesta correcta" : "❌ Respuesta incorrecta");
+        setFeedback(isCorrect ? "✅ Correct answer" : "❌ Wrong answer");
         setButtonsDisabled(true);
 
         setScore(prev => ({
@@ -58,11 +58,11 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
         return (
             <div>
-                <h1>Resultados Finales</h1>
-                <p>Correctas: {score.correct}</p>
-                <p>Incorrectas: {score.incorrect}</p>
+                <h1>Final results</h1>
+                <p>Correct answers: {score.correct}</p>
+                <p>Incorrect answers: {score.incorrect}</p>
                 <p>Ratio: {ratio}%</p>
-                <button onClick={() => navigate("/menu")}>Menú principal</button>
+                <button onClick={() => navigate("/menu")}>Main menu</button>
             </div>
         );
     }
@@ -119,7 +119,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                     }}>{feedback}</p>}
                 </>
             ) : (
-                <p style={{ fontSize: '18px', color: '#666' }}>Cargando pregunta...</p>
+                <p style={{ fontSize: '18px', color: '#666' }}>Loading question...</p>
             )}
         </div>
     );

@@ -51,7 +51,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
 
     const handleTimeout = () => {
         if (!buttonsDisabled) {
-            setFeedback("⏳ Tiempo agotado ❌ Respuesta incorrecta");
+            setFeedback("⏳ Time's over ❌ wrong answer");
             setButtonsDisabled(true);
 
             setScore(prev => ({
@@ -74,7 +74,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
         if (!question || buttonsDisabled) return;
 
         const isCorrect = selected === question.correct;
-        setFeedback(isCorrect ? "✅ Respuesta correcta" : "❌ Respuesta incorrecta");
+        setFeedback(isCorrect ? "✅ Correct answer" : "❌ Wrong answer");
         setButtonsDisabled(true);
 
         setScore(prev => ({
@@ -98,18 +98,18 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
 
         return (
             <div>
-                <h1>Resultados Finales</h1>
-                <p>Correctas: {score.correct}</p>
-                <p>Incorrectas: {score.incorrect}</p>
+                <h1>Final results</h1>
+                <p>Correct answers: {score.correct}</p>
+                <p>Incorrect answers: {score.incorrect}</p>
                 <p>Ratio: {ratio}%</p>
-                <button onClick={() => navigate("/menu")}>Menú principal</button>
+                <button onClick={() => navigate("/menu")}>Main menu</button>
             </div>
         );
     }
 
     return (
         <div>
-            <h1>Adivina la Ciudad 🌍</h1>
+            <h1>Guess the City 🌍</h1>
             {question ? (
                 <>
                     <p style={{ fontSize: "18px", fontWeight: "bold", color: timer <= 3 ? "red" : "black" }}>
@@ -162,7 +162,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
                     }}>{feedback}</p>}
                 </>
             ) : (
-                <p style={{ fontSize: '18px', color: '#666' }}>Cargando pregunta...</p>
+                <p style={{ fontSize: '18px', color: '#666' }}>Loading Question...</p>
             )}
         </div>
     );
