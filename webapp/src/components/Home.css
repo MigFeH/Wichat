@@ -1,4 +1,4 @@
-.logo {
+.logo { 
     display: block;
     margin: 0 auto;
     height: auto;
@@ -7,10 +7,11 @@
 .wave-container {
     width: 100%;
     position: absolute;
-    bottom: -3em;
+    bottom: -50em; /* Empieza más abajo */
     left: 0;
     overflow: hidden;
     pointer-events: none;
+    animation: waveRise 8s ease-in-out forwards; /* Animación de subida */
 }
 
 .wave {
@@ -21,11 +22,22 @@
     opacity: 0.6;
 }
 
+/* Animación del movimiento de la ola */
 @keyframes waveAnimation {
     from {
         transform: translateX(0);
     }
     to {
         transform: translateX(-50%);
+    }
+}
+
+/* Animación para que la ola suba lentamente */
+@keyframes waveRise {
+    from {
+        bottom: -50em;
+    }
+    to {
+        bottom: 0;
     }
 }
