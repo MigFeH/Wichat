@@ -9,10 +9,11 @@ const QuestionPresentation = ({ game, navigate, question }) => {
     useEffect(() => {
         const saveStats = async () => {
         try {
-            const response = await fetch('http://localhost:8010/api/stats', {
+            const response = await fetch('http://localhost:8001/api/stats', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                  username: localStorage.getItem('username'),
                   correctAnswers: score.correct,
                   incorrectAnswers: score.incorrect,
                   totalRounds: maxRounds
@@ -27,7 +28,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         };
 
         if (score.rounds >= maxRounds) saveStats();
-    }, [score]);
+    }, [score,maxRounds]);
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
