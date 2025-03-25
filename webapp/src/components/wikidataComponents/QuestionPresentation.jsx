@@ -14,6 +14,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     username: localStorage.getItem('username'),
+                    score:score.correct,
                     correctAnswers: score.correct,
                     incorrectAnswers: score.incorrect,
                     totalRounds: maxRounds
@@ -69,7 +70,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
     return (
         <div>
-            <h1>Adivina la Ciudad 🌍</h1>
+            <h1>Guess the city 🌍</h1>
             {question ? (
                 <>
                     <div style={{ margin: '20px 0' }}>

@@ -15,6 +15,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: localStorage.getItem('username'),
+                        score:score.correct,
                         correctAnswers: score.correct,
                         incorrectAnswers: score.incorrect,
                         totalRounds: maxRounds
