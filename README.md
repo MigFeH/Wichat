@@ -68,6 +68,7 @@ Both the user and auth service share a Mongo database that is accessed with mong
   </tr>
 </table>
 
+
 ## Resources used
 <ul>
   <li>Front-end:
