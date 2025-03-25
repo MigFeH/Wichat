@@ -1,62 +1,71 @@
 import React from 'react';
-import { render, fireEvent, screen, waitFor, act } from '@testing-library/react';
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Login from './Login';
+import { BrowserRouter } from 'react-router-dom';
+import axios from 'axios';
 
-const mockAxios = new MockAdapter(axios);
+const mockedUsedNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedUsedNavigate,
+}));
+jest.mock('axios');
 
-describe('Login component', () => {
+describe('Login Component', () => {
   beforeEach(() => {
-    mockAxios.reset();
+    mockedUsedNavigate.mockReset();
+    localStorage.clear();
   });
 
-  it('should log in successfully', async () => {
-    render(<Login />);
-
-    const usernameInput = screen.getByLabelText(/Username/i);
-    const passwordInput = screen.getByLabelText(/Password/i);
-    const loginButton = screen.getByRole('button', { name: /Login/i });
-
-    // Mock the axios.post request to simulate a successful response
-    mockAxios.onPost('http://localhost:8000/login').reply(200, { createdAt: '2024-01-01T12:34:56Z' });
-    mockAxios.onPost('http://localhost:8000/askllm').reply(200, { answer: 'Hello test user' });
-
-    // Simulate user input
-    await act(async () => {
-        fireEvent.change(usernameInput, { target: { value: 'testUser' } });
-        fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
-        fireEvent.click(loginButton);
-      });
-
-    // Verify that the user information is displayed
-    expect(screen.getByText(/Your account was created on 1\/1\/2024/i)).toBeInTheDocument();
+  it('shows error when username is too short', async () => {
+    render(
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>
+    );
+    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'ab' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'validPass' } });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    await waitFor(() => expect(screen.getByText(/username must have at least 3 characters/i)).toBeInTheDocument());
   });
 
-  it('should handle error when logging in', async () => {
-    render(<Login />);
+  it('shows error when password is too short', async () => {
+    render(
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>
+    );
+    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'validUser' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'ab' } });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    await waitFor(() => expect(screen.getByText(/password must have at least 3 characters/i)).toBeInTheDocument());
+  });
 
-    const usernameInput = screen.getByLabelText(/Username/i);
-    const passwordInput = screen.getByLabelText(/Password/i);
-    const loginButton = screen.getByRole('button', { name: /Login/i });
+  it('logs in successfully and navigates to menu', async () => {
+    const responseData = { createdAt: '2025-03-22T12:00:00Z', token: 'valid-token' };
+    axios.post.mockResolvedValueOnce({ data: responseData });
+    render(
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>
+    );
+    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'validUser' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'validPass' } });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    await waitFor(() => expect(axios.post).toHaveBeenCalled());
+    expect(localStorage.getItem('authToken')).toBe('valid-token');
+    expect(localStorage.getItem('username')).toBe('validUser');
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/menu');
+    await waitFor(() => expect(screen.getByText(/login successful/i)).toBeInTheDocument());
+  });
 
-    // Mock the axios.post request to simulate an error response
-    mockAxios.onPost('http://localhost:8000/login').reply(401, { error: 'Unauthorized' });
-
-    // Simulate user input
-    fireEvent.change(usernameInput, { target: { value: 'testUser' } });
-    fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
-
-    // Trigger the login button click
-    fireEvent.click(loginButton);
-
-    // Wait for the error Snackbar to be open
-    await waitFor(() => {
-      expect(screen.getByText(/Error: Unauthorized/i)).toBeInTheDocument();
-    });
-
-    // Verify that the user information is not displayed
-    expect(screen.queryByText(/Hello testUser!/i)).toBeNull();
-    expect(screen.queryByText(/Your account was created on/i)).toBeNull();
+  it('navigates to register page on link click', () => {
+    render(
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: /don't have an account\? register here\./i }));
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/register');
   });
 });

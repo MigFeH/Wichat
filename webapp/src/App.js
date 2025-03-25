@@ -1,38 +1,65 @@
 import React, { useState } from 'react';
-import AddUser from './components/AddUser';
-import Login from './components/Login';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
+import { Routes, Route } from 'react-router-dom';
+import Register from './components/Register';
+import Login from './components/Login';
+import Menu from './components/Menu';
+import Game from './components/Game';
+import Stadistics from './components/Stadistics';
+import ProtectedRoute from './auth/ProtectedRoute';
+import Ranking from './components/Ranking';
+import Navbar from './components/Navbar';
 
-function App() {
-  const [showLogin, setShowLogin] = useState(true);
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
-  const handleToggleView = () => {
-    setShowLogin(!showLogin);
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+  },
+});
+
+const App = () => {
+  const [theme, setTheme] = useState(lightTheme);
+
+  const toggleDarkTheme = () => {
+    setTheme(darkTheme);
+  };
+
+  const toggleLightTheme = () => {
+    setTheme(lightTheme);
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Typography component="h1" variant="h5" align="center" sx={{ marginTop: 2 }}>
-        Welcome to the 2025 edition of the Software Architecture course
-      </Typography>
-      {showLogin ? <Login /> : <AddUser />}
-      <Typography component="div" align="center" sx={{ marginTop: 2 }}>
-        {showLogin ? (
-          <Link name="gotoregister" component="button" variant="body2" onClick={handleToggleView}>
-            Don't have an account? Register here.
-          </Link>
-        ) : (
-          <Link component="button" variant="body2" onClick={handleToggleView}>
-            Already have an account? Login here.
-          </Link>
-        )}
-      </Typography>
-    </Container>
+      <Navbar toggleDarkTheme={toggleDarkTheme} toggleLightTheme={toggleLightTheme} />
+      <main>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/menu" element={
+            <ProtectedRoute element={<Menu />} />
+          } />
+          <Route path="/game" element={
+            <ProtectedRoute element={<Game />} />
+          } />
+          <Route path="/stadistics" element={
+            <ProtectedRoute element={<Stadistics />} />
+          } />
+          <Route path="/ranking" element={
+            <ProtectedRoute element={<Ranking />} />
+          } />
+        </Routes>
+      </main>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

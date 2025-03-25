@@ -26,7 +26,17 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-app.post('/login', async (req, res) => {
+app.get('/game/questions', async (req, res) => {
+  try {
+    // Petición al servicio de preguntas
+    const questionResponse = await axios.get("http://localhost:8004/questions");
+    res.json(questionResponse.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error fetching questions' });
+  }
+});
+
+app.post('${apiEndpoint}/login', async (req, res) => {
   try {
     // Forward the login request to the authentication service
     const authResponse = await axios.post(authServiceUrl+'/login', req.body);
@@ -53,6 +63,24 @@ app.post('/askllm', async (req, res) => {
     res.json(llmResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
+
+app.post('/hintllm', async (req, res) => {
+  console.log("🔍 Solicitud recibida en /hintllm:", req.body);
+  
+  try {
+    console.log("➡️ Reenviando solicitud a:", `${llmServiceUrl}/hint`);
+    
+    const llmResponse = await axios.post(`${llmServiceUrl}/hint`, req.body, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    console.log("✅ Respuesta del LLM recibida:", llmResponse.data);
+    res.json(llmResponse.data);
+  } catch (error) {
+    console.error("❌ Error en la solicitud al LLM:", error.message);
+    res.status(error.response?.status || 500).json({ error: "Error interno en hintllm" });
   }
 });
 
