@@ -14,7 +14,7 @@ jest.mock('./auth/ProtectedRoute', () => ({ element }) => element);
 describe('App Routing', () => {
   it('renders Login Component for path "/"', () => {
     render(
-      <MemoryRouter initialEntries={['/']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/']} >
         <App />
       </MemoryRouter>
     );
@@ -23,7 +23,7 @@ describe('App Routing', () => {
 
   it('renders Login Component for path "/login"', () => {
     render(
-      <MemoryRouter initialEntries={['/login']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/login']} >
         <App />
       </MemoryRouter>
     );
@@ -32,7 +32,7 @@ describe('App Routing', () => {
 
   it('renders Register Component for path "/register"', () => {
     render(
-      <MemoryRouter initialEntries={['/register']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/register']} >
         <App />
       </MemoryRouter>
     );
@@ -41,7 +41,7 @@ describe('App Routing', () => {
 
   it('renders Menu Component for path "/menu"', () => {
     render(
-      <MemoryRouter initialEntries={['/menu']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/menu']} >
         <App />
       </MemoryRouter>
     );
@@ -50,7 +50,7 @@ describe('App Routing', () => {
 
   it('renders Game Component for path "/game"', () => {
     render(
-      <MemoryRouter initialEntries={['/game']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/game']} >
         <App />
       </MemoryRouter>
     );
@@ -59,7 +59,7 @@ describe('App Routing', () => {
 
   it('renders Stadistics Component for path "/stadistics"', () => {
     render(
-      <MemoryRouter initialEntries={['/stadistics']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/stadistics']} >
         <App />
       </MemoryRouter>
     );
@@ -68,7 +68,7 @@ describe('App Routing', () => {
 
   it('renders Ranking Component for path "/ranking"', () => {
     render(
-      <MemoryRouter initialEntries={['/ranking']} future={{ v7_relativeSplatPath: true }}>
+      <MemoryRouter initialEntries={['/ranking']} >
         <App />
       </MemoryRouter>
     );
