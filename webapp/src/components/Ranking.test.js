@@ -17,7 +17,13 @@ describe('Ranking Component', () => {
   });
 
   it('renders error message on fetch failure', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Network error'));
+    axios.get.mockRejectedValueOnce({
+      response: {
+        status: 500,
+        data: 'Internal Server Error'
+      }
+    });
+    
     render(
       <BrowserRouter>
         <Ranking />
