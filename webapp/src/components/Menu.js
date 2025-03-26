@@ -18,7 +18,7 @@ const Menu = () => {
             </Typography>
             
             <Typography component="p" variant="body1" sx={{ marginTop: 2 }}>
-                Press start to play.
+                Select a game to play!
             </Typography>
 
             <Button variant="contained" color="primary" onClick={handlePageChange("game")}>

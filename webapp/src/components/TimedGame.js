@@ -22,7 +22,7 @@ const TimedProgress = () => {
     return <CircularProgress variant="determinate" value={progress} />;
 };
 
-const Game = () => {
+const TimedGame = () => {
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [questionGenerator] = useState(() => new QuestionGeneration(setCurrentQuestion));
@@ -33,9 +33,6 @@ const Game = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
-      <Typography component="h1" variant="h4">
-        Welcome to the Game Page
-      </Typography>
       <TimedQuestionPresentation
         timedGame={questionGenerator}
         navigate={navigate}
@@ -46,4 +43,4 @@ const Game = () => {
   );
 };
 
-export default Game;
+export default TimedGame;
