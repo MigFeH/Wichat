@@ -13,13 +13,29 @@ jest.mock('axios');
 
 describe('Ranking Component', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     mockedUsedNavigate.mockReset();
+  });
+
+  it('renders error message on fetch failure', async () => {
+    axios.get.mockRejectedValueOnce({
+      response: {
+        status: 500,
+        data: 'Internal Server Error'
+      }
+    });
+    render(
+      <BrowserRouter>
+        <Ranking />
+      </BrowserRouter>
+    );
+    await waitFor(() => expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument());
   });
 
   it('renders ranking data', async () => {
     const rankingData = [
-      { _id: 'user1', score: 100 },
-      { _id: 'user2', score: 80 }
+      { index: 1, _id: 'user1', score: 10 },
+      { index: 2, _id: 'user2', score: 8 }
     ];
     axios.get.mockResolvedValueOnce({ data: rankingData });
     render(
@@ -27,39 +43,31 @@ describe('Ranking Component', () => {
         <Ranking />
       </BrowserRouter>
     );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Ranking')).toBeInTheDocument();
-    expect(screen.getByText('Position')).toBeInTheDocument();
-    expect(screen.getByText('Username')).toBeInTheDocument();
-    expect(screen.getByText('Score')).toBeInTheDocument();
-    expect(screen.getByText('1')).toBeInTheDocument();
-    expect(screen.getByText('user1')).toBeInTheDocument();
-    expect(screen.getByText('100')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('user2')).toBeInTheDocument();
-    expect(screen.getByText('80')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Ranking')).toBeInTheDocument();
+
+      expect(screen.getByText('Position')).toBeInTheDocument();
+      expect(screen.getByText('Username')).toBeInTheDocument();
+      expect(screen.getByText('Score')).toBeInTheDocument();
+
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('user1')).toBeInTheDocument();
+      expect(screen.getByText('10')).toBeInTheDocument();
+
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('user2')).toBeInTheDocument();
+      expect(screen.getByText('8')).toBeInTheDocument();
+    });
   });
 
   it('renders error message on invalid data format', async () => {
-    axios.get.mockResolvedValueOnce({ data: {} });
+    axios.get.mockResolvedValueOnce({ data: 42 });
     render(
       <BrowserRouter>
         <Ranking />
       </BrowserRouter>
     );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Invalid data format')).toBeInTheDocument();
-  });
-
-  it('renders error message on fetch failure', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Network error'));
-    render(
-      <BrowserRouter>
-        <Ranking />
-      </BrowserRouter>
-    );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Invalid data format')).toBeInTheDocument());
   });
 
   it('calls navigate on Back to Menu click', async () => {

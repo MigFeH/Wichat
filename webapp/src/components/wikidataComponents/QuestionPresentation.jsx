@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from '@mui/material';
+import PropTypes from 'prop-types';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
@@ -54,6 +55,13 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         }, 1500);
     };
 
+    const getButtonBackgroundColor = (city) => {
+        if (buttonsDisabled) {
+            return city === question.correct ? '#4CAF50' : '#f44336';
+        }
+        return '#2196F3';
+    };
+
     if (score.rounds >= maxRounds) {
         const total = score.correct + score.incorrect;
         const ratio = total > 0 ? Math.round((score.correct / total) * 100) : 0;
@@ -104,9 +112,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                                     fontSize: '16px',
                                     borderRadius: '4px',
                                     border: 'none',
-                                    backgroundColor: buttonsDisabled 
-                                        ? (city === question.correct ? '#4CAF50' : '#f44336')
-                                        : '#2196F3',
+                                    backgroundColor: getButtonBackgroundColor(city),
                                     color: 'white',
                                     cursor: buttonsDisabled ? 'not-allowed' : 'pointer',
                                     transition: 'all 0.3s ease'
@@ -127,6 +133,25 @@ const QuestionPresentation = ({ game, navigate, question }) => {
             )}
         </div>
     );
+};
+
+QuestionPresentation.propTypes = {
+    game: PropTypes.shape({
+        fetchQuestions: PropTypes.func.isRequired
+    }),
+    navigate: PropTypes.func,
+    question: PropTypes.shape({
+        answers: PropTypes.objectOf(PropTypes.string),
+        correct: PropTypes.string
+    })
+};
+
+QuestionPresentation.defaultProps = {
+    game: {
+        fetchQuestions: () => {}
+    },
+    navigate: () => {},
+    question: null
 };
 
 export default QuestionPresentation;
