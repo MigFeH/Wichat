@@ -55,7 +55,7 @@ describe('Ranking Component', () => {
   });
 
   it('renders error message on invalid data format', async () => {
-    axios.get.mockResolvedValueOnce({ data: "" });
+    axios.get.mockResolvedValueOnce({ data: {} });
     render(
       <BrowserRouter>
         <Ranking />
