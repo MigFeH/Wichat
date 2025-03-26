@@ -1,7 +1,6 @@
 const request = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const bcrypt = require('bcrypt');
-const cors = require('cors');
 const User = require('./auth-model');
 
 let mongoServer;
