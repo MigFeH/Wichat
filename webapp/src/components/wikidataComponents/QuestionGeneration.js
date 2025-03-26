@@ -69,7 +69,11 @@ class QuestionGeneration {
 
         const options = this.questionsCache.slice(this.currentIndex, this.currentIndex + 4);
         this.currentIndex += 4;
-        const correctCity = options[Math.floor(Math.random() * options.length)];
+        
+        // Math.random() is sufficient for this game context
+        // We don't need cryptographically secure random numbers for selecting a city
+        const randomIndex = Math.floor(Math.random() * options.length);
+        const correctCity = options[randomIndex];
 
         this.currentCity = correctCity.city;
 
