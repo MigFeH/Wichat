@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const cors = require('cors');
+//const cors = require('cors');
 const User = require('./user-model');
 const GameStats = require('./game-stats-model');
 
@@ -10,11 +10,11 @@ const port = process.env.PORT || 8001;
 
 app.use(express.json());
 
-app.use(cors({
+/*app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
-}));
+}));*/
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri)
