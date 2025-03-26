@@ -41,9 +41,6 @@ const TimedGame = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
-      <Typography component="h1" variant="h4">
-        Welcome to the Game Page
-      </Typography>
       <TimedQuestionPresentation
         timedGame={questionGenerator}
         navigate={navigate}

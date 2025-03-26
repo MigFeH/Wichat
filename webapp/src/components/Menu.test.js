@@ -24,21 +24,32 @@ describe('Componente Menu', () => {
     );
 
     expect(screen.getByRole('heading', { name: /hey!! are you ready\?/i })).toBeInTheDocument();
-    expect(screen.getByText(/press start to play/i)).toBeInTheDocument();
+    expect(screen.getByText(/Select a game to play!/i)).toBeInTheDocument();
     
-    expect(screen.getByRole('button', { name: /start!/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /stadistics/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ranking/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Non Timed game!$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Timed game!$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Stadistics/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Ranking/i })).toBeInTheDocument();
   });
 
-  it('navega a la página de juego al hacer clic en "Start!"', () => {
+  it('navega a la página de juego sin tiempo al hacer clic en "Non Timed game!"', () => {
     render(
       <BrowserRouter>
         <Menu />
       </BrowserRouter>
     );
-    fireEvent.click(screen.getByRole('button', { name: /start!/i }));
+    fireEvent.click(screen.getByRole('button', { name: /^Non Timed game!$/i }));
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/game');
+  });
+
+  it('navega a la página de juego con tiempo al hacer clic en "Timed game!"', () => {
+    render(
+      <BrowserRouter>
+        <Menu />
+      </BrowserRouter>
+    );
+    fireEvent.click(screen.getByRole('button', { name: /^Timed game!$/i }));
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/timedGame');
   });
 
   it('navega a la página de stadistics al hacer clic en "Stadistics"', () => {
@@ -47,7 +58,7 @@ describe('Componente Menu', () => {
         <Menu />
       </BrowserRouter>
     );
-    fireEvent.click(screen.getByRole('button', { name: /stadistics/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Stadistics/i }));
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/stadistics');
   });
 
@@ -57,7 +68,7 @@ describe('Componente Menu', () => {
         <Menu />
       </BrowserRouter>
     );
-    fireEvent.click(screen.getByRole('button', { name: /ranking/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Ranking/i }));
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/ranking');
   });
 });

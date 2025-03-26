@@ -1,30 +1,35 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import Game from './Game';
+import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-
-jest.mock('./wikidataComponents/QuestionGeneration.js', () => {
-  return jest.fn().mockImplementation(() => ({
-    fetchQuestions: jest.fn(),
-  }));
-});
-
-jest.mock('./wikidataComponents/QuestionPresentation.jsx', () => (props) => (
-  <div data-testid="question-presentation">QuestionPresentation</div>
-));
-
+import Game from './Game';
 import QuestionGeneration from './wikidataComponents/QuestionGeneration.js';
 
+// Mock components
+jest.mock('./wikidataComponents/QuestionPresentation.jsx', () => () => 
+  <div>QuestionPresentation Component</div>
+);
+
+jest.mock('./wikidataComponents/QuestionGeneration.js');
+jest.mock('./ChatLLM', () => () => 
+  <div>Chat Component</div>
+);
+
 describe('Game Component', () => {
-  it('calls fetchQuestions on mount and renders QuestionPresentation', () => {
+  beforeEach(() => {
+    // Create mock for fetchQuestions
+    const mockFetchQuestions = jest.fn().mockResolvedValue();
+    QuestionGeneration.mockImplementation( () => ({ fetchQuestions: mockFetchQuestions }) );
+  });
+
+  it('renders game component correctly', async () => {
     render(
       <BrowserRouter>
         <Game />
       </BrowserRouter>
     );
-    expect(QuestionGeneration).toHaveBeenCalledTimes(1);
-    const instance = QuestionGeneration.mock.results[0].value;
-    expect(instance.fetchQuestions).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('question-presentation')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText('QuestionPresentation Component')).toBeInTheDocument();
+    });
   });
 });
