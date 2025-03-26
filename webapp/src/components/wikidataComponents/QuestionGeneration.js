@@ -61,6 +61,15 @@ class QuestionGeneration {
         }
     }
 
+    getSecureRandom(max) {
+        // Create a new array with 1 element
+        const array = new Uint32Array(1);
+        // Get cryptographically secure random values
+        window.crypto.getRandomValues(array);
+        // Convert to number between 0 and max-1
+        return Math.floor((array[0] / (0xffffffff + 1)) * max);
+    }
+
     getNextQuestion() {
         if (!this.questionsCache.length || this.currentIndex + 4 > this.questionsCache.length) {
             this.questionsCache = [];
@@ -70,9 +79,8 @@ class QuestionGeneration {
         const options = this.questionsCache.slice(this.currentIndex, this.currentIndex + 4);
         this.currentIndex += 4;
         
-        // Math.random() is sufficient for this game context
-        // We don't need cryptographically secure random numbers for selecting a city
-        const randomIndex = Math.floor(Math.random() * options.length);
+        // Use cryptographically secure random number generator
+        const randomIndex = this.getSecureRandom(options.length);
         const correctCity = options[randomIndex];
 
         this.currentCity = correctCity.city;
