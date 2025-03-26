@@ -16,6 +16,17 @@ describe('Ranking Component', () => {
     mockedUsedNavigate.mockReset();
   });
 
+  it('renders error message on fetch failure', async () => {
+    axios.get.mockRejectedValueOnce(new Error('Network error'));
+    render(
+      <BrowserRouter>
+        <Ranking />
+      </BrowserRouter>
+    );
+    await waitFor(() => expect(axios.get).toHaveBeenCalled());
+    expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument();
+  });
+
   it('renders ranking data', async () => {
     const rankingData = [
       { _id: 'user1', score: 100 },
@@ -29,12 +40,15 @@ describe('Ranking Component', () => {
     );
     await waitFor(() => expect(axios.get).toHaveBeenCalled());
     expect(screen.getByText('Ranking')).toBeInTheDocument();
+
     expect(screen.getByText('Position')).toBeInTheDocument();
     expect(screen.getByText('Username')).toBeInTheDocument();
     expect(screen.getByText('Score')).toBeInTheDocument();
+
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('user1')).toBeInTheDocument();
     expect(screen.getByText('100')).toBeInTheDocument();
+
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('user2')).toBeInTheDocument();
     expect(screen.getByText('80')).toBeInTheDocument();
@@ -49,17 +63,6 @@ describe('Ranking Component', () => {
     );
     await waitFor(() => expect(axios.get).toHaveBeenCalled());
     expect(screen.getByText('Invalid data format')).toBeInTheDocument();
-  });
-
-  it('renders error message on fetch failure', async () => {
-    axios.get.mockRejectedValueOnce(new Error('Network error'));
-    render(
-      <BrowserRouter>
-        <Ranking />
-      </BrowserRouter>
-    );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument();
   });
 
   it('calls navigate on Back to Menu click', async () => {
