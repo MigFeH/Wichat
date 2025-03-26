@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from '@mui/material';
-import "estilo.css";
+import "./estilo.css";
 import PropTypes from 'prop-types';
 
 const TimedQuestionPresentation = ({ game, navigate, question }) => {
