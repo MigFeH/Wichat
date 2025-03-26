@@ -1,6 +1,5 @@
 const request = require('supertest');
 const bcrypt = require('bcrypt');
-//const cors = require('cors');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const User = require('./user-model');
@@ -58,14 +57,16 @@ describe('User Service', () => {
     const response = await request(app).post('/api/stats').send({});
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Bad Request');
-    expect(response.body.message).toBe('Faltan campos requeridos: correctAnswers, incorrectAnswers, totalRounds');
+    expect(response.body.message).toBe('Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds');
   });
 
   it('should save game statistics on POST /api/stats', async () => {
     const statsData = {
+      username: "testuser",
+      score: 8,
       correctAnswers: 8,
       incorrectAnswers: 2,
-      totalRounds: 10,
+      totalRounds: 10
     };
 
     const response = await request(app).post('/api/stats').send(statsData);
@@ -79,19 +80,11 @@ describe('User Service', () => {
   });
 
   it('should get game statistics on GET /api/stats', async () => {
-    const statsData = {
-      correctAnswers: 5,
-      incorrectAnswers: 5,
-      totalRounds: 10,
-    };
-
-    await request(app).post('/api/stats').send(statsData);
-
-    const response = await request(app).get('/api/stats').query({ limit: 10 });
+    const response = await request(app).get('/api/stats').query({ username: "testuser" });
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThan(0);
-    expect(response.body[0]).toHaveProperty('correctAnswers', 5);
-    expect(response.body[0]).toHaveProperty('accuracy', 50);
+    expect(response.body[0]).toHaveProperty('correctAnswers', 8);
+    expect(response.body[0]).toHaveProperty('accuracy', 80);
   });
 
 });
