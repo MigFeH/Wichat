@@ -13,6 +13,7 @@ jest.mock('axios');
 
 describe('Ranking Component', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     mockedUsedNavigate.mockReset();
   });
 
@@ -23,14 +24,12 @@ describe('Ranking Component', () => {
         data: 'Internal Server Error'
       }
     });
-    
     render(
       <BrowserRouter>
         <Ranking />
       </BrowserRouter>
     );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument());
   });
 
   it('renders ranking data', async () => {
@@ -44,31 +43,31 @@ describe('Ranking Component', () => {
         <Ranking />
       </BrowserRouter>
     );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Ranking')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Ranking')).toBeInTheDocument();
 
-    expect(screen.getByText('Position')).toBeInTheDocument();
-    expect(screen.getByText('Username')).toBeInTheDocument();
-    expect(screen.getByText('Score')).toBeInTheDocument();
+      expect(screen.getByText('Position')).toBeInTheDocument();
+      expect(screen.getByText('Username')).toBeInTheDocument();
+      expect(screen.getByText('Score')).toBeInTheDocument();
 
-    expect(screen.getByText('1')).toBeInTheDocument();
-    expect(screen.getByText('user1')).toBeInTheDocument();
-    expect(screen.getByText('10')).toBeInTheDocument();
+      expect(screen.getByText('1')).toBeInTheDocument();
+      expect(screen.getByText('user1')).toBeInTheDocument();
+      expect(screen.getByText('10')).toBeInTheDocument();
 
-    expect(screen.getByText('2')).toBeInTheDocument();
-    expect(screen.getByText('user2')).toBeInTheDocument();
-    expect(screen.getByText('8')).toBeInTheDocument();
+      expect(screen.getByText('2')).toBeInTheDocument();
+      expect(screen.getByText('user2')).toBeInTheDocument();
+      expect(screen.getByText('8')).toBeInTheDocument();
+    });
   });
 
   it('renders error message on invalid data format', async () => {
-    axios.get.mockResolvedValueOnce({ data: {} });
+    axios.get.mockResolvedValueOnce({ data: 42 });
     render(
       <BrowserRouter>
         <Ranking />
       </BrowserRouter>
     );
-    await waitFor(() => expect(axios.get).toHaveBeenCalled());
-    expect(screen.getByText('Invalid data format')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Invalid data format')).toBeInTheDocument());
   });
 
   it('calls navigate on Back to Menu click', async () => {
