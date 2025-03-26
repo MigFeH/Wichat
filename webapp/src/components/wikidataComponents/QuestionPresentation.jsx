@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from '@mui/material';
+import PropTypes from 'prop-types';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
@@ -127,6 +128,25 @@ const QuestionPresentation = ({ game, navigate, question }) => {
             )}
         </div>
     );
+};
+
+QuestionPresentation.propTypes = {
+    game: PropTypes.shape({
+        fetchQuestions: PropTypes.func.isRequired
+    }),
+    navigate: PropTypes.func,
+    question: PropTypes.shape({
+        answers: PropTypes.objectOf(PropTypes.string),
+        correct: PropTypes.string
+    })
+};
+
+QuestionPresentation.defaultProps = {
+    game: {
+        fetchQuestions: () => {}
+    },
+    navigate: () => {},
+    question: null
 };
 
 export default QuestionPresentation;
