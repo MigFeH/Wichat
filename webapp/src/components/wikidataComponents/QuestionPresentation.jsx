@@ -55,6 +55,13 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         }, 1500);
     };
 
+    const getButtonBackgroundColor = (city) => {
+        if (buttonsDisabled) {
+            return city === question.correct ? '#4CAF50' : '#f44336';
+        }
+        return '#2196F3';
+    };
+
     if (score.rounds >= maxRounds) {
         const total = score.correct + score.incorrect;
         const ratio = total > 0 ? Math.round((score.correct / total) * 100) : 0;
@@ -105,9 +112,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                                     fontSize: '16px',
                                     borderRadius: '4px',
                                     border: 'none',
-                                    backgroundColor: buttonsDisabled 
-                                        ? (city === question.correct ? '#4CAF50' : '#f44336')
-                                        : '#2196F3',
+                                    backgroundColor: getButtonBackgroundColor(city),
                                     color: 'white',
                                     cursor: buttonsDisabled ? 'not-allowed' : 'pointer',
                                     transition: 'all 0.3s ease'
