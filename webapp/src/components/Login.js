@@ -27,6 +27,8 @@ const Login = () => {
 
       const response = await axios.post(`${apiEndpoint}/login`, { username, password });
 
+      console.log(response.data);
+
       const { createdAt: userCreatedAt, token } = response.data;
 
       if (token) {
