@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import Game from '../components/Game';
 import QuestionGeneration from '../components/wikidataComponents/QuestionGeneration';
 
-jest.mock('../components/wikidataComponents/QuestionGeneration');
+jest.mock('./wikidataComponents/QuestionGeneration');
 
 describe('Game Component', () => {
   let mockSetQuestion;
