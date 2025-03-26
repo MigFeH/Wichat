@@ -4,7 +4,11 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2b&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2b)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2b&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2b)
 
-![Logo](/docs/images/Logotipo_Wechat_mini.png)
+<div align="center">
+  
+  ![Logo](/docs/images/Logotipo_Wechat_mini.png)
+
+</div>
 
 This is a base project for the Software Architecture course in 2024/2025. It is a basic application composed of several components.
 
