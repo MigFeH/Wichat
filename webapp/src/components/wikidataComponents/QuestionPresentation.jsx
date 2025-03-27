@@ -11,24 +11,24 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
     useEffect(() => {
         const saveStats = async () => {
-        try {
-            const response = await fetch('http://localhost:8001/api/stats', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: localStorage.getItem('username'),
-                    score:score.correct,
-                    correctAnswers: score.correct,
-                    incorrectAnswers: score.incorrect,
-                    totalRounds: maxRounds
-                })
-            });
+            try {
+                const response = await fetch('http://localhost:8001/api/stats', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: localStorage.getItem('username'),
+                        score:score.correct,
+                        correctAnswers: score.correct,
+                        incorrectAnswers: score.incorrect,
+                        totalRounds: maxRounds
+                    })
+                });
             
-            if (!response.ok) throw new Error('Error al guardar estadísticas');
+                if (!response.ok) throw new Error('Error al guardar estadísticas');
             
-        } catch (error) {
-            console.error('Error:', error);
-        }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         };
 
         if (score.rounds >= maxRounds) saveStats();
@@ -54,6 +54,11 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                 setButtonsDisabled(false);
             }
         }, 1500);
+    };
+
+    const getButtonClassName = (city) => {
+        if (!buttonsDisabled) return 'answer-button';
+        return `answer-button ${city === question.correct ? "correct" : "incorrect"}`;
     };
 
     if (score.rounds >= maxRounds) {
@@ -88,13 +93,13 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                             }}
                         />
                     </div>
-                    <div >
+                    <div>
                         {Object.keys(question.answers).map((city) => (
                             <button
                                 key={city}
                                 onClick={() => checkAnswer(city)}
                                 disabled={buttonsDisabled}
-                                className={`answer-button ${buttonsDisabled ? (city === question.correct ? "correct" : "incorrect") : ""}`}
+                                className={getButtonClassName(city)}
                             >
                                 {city}
                             </button>
