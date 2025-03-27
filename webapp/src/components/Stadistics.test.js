@@ -17,4 +17,19 @@ describe('Stadistics Component', () => {
     mockedUsedNavigate.mockReset();
     localStorage.setItem('username', 'testUser');
   });
+
+  it('renders error message on fetch failure', async () => {
+    axios.get.mockRejectedValueOnce({
+      response: {
+        status: 500,
+        data: 'Internal Server Error'
+      }
+    });
+    render(
+      <BrowserRouter>
+        <Stadistics />
+      </BrowserRouter>
+    );
+    await waitFor(() => expect(screen.getByText('Failed to fetch statistics')).toBeInTheDocument());
+  });
 });
