@@ -9,7 +9,25 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
     const [timer, setTimer] = useState(10);
     const maxRounds = 10;
 
-    const handleTimeout = useCallback(() => {
+    useEffect(() => {
+        if (!question) return;
+
+        setTimer(10); // Reiniciar el temporizador al iniciar una nueva pregunta
+
+        const countdown = setInterval(() => {
+            setTimer(prev => {
+                if (prev === 1) {
+                    clearInterval(countdown);
+                    handleTimeout(); // Llamar a la función de tiempo agotado
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(countdown); // Limpiar el temporizador al cambiar de pregunta
+    }, [question]);
+
+    const handleTimeout = () => {
         if (!buttonsDisabled) {
             setFeedback("⏳ Time's over ❌ wrong answer");
             setButtonsDisabled(true);
@@ -28,25 +46,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
                 }
             }, 1500);
         }
-    }, [buttonsDisabled, score.rounds, maxRounds, game, setScore, setFeedback, setButtonsDisabled]);
-
-    useEffect(() => {
-        if (!question) return;
-
-        setTimer(10); // Reiniciar el temporizador al iniciar una nueva pregunta
-
-        const countdown = setInterval(() => {
-            setTimer(prev => {
-                if (prev === 1) {
-                    clearInterval(countdown);
-                    handleTimeout(); // Llamar a la función de tiempo agotado
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(countdown); // Limpiar el temporizador al cambiar de pregunta
-    }, [question, handleTimeout]);
+    };
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;

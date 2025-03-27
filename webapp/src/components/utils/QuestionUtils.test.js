@@ -1,10 +1,29 @@
-import { renderHook, act } from '@testing-library/react-hooks';
+import React from 'react';
+import { render, act } from '@testing-library/react';
 import useStats from './QuestionUtils';
+
+const TestComponent = ({ maxRounds, onHookReady }) => {
+    const hook = useStats(maxRounds);
+
+    // Llama a la función `onHookReady` para exponer el hook a las pruebas
+    React.useEffect(() => {
+        if (onHookReady) {
+            onHookReady(hook);
+        }
+    }, [hook, onHookReady]);
+
+    return <div>Test Component</div>;
+};
 
 describe('useStats', () => {
     beforeEach(() => {
         localStorage.setItem('username', 'testUser');
-        global.fetch = jest.fn();
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({}),
+            })
+        );
     });
 
     afterEach(() => {
@@ -13,21 +32,37 @@ describe('useStats', () => {
     });
 
     it('initializes with default values', () => {
-        const { result } = renderHook(() => useStats());
+        let hook;
+        render(
+            <TestComponent
+                maxRounds={10}
+                onHookReady={(h) => {
+                    hook = h;
+                }}
+            />
+        );
 
-        expect(result.current.score).toEqual({ correct: 0, incorrect: 0, rounds: 0 });
-        expect(result.current.feedback).toBeNull();
-        expect(result.current.buttonsDisabled).toBe(false);
+        expect(hook.score).toEqual({ correct: 0, incorrect: 0, rounds: 0 });
+        expect(hook.feedback).toBeNull();
+        expect(hook.buttonsDisabled).toBe(false);
     });
 
     it('updates score correctly', () => {
-        const { result } = renderHook(() => useStats());
+        let hook;
+        render(
+            <TestComponent
+                maxRounds={10}
+                onHookReady={(h) => {
+                    hook = h;
+                }}
+            />
+        );
 
         act(() => {
-            result.current.setScore({ correct: 1, incorrect: 0, rounds: 1 });
+            hook.setScore({ correct: 1, incorrect: 0, rounds: 1 });
         });
 
-        expect(result.current.score).toEqual({ correct: 1, incorrect: 0, rounds: 1 });
+        expect(hook.score).toEqual({ correct: 1, incorrect: 0, rounds: 1 });
     });
 
     it('saves stats when maxRounds is reached', async () => {
@@ -35,10 +70,18 @@ describe('useStats', () => {
             Promise.resolve({ ok: true })
         );
 
-        const { result } = renderHook(() => useStats(2));
+        let hook;
+        render(
+            <TestComponent
+                maxRounds={2}
+                onHookReady={(h) => {
+                    hook = h;
+                }}
+            />
+        );
 
         act(() => {
-            result.current.setScore({ correct: 1, incorrect: 1, rounds: 2 });
+            hook.setScore({ correct: 1, incorrect: 1, rounds: 2 });
         });
 
         expect(global.fetch).toHaveBeenCalledWith('http://localhost:8001/api/stats', {
@@ -55,10 +98,18 @@ describe('useStats', () => {
     });
 
     it('does not save stats if maxRounds is not reached', () => {
-        const { result } = renderHook(() => useStats(3));
+        let hook;
+        render(
+            <TestComponent
+                maxRounds={3}
+                onHookReady={(h) => {
+                    hook = h;
+                }}
+            />
+        );
 
         act(() => {
-            result.current.setScore({ correct: 1, incorrect: 1, rounds: 2 });
+            hook.setScore({ correct: 1, incorrect: 1, rounds: 2 });
         });
 
         expect(global.fetch).not.toHaveBeenCalled();
