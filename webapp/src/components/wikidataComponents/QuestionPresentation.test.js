@@ -1,30 +1,15 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import QuestionPresentation from './QuestionPresentation';
+import { mockGame, mockNavigate, mockQuestion, setupTest, cleanupTest } from './testUtils';
 
 describe('QuestionPresentation Component', () => {
-    const mockGame = {
-        fetchQuestions: jest.fn()
-    };
-    const mockNavigate = jest.fn();
-    const mockQuestion = {
-        answers: {
-            'Madrid': 'madrid-image-url',
-            'Paris': 'paris-image-url'
-        },
-        correct: 'Madrid'
-    };
-
     beforeEach(() => {
-        jest.clearAllMocks();
-        localStorage.setItem('username', 'testUser');
-        jest.useFakeTimers();
+        setupTest();
     });
 
     afterEach(() => {
-        localStorage.clear();
-        jest.runOnlyPendingTimers();
-        jest.useRealTimers();
+        cleanupTest();
     });
 
     it('renders loading state when no question is provided', () => {
