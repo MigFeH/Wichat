@@ -42,4 +42,16 @@ describe('Stadistics Component', () => {
     );
     await waitFor(() => expect(screen.getByText('Invalid data format')).toBeInTheDocument());
   });
+
+  it('calls navigate on Back to Menu click', async () => {
+    axios.get.mockResolvedValueOnce({ data: [] });
+    render(
+      <BrowserRouter>
+        <Stadistics />
+      </BrowserRouter>
+    );
+    await waitFor(() => expect(axios.get).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: /back to menu/i }));
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/menu');
+  });
 });
