@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
+import { PieChart, Pie, Cell } from 'recharts';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
 
@@ -61,6 +62,7 @@ const Stadistics = () => {
               <TableCell>Incorrect Answers</TableCell>
               <TableCell>Total Rounds</TableCell>
               <TableCell>Accuracy</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -71,6 +73,25 @@ const Stadistics = () => {
                 <TableCell>{stat.correctAnswers}</TableCell>
                 <TableCell>{stat.incorrectAnswers}</TableCell>
                 <TableCell>{stat.totalRounds}</TableCell>
+                <TableCell>
+                  <PieChart width={50} height={50}>
+                    <Pie 
+                      data={[
+                        { name: 'Correct', value: stat.accuracy },
+                        { name: 'Incorrect', value: 100 - stat.accuracy }
+                      ]}
+                      cx={25} 
+                      cy={25} 
+                      innerRadius={10} 
+                      outerRadius={20} 
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      <Cell fill="#0088FE" />
+                      <Cell fill="#FF0000" />
+                    </Pie>
+                  </PieChart>
+                </TableCell>
                 <TableCell>{stat.accuracy}%</TableCell>
               </TableRow>
             ))}
