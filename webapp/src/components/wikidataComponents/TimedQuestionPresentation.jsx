@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from '@mui/material';
 import "./estilo.css";
 import PropTypes from 'prop-types';
@@ -35,25 +35,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
         if (score.rounds >= maxRounds) saveStats();
     }, [score,maxRounds]);
 
-    useEffect(() => {
-        if (!question) return;
-
-        setTimer(10); // Reiniciar el temporizador al iniciar una nueva pregunta
-
-        const countdown = setInterval(() => {
-            setTimer(prev => {
-                if (prev === 1) {
-                    clearInterval(countdown);
-                    handleTimeout(); // Llamar a la función de tiempo agotado
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(countdown); // Limpiar el temporizador al cambiar de pregunta
-    }, [question]);
-
-    const handleTimeout = () => {
+    const handleTimeout = useCallback(() => {
         if (!buttonsDisabled) {
             setFeedback("⏳ Time's over ❌ wrong answer");
             setButtonsDisabled(true);
@@ -72,7 +54,25 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
                 }
             }, 1500);
         }
-    };
+    }, [buttonsDisabled, score.rounds, maxRounds, game]);
+
+    useEffect(() => {
+        if (!question) return;
+
+        setTimer(10); // Reiniciar el temporizador al iniciar una nueva pregunta
+
+        const countdown = setInterval(() => {
+            setTimer(prev => {
+                if (prev === 1) {
+                    clearInterval(countdown);
+                    handleTimeout(); // Llamar a la función de tiempo agotado
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(countdown); // Limpiar el temporizador al cambiar de pregunta
+    }, [question, handleTimeout]);
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
@@ -96,11 +96,13 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
         }, 1500);
     };
 
-    const getButtonBackgroundColor = (city) => {
-        if (buttonsDisabled) {
-            return city === question.correct ? '#4CAF50' : '#f44336';
-        }
-        return '#2196F3';
+    const getButtonClassName = (city) => {
+        if (!buttonsDisabled) return 'answer-button';
+        return `answer-button ${city === question.correct ? "correct" : "incorrect"}`;
+    };
+
+    const getTimerClassName = () => {
+        return timer <= 3 ? 'timer-low' : 'timer-normal';
     };
 
     if (score.rounds >= maxRounds) {
@@ -125,55 +127,36 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
             <h1>Guess the City 🌍</h1>
             {question ? (
                 <>
-                    <p style={{ fontSize: "18px", fontWeight: "bold", color: timer <= 3 ? "red" : "black" }}>
+                    <p className={`timer ${getTimerClassName()}`}>
                         ⏳ Tiempo restante: {timer}s
                     </p>
-                    <div style={{ margin: '20px 0' }}>
+                    <div className="image-container">
                         <img
+                            className="city-image"
                             src={question.answers[question.correct]}
                             alt="Ciudad"
-                            style={{
-                                maxWidth: '100%',
-                                height: '300px',
-                                objectFit: 'cover',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                            }}
                             onError={(e) => {
                                 e.target.src = 'fallback-image-url';
                                 e.target.alt = 'Imagen no disponible';
                             }}
                         />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                    <div className="button-grid">
                         {Object.keys(question.answers).map((city) => (
                             <button
                                 key={city}
                                 onClick={() => checkAnswer(city)}
                                 disabled={buttonsDisabled}
-                                style={{
-                                    padding: '12px',
-                                    fontSize: '16px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    backgroundColor: getButtonBackgroundColor(city),
-                                    color: 'white',
-                                    cursor: buttonsDisabled ? 'not-allowed' : 'pointer',
-                                    transition: 'all 0.3s ease'
-                                }}
+                                className={getButtonClassName(city)}
                             >
                                 {city}
                             </button>
                         ))}
                     </div>
-                    {feedback && <p style={{
-                        fontSize: '20px',
-                        marginTop: '20px',
-                        animation: 'fadeIn 0.5s ease'
-                    }}>{feedback}</p>}
+                    {feedback && <p>{feedback}</p>}
                 </>
             ) : (
-                <p style={{ fontSize: '18px', color: '#666' }}>Loading Question...</p>
+                <p className="loading-question">Loading Question...</p>
             )}
         </div>
     );

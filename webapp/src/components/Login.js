@@ -8,7 +8,6 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [createdAt, setCreatedAt] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
@@ -29,7 +28,7 @@ const Login = () => {
 
       console.log(response.data);
 
-      const { createdAt: userCreatedAt, token } = response.data;
+      const { token } = response.data;
 
       if (token) {
         localStorage.setItem('authToken', token);

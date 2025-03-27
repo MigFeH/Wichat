@@ -29,7 +29,7 @@ describe('QuestionPresentation Component', () => {
 
     it('renders loading state when no question is provided', () => {
         render(<QuestionPresentation game={mockGame} navigate={mockNavigate} />);
-        expect(screen.getByText('Loading question...')).toBeInTheDocument();
+        expect(screen.getByText('Loading Question...')).toBeInTheDocument();
     });
 
     it('renders question with options when question is provided', () => {

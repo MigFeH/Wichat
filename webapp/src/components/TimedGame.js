@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, CircularProgress } from '@mui/material';
+import { Container, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TimedQuestionPresentation from './wikidataComponents/TimedQuestionPresentation.jsx';
 import QuestionGeneration from "./wikidataComponents/QuestionGeneration.js";

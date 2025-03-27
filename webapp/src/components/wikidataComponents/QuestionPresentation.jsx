@@ -83,8 +83,9 @@ const QuestionPresentation = ({ game, navigate, question }) => {
             <h1>Guess the city 🌍</h1>
             {question ? (
                 <>
-                    <div style={{ margin: '20px 0' }}>
-                        <img 
+                    <div className="image-container">
+                        <img
+                            className="city-image" 
                             src={question.answers[question.correct]} 
                             alt="Ciudad"
                             onError={(e) => {
@@ -93,7 +94,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                             }}
                         />
                     </div>
-                    <div>
+                    <div className="button-grid">
                         {Object.keys(question.answers).map((city) => (
                             <button
                                 key={city}
@@ -108,7 +109,7 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                     {feedback && <p>{feedback}</p>}
                 </>
             ) : (
-                <p>Loading question...</p>
+                <p className="loading-question">Loading Question...</p>
             )}
         </div>
     );
