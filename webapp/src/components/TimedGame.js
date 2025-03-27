@@ -45,10 +45,10 @@ const TimedGame = () => {
         timedGame={questionGenerator}
         navigate={navigate}
         question={currentQuestion}
+        data-testid="timed-question-presentation"
       />
-        {TimedProgress}
-
-        <ChatLLM currentCity={currentCity} />
+      <TimedProgress data-testid="timed-progress" />
+      <ChatLLM currentCity={currentCity} data-testid="chat-llm" />
     </Container>
   );
 };
