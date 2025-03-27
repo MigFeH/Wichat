@@ -6,10 +6,12 @@ import { mockGame, mockNavigate, mockQuestion, setupTest, cleanupTest } from '..
 describe('TimedQuestionPresentation Component', () => {
     beforeEach(() => {
         setupTest();
+        jest.useFakeTimers();
     });
 
     afterEach(() => {
         cleanupTest();
+        jest.useRealTimers();
     });
 
     it('renders loading state when no question is provided', () => {
@@ -31,7 +33,7 @@ describe('TimedQuestionPresentation Component', () => {
             />
         );
 
-        expect(screen.getByText('Guess the City 🌍')).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes('Guess the City'))).toBeInTheDocument();
         expect(screen.getByText(/Tiempo restante: 10s/)).toBeInTheDocument();
         expect(screen.getByText('Madrid')).toBeInTheDocument();
         expect(screen.getByText('Paris')).toBeInTheDocument();

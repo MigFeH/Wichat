@@ -26,7 +26,7 @@ describe('QuestionPresentation Component', () => {
             />
         );
 
-        expect(screen.getByText('Guess the city 🌍')).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes('Guess the City'))).toBeInTheDocument();
         expect(screen.getByText('Madrid')).toBeInTheDocument();
         expect(screen.getByText('Paris')).toBeInTheDocument();
     });

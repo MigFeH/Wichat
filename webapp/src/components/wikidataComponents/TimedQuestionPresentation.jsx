@@ -2,38 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Button } from '@mui/material';
 import "../style/estilo.css";
 import PropTypes from 'prop-types';
+import useStats from '../utils/QuestionUtils';
 
 const TimedQuestionPresentation = ({ game, navigate, question }) => {
-    const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
-    const [feedback, setFeedback] = useState(null);
-    const [buttonsDisabled, setButtonsDisabled] = useState(false);
-    const [timer, setTimer] = useState(10); // Tiempo en segundos
+    const { score, setScore, feedback, setFeedback, buttonsDisabled, setButtonsDisabled } = useStats(10);
+    const [timer, setTimer] = useState(10);
     const maxRounds = 10;
-
-    useEffect(() => {
-        const saveStats = async () => {
-            try {
-                const response = await fetch('http://localhost:8001/api/stats', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: localStorage.getItem('username'),
-                        score:score.correct,
-                        correctAnswers: score.correct,
-                        incorrectAnswers: score.incorrect,
-                        totalRounds: maxRounds
-                    })
-                });
-
-                if (!response.ok) throw new Error('Error al guardar estadísticas');
-
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-        if (score.rounds >= maxRounds) saveStats();
-    }, [score,maxRounds]);
 
     const handleTimeout = useCallback(() => {
         if (!buttonsDisabled) {
@@ -54,7 +28,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
                 }
             }, 1500);
         }
-    }, [buttonsDisabled, score.rounds, maxRounds, game]);
+    }, [buttonsDisabled, score.rounds, maxRounds, game, setScore, setFeedback, setButtonsDisabled]);
 
     useEffect(() => {
         if (!question) return;

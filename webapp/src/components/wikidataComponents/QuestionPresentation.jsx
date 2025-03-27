@@ -1,38 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button } from '@mui/material';
 import "../style/estilo.css";
 import PropTypes from 'prop-types';
+import useStats from '../utils/QuestionUtils';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
-    const [score, setScore] = useState({ correct: 0, incorrect: 0, rounds: 0 });
-    const [feedback, setFeedback] = useState(null);
-    const [buttonsDisabled, setButtonsDisabled] = useState(false);
+    const { score, setScore, feedback, setFeedback, buttonsDisabled, setButtonsDisabled } = useStats(10);
     const maxRounds = 10;
-
-    useEffect(() => {
-        const saveStats = async () => {
-            try {
-                const response = await fetch('http://localhost:8001/api/stats', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: localStorage.getItem('username'),
-                        score:score.correct,
-                        correctAnswers: score.correct,
-                        incorrectAnswers: score.incorrect,
-                        totalRounds: maxRounds
-                    })
-                });
-            
-                if (!response.ok) throw new Error('Error al guardar estadísticas');
-            
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-        if (score.rounds >= maxRounds) saveStats();
-    }, [score,maxRounds]);
 
     const checkAnswer = (selected) => {
         if (!question || buttonsDisabled) return;
@@ -80,13 +54,13 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 
     return (
         <div>
-            <h1>Guess the city 🌍</h1>
+            <h1>Guess the City 🌍</h1>
             {question ? (
                 <>
                     <div className="image-container">
                         <img
-                            className="city-image" 
-                            src={question.answers[question.correct]} 
+                            className="city-image"
+                            src={question.answers[question.correct]}
                             alt="Ciudad"
                             onError={(e) => {
                                 e.target.src = 'fallback-image-url';
@@ -118,8 +92,8 @@ const QuestionPresentation = ({ game, navigate, question }) => {
 QuestionPresentation.propTypes = {
     game: PropTypes.shape({
         fetchQuestions: PropTypes.func.isRequired
-    }),
-    navigate: PropTypes.func,
+    }).isRequired,
+    navigate: PropTypes.func.isRequired,
     question: PropTypes.shape({
         answers: PropTypes.objectOf(PropTypes.string),
         correct: PropTypes.string
@@ -127,10 +101,6 @@ QuestionPresentation.propTypes = {
 };
 
 QuestionPresentation.defaultProps = {
-    game: {
-        fetchQuestions: () => {}
-    },
-    navigate: () => {},
     question: null
 };
 
