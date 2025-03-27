@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import QuestionPresentation from './wikidataComponents/QuestionPresentation.jsx';
 import QuestionGeneration from "./wikidataComponents/QuestionGeneration.js";
