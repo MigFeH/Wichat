@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button } from '@mui/material';
+import "./estilo.css";
 import PropTypes from 'prop-types';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
@@ -55,13 +56,6 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         }, 1500);
     };
 
-    const getButtonBackgroundColor = (city) => {
-        if (buttonsDisabled) {
-            return city === question.correct ? '#4CAF50' : '#f44336';
-        }
-        return '#2196F3';
-    };
-
     if (score.rounds >= maxRounds) {
         const total = score.correct + score.incorrect;
         const ratio = total > 0 ? Math.round((score.correct / total) * 100) : 0;
@@ -87,49 +81,29 @@ const QuestionPresentation = ({ game, navigate, question }) => {
                     <div style={{ margin: '20px 0' }}>
                         <img 
                             src={question.answers[question.correct]} 
-                            alt="Ciudad" 
-                            style={{ 
-                                maxWidth: '100%', 
-                                height: '300px', 
-                                objectFit: 'cover',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                            }}
+                            alt="Ciudad"
                             onError={(e) => {
                                 e.target.src = 'fallback-image-url';
                                 e.target.alt = 'Imagen no disponible';
                             }}
                         />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                    <div >
                         {Object.keys(question.answers).map((city) => (
                             <button
                                 key={city}
                                 onClick={() => checkAnswer(city)}
                                 disabled={buttonsDisabled}
-                                style={{
-                                    padding: '12px',
-                                    fontSize: '16px',
-                                    borderRadius: '4px',
-                                    border: 'none',
-                                    backgroundColor: getButtonBackgroundColor(city),
-                                    color: 'white',
-                                    cursor: buttonsDisabled ? 'not-allowed' : 'pointer',
-                                    transition: 'all 0.3s ease'
-                                }}
+                                className={`answer-button ${buttonsDisabled ? (city === question.correct ? "correct" : "incorrect") : ""}`}
                             >
                                 {city}
                             </button>
                         ))}
                     </div>
-                    {feedback && <p style={{ 
-                        fontSize: '20px', 
-                        marginTop: '20px',
-                        animation: 'fadeIn 0.5s ease'
-                    }}>{feedback}</p>}
+                    {feedback && <p>{feedback}</p>}
                 </>
             ) : (
-                <p style={{ fontSize: '18px', color: '#666' }}>Loading question...</p>
+                <p>Loading question...</p>
             )}
         </div>
     );
