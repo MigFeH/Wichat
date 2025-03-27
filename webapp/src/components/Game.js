@@ -27,9 +27,13 @@ const Game = () => {
         game={questionGenerator}
         navigate={navigate}
         question={currentQuestion}
+        data-testid="question-presentation"
       />
 
-      <ChatLLM currentCity={currentCity} />
+      <ChatLLM 
+        currentCity={currentCity} 
+        data-testid="chat-llm"
+      />
 
       <audio id="wave-sound" src="/olas-del-mar.mp3" autoPlay loop></audio>
       <div className="wave-container">
