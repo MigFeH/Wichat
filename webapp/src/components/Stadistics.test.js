@@ -32,4 +32,14 @@ describe('Stadistics Component', () => {
     );
     await waitFor(() => expect(screen.getByText('Failed to fetch statistics')).toBeInTheDocument());
   });
+
+  it('renders error message on invalid data format', async () => {
+    axios.get.mockResolvedValueOnce({ data: 42 });
+    render(
+      <BrowserRouter>
+        <Stadistics />
+      </BrowserRouter>
+    );
+    await waitFor(() => expect(screen.getByText('Invalid data format')).toBeInTheDocument());
+  });
 });
