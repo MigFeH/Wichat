@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import './Home.css';
+import '../components/style/Home.css';
 
 const Menu = () => {
     const navigate = useNavigate();

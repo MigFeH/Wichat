@@ -1,25 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import QuestionPresentation from './wikidataComponents/QuestionPresentation.jsx';
-import QuestionGeneration from "./wikidataComponents/QuestionGeneration.js";
+import useGameLogic from './utils/GameUtils';
 import ChatLLM from './ChatLLM';
 
 const Game = () => {
   const navigate = useNavigate();
-  const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [questionGenerator] = useState(() => new QuestionGeneration(setCurrentQuestion));
-  const [currentCity, setCurrentCity] = useState(null);
-
-  useEffect(() => {
-    questionGenerator.fetchQuestions();
-  }, [questionGenerator]);
-
-  useEffect(() => {
-    if (currentQuestion) {
-      setCurrentCity(currentQuestion.correct); // ← Guarda la ciudad actual basada en la pregunta
-    }
-  }, [currentQuestion]);
+  const { currentQuestion, questionGenerator, currentCity } = useGameLogic();
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>

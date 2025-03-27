@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import TimedQuestionPresentation from './TimedQuestionPresentation';
-import { mockGame, mockNavigate, mockQuestion, setupTest, cleanupTest } from './testUtils';
+import { mockGame, mockNavigate, mockQuestion, setupTest, cleanupTest } from '../utils/GameTestUtils';
 
 describe('TimedQuestionPresentation Component', () => {
     beforeEach(() => {
