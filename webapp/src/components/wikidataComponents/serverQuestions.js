@@ -3,6 +3,7 @@ const cors = require('cors');
 const QuestionGeneration = require('./QuestionGeneration');
 
 const app = express();
+app.disable('x-powered-by'); // Add this line to remove the version information
 const port = 8004;
 
 // Configure CORS with specific options
