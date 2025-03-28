@@ -14,7 +14,6 @@ describe('TimedGame Component', () => {
         <TimedGame />
       </BrowserRouter>
     );
-
     expect(screen.getByText('TimedQuestionPresentation')).toBeInTheDocument();
     expect(screen.getByText('ChatLLM')).toBeInTheDocument();
   });
@@ -30,7 +29,6 @@ describe('TimedGame Component', () => {
         <TimedGame />
       </BrowserRouter>
     );
-
     await waitFor(() => expect(mockFetchQuestions).toHaveBeenCalled());
   });
 });
