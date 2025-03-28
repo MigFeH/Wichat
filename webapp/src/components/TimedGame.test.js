@@ -18,4 +18,19 @@ describe('TimedGame Component', () => {
     expect(screen.getByText('TimedQuestionPresentation')).toBeInTheDocument();
     expect(screen.getByText('ChatLLM')).toBeInTheDocument();
   });
+
+  it('calls fetchQuestions on mount', async () => {
+    const mockFetchQuestions = jest.fn();
+    require('./wikidataComponents/QuestionGeneration.js').default.mockImplementation(() => {
+      return { fetchQuestions: mockFetchQuestions };
+    });
+
+    render(
+      <BrowserRouter>
+        <TimedGame />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => expect(mockFetchQuestions).toHaveBeenCalled());
+  });
 });
