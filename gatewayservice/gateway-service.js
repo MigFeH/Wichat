@@ -10,9 +10,12 @@ const YAML = require('yaml')
 const app = express();
 const port = 8000;
 
+//CONFIGURATIONS
+
 const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
+const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:8004'
 
 app.use(cors());
 app.use(express.json());
@@ -21,19 +24,24 @@ app.use(express.json());
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);
 
+//ENDPOINTS
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
 });
 
-app.get('/game/questions', async (req, res) => {
-  try {
-    // Petición al servicio de preguntas
-    const questionResponse = await axios.get("http://localhost:8004/questions");
-    res.json(questionResponse.data);
-  } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error fetching questions' });
+app.get('/api/stats',async(req,res)=>{
+ try{
+    const userResponse = await axios.get(userServiceUrl+'/api/stats', req.body);
+    res.json(userResponse.data);
+ } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
   }
+});
+
+app.get('/game/questions', async (_req, res) => {
+  getQuestions('/game/questions',res)
 });
 
 app.post('/login', async (req, res) => {
@@ -84,6 +92,24 @@ app.post('/hintllm', async (req, res) => {
   }
 });
 
+async function getQuestions(specificPath, res){
+  try {
+    const wikiResponse = await axios.get(gameServiceUrl + specificPath, { timeout: 10000 });
+    if (wikiResponse.status !== 200) {
+      let statusCode = wikiResponse.status ? wikiResponse.status : 500;
+
+      console.error('Error with the wikidata service:', statusCode);
+      res.status(statusCode).json({ error: 'Error with the wikidata service' });
+
+    } else {
+      res.json(wikiResponse.data);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+  }
+}
+
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'
 if (fs.existsSync(openapiPath)) {
@@ -100,6 +126,12 @@ if (fs.existsSync(openapiPath)) {
   console.log("Not configuring OpenAPI. Configuration file not present.")
 }
 
+app.get('/*', (_req,res) =>{
+  res.status(404).json({
+    status:"not found",
+    message:"Wrong URL: Please, check the correct enpoint URL"
+  });
+});
 
 // Start the gateway service
 const server = app.listen(port, () => {

@@ -95,9 +95,18 @@ paths:
                   question:
                     type: string
                     example: "https://example.com/image.jpg"
-                  answers:
+                  answers1:
                     type: string
                     example: "Milán"
+                  answers2:
+                    type: string
+                    example2: "Paris"
+                  answers3:
+                    type: string
+                    example3: "Atenas"
+                  answer4:
+                    type: string
+                    example4: "Los Angeles"
                   correct:
                     type: string
                     example: "Paris"
