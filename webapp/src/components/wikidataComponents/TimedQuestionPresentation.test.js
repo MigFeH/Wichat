@@ -3,37 +3,42 @@ import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom';
 import TimedQuestionPresentation from './TimedQuestionPresentation';
 
-// Test constants and setup
-const createMockHook = (feedback = '', setFeedbackMock = jest.fn()) => ({
-    score: { correct: 0, incorrect: 0, rounds: 0 },
-    setScore: jest.fn(),
-    feedback,
-    setFeedback: setFeedbackMock,
-    buttonsDisabled: false,
-    setButtonsDisabled: jest.fn()
-});
-
-const mockGame = {
-    fetchQuestions: jest.fn()
-};
-
-const mockNavigate = jest.fn();
-
-const mockQuestion = {
-    answers: {
-        "Madrid": "madrid.jpg",
-        "Paris": "paris.jpg"
-    },
-    correct: "Madrid"
-};
-
-// Mock the useStats hook with default implementation
-jest.mock('../utils/QuestionUtils', () => ({
-    __esModule: true,
-    default: () => createMockHook()
-}));
-
 describe('TimedQuestionPresentation', () => {
+    // Move mock objects inside describe block
+    const defaultStats = {
+        score: { correct: 0, incorrect: 0, rounds: 0 },
+        setScore: jest.fn(),
+        feedback: '',
+        setFeedback: jest.fn(),
+        buttonsDisabled: false,
+        setButtonsDisabled: jest.fn()
+    };
+
+    const mockGame = {
+        fetchQuestions: jest.fn()
+    };
+
+    const mockNavigate = jest.fn();
+
+    const mockQuestion = {
+        answers: {
+            "Madrid": "madrid.jpg",
+            "Paris": "paris.jpg"
+        },
+        correct: "Madrid"
+    };
+
+    const createMockHook = (overrides = {}) => ({
+        ...defaultStats,
+        ...overrides
+    });
+
+    // Mock the useStats hook
+    jest.mock('../utils/QuestionUtils', () => ({
+        __esModule: true,
+        default: jest.fn((initialValue) => createMockHook())
+    }));
+
     const renderComponent = () => {
         return render(
             <TimedQuestionPresentation
@@ -44,24 +49,14 @@ describe('TimedQuestionPresentation', () => {
         );
     };
 
-    const setupFeedbackTest = () => {
-        let feedback = '';
-        const setFeedbackMock = jest.fn((value) => {
-            feedback = value;
-        });
-
-        jest.spyOn(require('../utils/QuestionUtils'), 'default')
-            .mockImplementation(() => createMockHook(feedback, setFeedbackMock));
-
-        return { feedback, setFeedbackMock };
-    };
-
     beforeEach(() => {
         jest.useFakeTimers();
+        jest.clearAllMocks();
+        mockGame.fetchQuestions.mockClear();
+        mockNavigate.mockClear();
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
         jest.useRealTimers();
     });
 
@@ -83,40 +78,31 @@ describe('TimedQuestionPresentation', () => {
     });
 
     test('handles timeout correctly', async () => {
-        const { setFeedbackMock } = setupFeedbackTest();
         renderComponent();
 
         act(() => {
             jest.advanceTimersByTime(10000);
         });
 
-        await waitFor(() => {
-            expect(setFeedbackMock).toHaveBeenCalledWith("⏳ Time's over ❌ wrong answer");
-        });
+        expect(screen.getByText("⏳ Time's over ❌ wrong answer")).toBeInTheDocument();
     });
 
     test('handles correct answer', async () => {
-        const { setFeedbackMock } = setupFeedbackTest();
         renderComponent();
 
         const correctButton = screen.getByRole('button', { name: 'Madrid' });
         fireEvent.click(correctButton);
 
-        await waitFor(() => {
-            expect(setFeedbackMock).toHaveBeenCalledWith('✅ Correct answer');
-        });
+        expect(screen.getByText('✅ Correct answer')).toBeInTheDocument();
     });
 
     test('handles incorrect answer', async () => {
-        const { setFeedbackMock } = setupFeedbackTest();
         renderComponent();
 
-        const incorrectButton = screen.getByRole('button', { name: 'Paris' });
-        fireEvent.click(incorrectButton);
+        const correctButton = screen.getByRole('button', { name: 'Paris' });
+        fireEvent.click(correctButton);
 
-        await waitFor(() => {
-            expect(setFeedbackMock).toHaveBeenCalledWith('❌ Wrong answer');
-        });
+        expect(screen.getByText('❌ Wrong answer')).toBeInTheDocument();
     });
 
     test('fetches new question after delay', async () => {
