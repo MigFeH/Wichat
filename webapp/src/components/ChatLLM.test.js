@@ -27,4 +27,18 @@ describe('ChatLLM Component', () => {
     await waitFor(() => expect(screen.getByText('Tú: Dame una pista')).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('LLM: Esta es una pista sobre Madrid')).toBeInTheDocument());
   });
+
+  it('displays an error message on request failure', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Network Error'));
+    
+    render(<ChatLLM currentCity="Madrid" />);
+
+    const input = screen.getByLabelText('Pregunta al LLM...');
+    const sendButton = screen.getByRole('button', { name: /enviar/i });
+    
+    fireEvent.change(input, { target: { value: 'Dame una pista' } });
+    fireEvent.click(sendButton);
+    
+    await waitFor(() => expect(screen.getByText('LLM: Error al obtener respuesta.')).toBeInTheDocument());
+  });
 });
