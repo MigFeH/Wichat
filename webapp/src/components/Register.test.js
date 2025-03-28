@@ -14,6 +14,14 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockNavigate
 }));
 
+// Test constants
+const TEST_CREDENTIALS = {
+    validUsername: 'testuser123',
+    validPassword: process.env.TEST_PASSWORD || 'test_password_123',
+    shortUsername: 'ab',
+    shortPassword: 'ab'
+};
+
 describe('Register Component', () => {
     beforeEach(() => {
         render(
@@ -39,7 +47,7 @@ describe('Register Component', () => {
         const addButton = screen.getByRole('button', { name: /add user/i });
         const usernameInput = screen.getByLabelText(/username/i);
 
-        fireEvent.change(usernameInput, { target: { value: 'ab' } });
+        fireEvent.change(usernameInput, { target: { value: TEST_CREDENTIALS.shortUsername } });
         fireEvent.click(addButton);
 
         await waitFor(() => {
@@ -52,8 +60,8 @@ describe('Register Component', () => {
         const usernameInput = screen.getByLabelText(/username/i);
         const passwordInput = screen.getByLabelText(/password/i);
 
-        fireEvent.change(usernameInput, { target: { value: 'validuser' } });
-        fireEvent.change(passwordInput, { target: { value: 'ab' } });
+        fireEvent.change(usernameInput, { target: { value: TEST_CREDENTIALS.validUsername } });
+        fireEvent.change(passwordInput, { target: { value: TEST_CREDENTIALS.shortPassword } });
         fireEvent.click(addButton);
 
         await waitFor(() => {
@@ -68,14 +76,17 @@ describe('Register Component', () => {
         const usernameInput = screen.getByLabelText(/username/i);
         const passwordInput = screen.getByLabelText(/password/i);
 
-        fireEvent.change(usernameInput, { target: { value: 'validuser' } });
-        fireEvent.change(passwordInput, { target: { value: 'validpass' } });
+        fireEvent.change(usernameInput, { target: { value: TEST_CREDENTIALS.validUsername } });
+        fireEvent.change(passwordInput, { target: { value: TEST_CREDENTIALS.validPassword } });
         fireEvent.click(addButton);
 
         await waitFor(() => {
             expect(axios.post).toHaveBeenCalledWith(
                 expect.stringContaining('/adduser'),
-                { username: 'validuser', password: 'validpass' }
+                { 
+                    username: TEST_CREDENTIALS.validUsername, 
+                    password: TEST_CREDENTIALS.validPassword 
+                }
             );
             expect(mockNavigate).toHaveBeenCalledWith('/login');
         });
@@ -91,8 +102,8 @@ describe('Register Component', () => {
         const usernameInput = screen.getByLabelText(/username/i);
         const passwordInput = screen.getByLabelText(/password/i);
 
-        fireEvent.change(usernameInput, { target: { value: 'validuser' } });
-        fireEvent.change(passwordInput, { target: { value: 'validpass' } });
+        fireEvent.change(usernameInput, { target: { value: TEST_CREDENTIALS.validUsername } });
+        fireEvent.change(passwordInput, { target: { value: TEST_CREDENTIALS.validPassword } });
         fireEvent.click(addButton);
 
         await waitFor(() => {
@@ -113,8 +124,8 @@ describe('Register Component', () => {
         const usernameInput = screen.getByLabelText(/username/i);
         const passwordInput = screen.getByLabelText(/password/i);
 
-        fireEvent.change(usernameInput, { target: { value: 'validuser' } });
-        fireEvent.change(passwordInput, { target: { value: 'validpass' } });
+        fireEvent.change(usernameInput, { target: { value: TEST_CREDENTIALS.validUsername } });
+        fireEvent.change(passwordInput, { target: { value: TEST_CREDENTIALS.validPassword } });
         fireEvent.click(addButton);
 
         await waitFor(() => {
