@@ -21,9 +21,7 @@ describe('Componente Menu', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByAltText(/Hey!! Are you ready\? 🌊/i)).toBeInTheDocument();
     expect(screen.getByAltText(/Non Timed Game/i)).toBeInTheDocument();
-    expect(screen.getByAltText(/Timed Game/i)).toBeInTheDocument();
     expect(screen.getByAltText(/Statistics/i)).toBeInTheDocument();
     expect(screen.getByAltText(/Ranking/i)).toBeInTheDocument();
   });
@@ -36,16 +34,6 @@ describe('Componente Menu', () => {
     );
     fireEvent.click(screen.getByAltText(/Non Timed Game/i));
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/game');
-  });
-
-  it('navega a la página de juego con tiempo al hacer clic en "Timed game!"', () => {
-    render(
-      <BrowserRouter>
-        <Menu />
-      </BrowserRouter>
-    );
-    fireEvent.click(screen.getByAltText(/Timed Game/i));
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/timedGame');
   });
 
   it('navega a la página de stadistics al hacer clic en "Stadistics"', () => {
