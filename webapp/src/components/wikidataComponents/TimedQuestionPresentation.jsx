@@ -70,7 +70,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
                 variant="body1" 
                 className={`timer ${timer <= 3 ? 'timer-low' : 'timer-normal'}`}
             >
-                ⏳ Tiempo restante: {timer}s
+                ⏳ Time remaining: {timer}s
             </Typography>
             <BaseQuestionPresentation
                 score={score}
