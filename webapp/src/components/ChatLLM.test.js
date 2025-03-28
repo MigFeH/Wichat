@@ -12,4 +12,19 @@ describe('ChatLLM Component', () => {
     expect(screen.getByLabelText('Pregunta al LLM...')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /enviar/i })).toBeInTheDocument();
   });
+
+  it('sends a message and receives a response', async () => {
+    axios.post.mockResolvedValueOnce({ data: { answer: 'Esta es una pista sobre Madrid' } });
+    
+    render(<ChatLLM currentCity="Madrid" />);
+
+    const input = screen.getByLabelText('Pregunta al LLM...');
+    const sendButton = screen.getByRole('button', { name: /enviar/i });
+    
+    fireEvent.change(input, { target: { value: 'Dame una pista' } });
+    fireEvent.click(sendButton);
+    
+    await waitFor(() => expect(screen.getByText('Tú: Dame una pista')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('LLM: Esta es una pista sobre Madrid')).toBeInTheDocument());
+  });
 });
