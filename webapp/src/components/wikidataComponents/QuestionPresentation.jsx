@@ -1,8 +1,7 @@
 import React from "react";
-import { Button } from '@mui/material';
-import "../style/estilo.css";
 import PropTypes from 'prop-types';
 import useStats from '../utils/QuestionUtils';
+import BaseQuestionPresentation from './BaseQuestionPresentation';
 
 const QuestionPresentation = ({ game, navigate, question }) => {
     const { score, setScore, feedback, setFeedback, buttonsDisabled, setButtonsDisabled } = useStats(10);
@@ -35,57 +34,17 @@ const QuestionPresentation = ({ game, navigate, question }) => {
         return `answer-button ${city === question.correct ? "correct" : "incorrect"}`;
     };
 
-    if (score.rounds >= maxRounds) {
-        const total = score.correct + score.incorrect;
-        const ratio = total > 0 ? Math.round((score.correct / total) * 100) : 0;
-
-        return (
-            <div>
-                <h1>Final results</h1>
-                <p>Correct answers: {score.correct}</p>
-                <p>Incorrect answers: {score.incorrect}</p>
-                <p>Ratio: {ratio}%</p>
-                <Button variant="contained" color="primary" onClick={() => navigate("/menu")}>
-                    Back to menu
-                </Button>
-            </div>
-        );
-    }
-
     return (
-        <div>
-            <h1>Guess the City 🌍</h1>
-            {question ? (
-                <>
-                    <div className="image-container">
-                        <img
-                            className="city-image"
-                            src={question.answers[question.correct]}
-                            alt="Ciudad"
-                            onError={(e) => {
-                                e.target.src = 'fallback-image-url';
-                                e.target.alt = 'Imagen no disponible';
-                            }}
-                        />
-                    </div>
-                    <div className="button-grid">
-                        {Object.keys(question.answers).map((city) => (
-                            <button
-                                key={city}
-                                onClick={() => checkAnswer(city)}
-                                disabled={buttonsDisabled}
-                                className={getButtonClassName(city)}
-                            >
-                                {city}
-                            </button>
-                        ))}
-                    </div>
-                    {feedback && <p>{feedback}</p>}
-                </>
-            ) : (
-                <p className="loading-question">Loading Question...</p>
-            )}
-        </div>
+        <BaseQuestionPresentation
+            score={score}
+            maxRounds={maxRounds}
+            question={question}
+            feedback={feedback}
+            buttonsDisabled={buttonsDisabled}
+            navigate={navigate}
+            onAnswerClick={checkAnswer}
+            getButtonClassName={getButtonClassName}
+        />
     );
 };
 
@@ -98,10 +57,6 @@ QuestionPresentation.propTypes = {
         answers: PropTypes.objectOf(PropTypes.string),
         correct: PropTypes.string
     })
-};
-
-QuestionPresentation.defaultProps = {
-    question: null
 };
 
 export default QuestionPresentation;
