@@ -81,51 +81,34 @@ paths:
                     type: string
                     description: Health status.
                     example: OK
-  /game/questions:
+  /api/stats:
     get:
-      summary: Obtiene una nueva pregunta del juego
+      summary: Obtiene estadísticas de usuario
+      operationId: getUserStats
       responses:
-        '200':
-          description: Pregunta generada con respuestas
+        "200":
+          description: Estadísticas del usuario obtenidas con éxito
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  question:
-                    type: string
-                    example: "https://example.com/image.jpg"
-                  answers1:
-                    type: string
-                    example: "Milán"
-                  answers2:
-                    type: string
-                    example2: "Paris"
-                  answers3:
-                    type: string
-                    example3: "Atenas"
-                  answer4:
-                    type: string
-                    example4: "Los Angeles"
-                  correct:
-                    type: string
-                    example: "Paris"
-        '500':
-          description: Error al generar preguntas
-  /users/statistics:
+        "500":
+          description: Error en la obtención de estadísticas
+  /questions:
     get:
-      summary: Obtiene las estadísticas de un jugador
+      summary: Obtiene preguntas del juego
+      operationId: getGameQuestions
       responses:
-        '200':
-          description: Estadísticas del jugador
+        "200":
+          description: Preguntas obtenidas con éxito
           content:
             application/json:
               schema:
-                type: object
-
-
-        '500':
-          description: Error al generar preguntas
+                type: array
+                items:
+                  type: object
+        "500":
+          description: Error al obtener preguntas
   /login:
     post:
       summary: Log in to the system.
@@ -187,3 +170,57 @@ paths:
                     type: string
                     description: Error information.
                     example: Internal Server Error
+  /ask:
+    post:
+      summary: Realiza una consulta al modelo de lenguaje (LLM)
+      operationId: askLLM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: "¿Cuál es la capital de Francia?"
+      responses:
+        "200":
+          description: Respuesta obtenida del LLM
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    example: "París"
+        "500":
+          description: Error en la solicitud al LLM
+  /hint:
+    post:
+      summary: Solicita una pista al modelo de lenguaje (LLM)
+      operationId: hintLLM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: "¿Cuál es la capital de Alemania?"
+      responses:
+        "200":
+          description: Pista obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hint:
+                    type: string
+                    example: "Empieza con 'B'"
+        "500":
+          description: Error en la solicitud al LLM
