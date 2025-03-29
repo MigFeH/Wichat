@@ -83,6 +83,13 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini',systemInstru
   }
 }
 
+// Function to check if the response contains the city name
+function validateResponseDoesNotContainCity(response, cityName) {
+  if (response.toLowerCase().includes(cityName.toLowerCase())) {
+    throw new Error('The response contains restricted information.');
+  }
+}
+
 app.post('/ask', async (req, res) => {
   try {
     // Check if required fields are present in the request body
@@ -107,20 +114,25 @@ app.post('/hint', async (req, res) => {
     console.log('Validation passed.');
 
     const { question, model, apiKey } = req.body;
+    const cityName = question.split(':')[0]; // Extract the city name from the question
     console.log(`Question: ${question}`);
     console.log(`Model: ${model}`);
     console.log(`API Key: ${apiKey}`);
+    console.log(`City Name: ${cityName}`);
 
     console.log('Sending question to LLM...');
     const answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
     console.log('Received answer from LLM:', answer);
+
+    // Validate that the response does not contain the city name
+    validateResponseDoesNotContainCity(answer, cityName);
 
     res.json({ answer });
     console.log('Response sent.');
 
   } catch (error) {
     console.log('Error occurred:', error.message);
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: 'An error occurred while processing your request.' });
   }
 });
 
