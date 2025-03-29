@@ -90,20 +90,6 @@ function validateResponseDoesNotContainCity(response, cityName) {
   }
 }
 
-app.post('/ask', async (req, res) => {
-  try {
-    // Check if required fields are present in the request body
-    validateRequiredFields(req, ['question', 'model', 'apiKey']);
-
-    const { question, model, apiKey } = req.body;
-    const answer = await sendQuestionToLLM(question, apiKey);
-    res.json({ answer });
-
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
 app.post('/hint', async (req, res) => {
   try {
     console.log('Received request:', req.body);
