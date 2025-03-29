@@ -43,17 +43,6 @@ paths:
                     type: string
                     description: Hashed password
                     example: $2b$10$ZKdNYLWFQxzt5Rei/YTc/OsZNi12YiWz30JeUFHNdAt7MyfmkTuvC
-                  _id:
-                    type: string
-                    description: Identification
-                    example: 65f756db3fa22d227a4b7c7d
-                  createdAt:
-                    type: string
-                    description: Creation date.
-                    example: '2024-03-17T20:47:23.935Z'
-                  ___v:
-                    type: integer
-                    example: '0'                                        
         '400':
           description: Failed to add user.
           content:
@@ -92,6 +81,26 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  username:
+                    type: string
+                    example: "User1234"
+                    description: User ID
+                  score:
+                    type: number
+                    example: 120.0
+                  correctAnswers:
+                    type: integer
+                    example: 12
+                  incorrectAnswers:
+                    type: integer
+                    example: 8
+                  totalRounds:
+                    type: integer
+                    example: 20
+                  accuracy:
+                    type: number
+                    example: 55
         "500":
           description: Error en la obtención de estadísticas
   /questions:
@@ -194,7 +203,7 @@ paths:
                 properties:
                   answer:
                     type: string
-                    example: "París"
+                    example: "Es una ciudad con un monumento famoso"
         "500":
           description: Error en la solicitud al LLM
   /hint:
