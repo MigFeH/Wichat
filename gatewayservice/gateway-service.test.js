@@ -17,7 +17,7 @@ describe('Gateway Service', () => {
       return Promise.resolve({ data: { userId: 'mockedUserId' } });
     } else if (url.endsWith('/ask')) {
       return Promise.resolve({data: {answer: 'llmanswer'}});
-    }else if (url.endsWith('/question')){
+    }else if (url.endsWith('/questions')){
       return Promise.resolve({data: {answer: 'questionAnswer'}})
     }
   });
@@ -44,7 +44,7 @@ describe('Gateway Service', () => {
 
   it('should forward getQuestion request to the gameservice', async () => {
     const response = await request(app)
-        .get('/question');
+        .get('/questions');
 
     expect(response.statusCode).toBe(200);
     expect(response.body.token).toBe('questionAnswer');
@@ -54,7 +54,7 @@ describe('Gateway Service', () => {
   it('should forward askllm request to the llm service', async () => {
     const response = await request(app)
       .post('/hint')
-      .send({ question: 'question', apiKey: 'apiKey', model: 'gemini' });
+      .send({ question: 'question', model: 'gemini', apiKey: 'apiKey'});
 
     expect(response.statusCode).toBe(200);
     expect(response.body.answer).toBe('llmanswer');
