@@ -65,11 +65,7 @@ app.post('/adduser', async (req, res) => {
 });
 
 app.post('/hint', async (req, res) => {
-  console.log("🔍 Solicitud recibida en /hintllm:", req.body);
-  
   try {
-    console.log("➡️ Reenviando solicitud a:", `${llmServiceUrl}/hint`);
-    
     const llmResponse = await axios.post(llmServiceUrl+'/hint', req.body, {
       headers: { 'Content-Type': 'application/json' }
     });
