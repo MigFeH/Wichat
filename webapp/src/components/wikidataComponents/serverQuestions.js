@@ -3,6 +3,7 @@ const cors = require('cors');
 const QuestionGeneration = require('./QuestionGeneration');
 
 const app = express();
+app.disable('x-powered-by'); // Add this line to remove the version information
 const port = 8004;
 
 // Configure CORS with specific options
@@ -35,6 +36,13 @@ app.get('/questions', async (req, res) => {
 });
 
 // Iniciar el servicio
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Question Service running on http://localhost:${port}`);
 });
+
+// For testing purposes
+if (process.env.NODE_ENV === 'test') {
+    server.close();
+}
+
+module.exports = app;
