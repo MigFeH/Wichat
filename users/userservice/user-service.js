@@ -36,7 +36,7 @@ app.post('/adduser', async (req, res) => {
     try {
         validateRequiredFields(req, ['username', 'password']);
 
-        const checkUsernameAlreadyExists = await User.findOne({ username: req.body.username });
+        const checkUsernameAlreadyExists = await User.findOne({ username: req.body.username.toString() });
         if (checkUsernameAlreadyExists) {
           throw new Error('Username already exists, please choose another one');
         }
@@ -102,7 +102,7 @@ app.get('/api/stats', async (req, res) => {
       });
     }
 
-    const stats = await GameStats.find({ username })
+    const stats = await GameStats.find({ username: username.toString() })
       .sort({ timestamp: -1 });
 
     res.json(stats);

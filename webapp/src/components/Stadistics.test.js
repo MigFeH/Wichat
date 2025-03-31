@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import Ranking from './Ranking';
+import Stadistics from './Stadistics';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
@@ -11,10 +11,11 @@ jest.mock('react-router-dom', () => ({
 }));
 jest.mock('axios');
 
-describe('Ranking Component', () => {
+describe('Stadistics Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUsedNavigate.mockReset();
+    localStorage.setItem('username', 'testUser');
   });
 
   it('renders error message on fetch failure', async () => {
@@ -26,45 +27,17 @@ describe('Ranking Component', () => {
     });
     render(
       <BrowserRouter>
-        <Ranking />
+        <Stadistics />
       </BrowserRouter>
     );
-    await waitFor(() => expect(screen.getByText('Failed to fetch ranking data')).toBeInTheDocument());
-  });
-
-  it('renders ranking data', async () => {
-    const rankingData = [
-      { index: 1, _id: 'user1', score: 10 },
-      { index: 2, _id: 'user2', score: 8 }
-    ];
-    axios.get.mockResolvedValueOnce({ data: rankingData });
-    render(
-      <BrowserRouter>
-        <Ranking />
-      </BrowserRouter>
-    );
-    await waitFor(() => {
-      expect(screen.getByText('Ranking')).toBeInTheDocument();
-
-      expect(screen.getByText('Position')).toBeInTheDocument();
-      expect(screen.getByText('Username')).toBeInTheDocument();
-      expect(screen.getByText('Score')).toBeInTheDocument();
-
-      expect(screen.getByText('1')).toBeInTheDocument();
-      expect(screen.getByText('user1')).toBeInTheDocument();
-      expect(screen.getByText('10')).toBeInTheDocument();
-
-      expect(screen.getByText('2')).toBeInTheDocument();
-      expect(screen.getByText('user2')).toBeInTheDocument();
-      expect(screen.getByText('8')).toBeInTheDocument();
-    });
+    await waitFor(() => expect(screen.getByText('Failed to fetch statistics')).toBeInTheDocument());
   });
 
   it('renders error message on invalid data format', async () => {
     axios.get.mockResolvedValueOnce({ data: 42 });
     render(
       <BrowserRouter>
-        <Ranking />
+        <Stadistics />
       </BrowserRouter>
     );
     await waitFor(() => expect(screen.getByText('Invalid data format')).toBeInTheDocument());
@@ -74,7 +47,7 @@ describe('Ranking Component', () => {
     axios.get.mockResolvedValueOnce({ data: [] });
     render(
       <BrowserRouter>
-        <Ranking />
+        <Stadistics />
       </BrowserRouter>
     );
     await waitFor(() => expect(axios.get).toHaveBeenCalled());
