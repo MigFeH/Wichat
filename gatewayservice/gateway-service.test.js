@@ -19,7 +19,26 @@ describe('Gateway Service', () => {
       return Promise.resolve({ data: { answer: 'llmanswer' } });
     }else if (url.endsWith('/questions')){
       return Promise.resolve({data: {answer: 'questionAnswer'}})
+    }else if (url.endsWith('/health')){
+      return Promise.resolve({data: {answer: 'health'}})
     }
+    else if (url.endsWith('/api/stats')){
+      return Promise.resolve({data: {answer: 'apiStats'}})
+    }
+  });
+
+  it('should forward a health request', async () => {
+    const response = await request(app)
+        .get('/health');
+    expect(response.statusCode).toBe(200);
+    expect(response.body.token).toBe('health');
+  });
+
+  it('should forward a stats request to user service', async () => {
+    const response = await request(app)
+        .get('/api/stats');
+    expect(response.statusCode).toBe(200);
+    expect(response.body.token).toBe('apiStats');
   });
 
   // Test /login endpoint
