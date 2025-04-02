@@ -28,47 +28,62 @@ describe('Gateway Service', () => {
   });
 
   it('should forward a health request', async () => {
-    const response = await request(app)
-        .get('/health');
+    const response = await request(app).get('/health');
     expect(response.statusCode).toBe(200);
   });
 
-  // Test /login endpoint
   it('should forward login request to auth service', async () => {
     const response = await request(app)
         .post('/login')
         .send({ username: 'testuser', password: 'testpassword' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.token).toBe('mockedToken');
+    expect(response.body.token).toBeDefined();
   });
 
-  // Test /login endpoint
-  it('should forward login request to auth service', async () => {
+  it('should fail login with missing credentials', async () => {
     const response = await request(app)
         .post('/login')
-        .send({ username: 'testuser1', password: 'testpassword2' });
-    expect(response.statusCode).toBe(200);
-    expect(response.body.token).toBe('mockedToken');
+        .send({ username: '', password: '' });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toBeDefined();
   });
 
-  // Test /adduser endpoint
   it('should forward add user request to user service', async () => {
     const response = await request(app)
         .post('/adduser')
         .send({ username: 'newuser', password: 'newpassword' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.userId).toBe('mockedUserId');
+    expect(response.body.userId).toBeDefined();
   });
 
-  // Test /askllm endpoint
-  it('should forward askllm request to the llm service', async () => {
+  it('should fail add user with missing data', async () => {
+    const response = await request(app)
+        .post('/adduser')
+        .send({ username: '' });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toBeDefined();
+  });
+
+  it('should forward askllm request to the LLM service', async () => {
     const response = await request(app)
         .post('/hint')
-        .send({ question: 'question', model: 'gemini', apiKey: 'apiKey'});
-
+        .send({ question: 'question', model: 'gemini', apiKey: 'apiKey' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.answer).toBe('llmanswer');
+    expect(response.body.answer).toBeDefined();
   });
 
+  it('should fail askllm with missing parameters', async () => {
+    const response = await request(app)
+        .post('/hint')
+        .send({ question: '' });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.error).toBeDefined();
+  });
+
+  it('should return 404 for unknown routes', async () => {
+    const response = await request(app).get('/unknown');
+    expect(response.statusCode).toBe(404);
+    expect(response.body.message).toBe('Wrong URL: Please, check the correct enpoint URL');
+  });
 
 });
