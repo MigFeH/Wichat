@@ -1,9 +1,9 @@
 import React from 'react';
-import QuestionGeneration from '../components/wikidataComponents/QuestionGeneration';
+import QuestionGeneration from './QuestionGeneration';
 import {render, screen} from "@testing-library/react";
 //import QuestionPresentation from "../components/wikidataComponents/QuestionPresentation";
 import { BrowserRouter } from 'react-router-dom';
-import Game from '../components/Game';
+import Game from '../Game';
 
 jest.mock('../components/wikidataComponents/QuestionGeneration');
 
