@@ -22,7 +22,7 @@ const Menu = () => {
 
     return (
         <Container component="main" maxWidth="md" sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-            <img src="/MenuUI.png" alt="Hey!! Are you ready? 🌊" style={{ width: "100%", maxWidth: "50%" }} className="logo" />
+            <img src="/MenuUI.png" alt="Hey!! Are you ready? 🌊" style={{ width: "100%", maxWidth: "70%" }} className="logo" />
 
             <Box display="flex" flexDirection="column" alignItems="center" gap={2} marginTop={2}>
                 <ImageButton src="/Button_NonTimedGame.png" alt="Non Timed Game" onClick={handlePageChange("game")} />
