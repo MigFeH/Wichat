@@ -33,17 +33,14 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/api/stats',async(req,res)=>{
- try{
+
     const userResponse = await axios.get(userServiceUrl+'/api/stats', req.body);
     res.json(userResponse.data);
- } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-    res.status(500).json({ error: error });
-  }
+
 });
 
 app.get('/questions', async (_req, res) => {
-  try {
+
     const wikiResponse = await axios.get(gameServiceUrl + '/questions', { timeout: 10000 });
     if (wikiResponse.status !== 200) {
       let statusCode = wikiResponse.status ? wikiResponse.status : 500;
@@ -54,45 +51,32 @@ app.get('/questions', async (_req, res) => {
     } else {
       res.json(wikiResponse.data);
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
-  }
+
 });
 
 app.post('/login', async (req, res) => {
-  try {
-    // Forward the login request to the authentication service
+
     const authResponse = await axios.post(authServiceUrl+'/login', req.body);
     res.json(authResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-    res.status(500).json({ error: error });
-  }
+
 });
 
 app.post('/adduser', async (req, res) => {
-  try {
+
     // Forward the add user request to the user service
     const userResponse = await axios.post(userServiceUrl+'/adduser', req.body);
     res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-    res.status(500).json({ error: error });
-  }
+
 });
 
 app.post('/hint', async (req, res) => {
-  try {
+
     const llmResponse = await axios.post(llmServiceUrl+'/hint', req.body, {
       headers: { 'Content-Type': 'application/json' }
     });
 
     res.json(llmResponse.data);
-  } catch (error) {
-    res.status(500).json({ error: error });
-    res.status(error.response?.status || 500).json({ error: "Error interno en hintllm" });
-  }
+
 });
 
 

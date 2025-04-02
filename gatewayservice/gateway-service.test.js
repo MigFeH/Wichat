@@ -77,10 +77,18 @@ describe('Gateway Service', () => {
     expect(response.body.error).toBe();
   });
 
+  it('should get the user data /api/stats', async () => {
+    const response = await request(app).get('/api/stats').query({ username: "testuser" });
+    expect(response.status).toBe(200);
+    expect(response.body.answer).toBe('apiStats');
+  });
+
   it('should return 404 for unknown routes', async () => {
     const response = await request(app).get('/unknown');
     expect(response.statusCode).toBe(404);
     expect(response.body.message).toBe('Wrong URL: Please, check the correct enpoint URL');
   });
+
+
 
 });
