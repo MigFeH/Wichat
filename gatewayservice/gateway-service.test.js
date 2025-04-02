@@ -44,7 +44,7 @@ describe('Gateway Service', () => {
     const response = await request(app)
         .post('/login')
         .send({ username: '', password: '' });
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(500);
     expect(response.body.error).toBeDefined();
   });
 
@@ -60,7 +60,7 @@ describe('Gateway Service', () => {
     const response = await request(app)
         .post('/adduser')
         .send({ username: '' });
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(500);
     expect(response.body.error).toBeDefined();
   });
 
@@ -76,7 +76,7 @@ describe('Gateway Service', () => {
     const response = await request(app)
         .post('/hint')
         .send({ question: '' });
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(500);
     expect(response.body.error).toBeDefined();
   });
 

@@ -38,6 +38,7 @@ app.get('/api/stats',async(req,res)=>{
     res.json(userResponse.data);
  } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
+    res.status(500).json({ error: error });
   }
 });
 
@@ -66,6 +67,7 @@ app.post('/login', async (req, res) => {
     res.json(authResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
+    res.status(500).json({ error: error });
   }
 });
 
@@ -76,6 +78,7 @@ app.post('/adduser', async (req, res) => {
     res.json(userResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
+    res.status(500).json({ error: error });
   }
 });
 
@@ -85,10 +88,9 @@ app.post('/hint', async (req, res) => {
       headers: { 'Content-Type': 'application/json' }
     });
 
-    console.log("Respuesta del LLM recibida:", llmResponse.data);
     res.json(llmResponse.data);
   } catch (error) {
-    console.error("Error en la solicitud al LLM:", error.message);
+    res.status(500).json({ error: error });
     res.status(error.response?.status || 500).json({ error: "Error interno en hintllm" });
   }
 });
