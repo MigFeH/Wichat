@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+const apiEndpoint = 'http://localhost:8001';
 
 const Ranking = () => {
   const navigate = useNavigate();
