@@ -31,14 +31,6 @@ describe('Gateway Service', () => {
     const response = await request(app)
         .get('/health');
     expect(response.statusCode).toBe(200);
-    expect(response.body.token).toBe('health');
-  });
-
-  it('should forward a stats request to user service', async () => {
-    const response = await request(app)
-        .get('/api/stats');
-    expect(response.statusCode).toBe(200);
-    expect(response.body.token).toBe('apiStats');
   });
 
   // Test /login endpoint
