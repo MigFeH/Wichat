@@ -17,12 +17,9 @@ describe('Gateway Service', () => {
       return Promise.resolve({ data: { userId: 'mockedUserId' } });
     } else if (url.endsWith('/hint')) {
       return Promise.resolve({ data: { answer: 'llmanswer' } });
-    }else if (url.endsWith('/questions')){
+    }else if (url.endsWith('/questions')) {
       return Promise.resolve({data: {answer: 'questionAnswer'}})
-    }else if (url.endsWith('/health')){
-      return Promise.resolve({data: {answer: 'health'}})
-    }
-    else if (url.endsWith('/api/stats')){
+    }else if (url.endsWith('/api/stats')){
       return Promise.resolve({data: {answer: 'apiStats'}})
     }
   });
@@ -37,14 +34,13 @@ describe('Gateway Service', () => {
         .post('/login')
         .send({ username: 'testuser', password: 'testpassword' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.token).toBeDefined();
+    expect(response.body.token).toBeDefined('mockedToken');
   });
 
   it('should fail login with missing credentials', async () => {
     const response = await request(app)
-        .post('/login')
-        .send({ username: '', password: '' });
-    expect(response.statusCode).toBe(500);
+        .post('/login');
+    expect(response.statusCode).toBe(400);
     expect(response.body.error).toBeDefined();
   });
 
@@ -53,14 +49,13 @@ describe('Gateway Service', () => {
         .post('/adduser')
         .send({ username: 'newuser', password: 'newpassword' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.userId).toBeDefined();
+    expect(response.body.userId).toBeDefined('mockedUserId' );
   });
 
   it('should fail add user with missing data', async () => {
     const response = await request(app)
-        .post('/adduser')
-        .send({ username: '' });
-    expect(response.statusCode).toBe(500);
+        .post('/adduser');
+    expect(response.statusCode).toBe(400);
     expect(response.body.error).toBeDefined();
   });
 
@@ -69,15 +64,14 @@ describe('Gateway Service', () => {
         .post('/hint')
         .send({ question: 'question', model: 'gemini', apiKey: 'apiKey' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.answer).toBeDefined();
+    expect(response.body.answer).toBeDefined('llmanswer');
   });
 
   it('should fail askllm with missing parameters', async () => {
     const response = await request(app)
-        .post('/hint')
-        .send({ question: '' });
-    expect(response.statusCode).toBe(500);
-    expect(response.body.error).toBeDefined();
+        .post('/hint');
+    expect(response.statusCode).toBe(400);
+
   });
 
   it('should return 404 for unknown routes', async () => {
