@@ -29,6 +29,7 @@ app.use(metricsMiddleware);
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
+  res.status(200);
 });
 
 app.get('/api/stats',async(req,res)=>{

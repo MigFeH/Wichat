@@ -59,6 +59,14 @@ describe('Gateway Service', () => {
     expect(response.body.userId).toBe('mockedUserId');
   });
 
+  it('should forward add user request to user service', async () => {
+    const response = await request(app)
+        .post('/adduser')
+        .send({ username: 'newuser1', password: 'newpassword2' });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.userId).toBe('mockedUserId');
+  });
+
   // Test /askllm endpoint
   it('should forward askllm request to the llm service', async () => {
     const response = await request(app)
