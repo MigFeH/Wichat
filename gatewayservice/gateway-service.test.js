@@ -15,17 +15,18 @@ describe('Gateway Service', () => {
       return Promise.resolve({ data: { token: 'mockedToken' } });
     } else if (url.endsWith('/adduser')) {
       return Promise.resolve({ data: { userId: 'mockedUserId' } });
-    } else if (url.endsWith('/ask')) {
+    } else if (url.endsWith('/hint')) {
       return Promise.resolve({ data: { answer: 'llmanswer' } });
+    }else if (url.endsWith('/questions')){
+      return Promise.resolve({data: {answer: 'questionAnswer'}})
     }
   });
 
   // Test /login endpoint
   it('should forward login request to auth service', async () => {
     const response = await request(app)
-      .post('/login')
-      .send({ username: 'testuser', password: 'testpassword' });
-
+        .post('/login')
+        .send({ username: 'testuser', password: 'testpassword' });
     expect(response.statusCode).toBe(200);
     expect(response.body.token).toBe('mockedToken');
   });
@@ -33,20 +34,29 @@ describe('Gateway Service', () => {
   // Test /adduser endpoint
   it('should forward add user request to user service', async () => {
     const response = await request(app)
-      .post('/adduser')
-      .send({ username: 'newuser', password: 'newpassword' });
-
+        .post('/adduser')
+        .send({ username: 'newuser', password: 'newpassword' });
     expect(response.statusCode).toBe(200);
     expect(response.body.userId).toBe('mockedUserId');
+  });
+
+  it('should forward getQuestion request to the gameservice', async () => {
+    const response = await request(app)
+        .get('/questions');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.token).toBe('questionAnswer');
   });
 
   // Test /askllm endpoint
   it('should forward askllm request to the llm service', async () => {
     const response = await request(app)
-      .post('/askllm')
-      .send({ question: 'question', apiKey: 'apiKey', model: 'gemini' });
+        .post('/hint')
+        .send({ question: 'question', model: 'gemini', apiKey: 'apiKey'});
 
     expect(response.statusCode).toBe(200);
     expect(response.body.answer).toBe('llmanswer');
   });
+
+
 });
