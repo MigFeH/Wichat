@@ -19,7 +19,7 @@
     display: block;
     position: relative;
     animation: waveAnimation 8s infinite linear;
-    opacity: 0.35; /* Opacidad de la ola */
+    opacity: 0.25; /* Opacidad de la ola */
 }
 
 /* Animación del movimiento de la ola */
@@ -38,6 +38,6 @@
         bottom: -50em;
     }
     to {
-        bottom: 0;
+        bottom: -20em;
     }
 }
