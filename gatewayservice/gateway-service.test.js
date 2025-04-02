@@ -34,7 +34,7 @@ describe('Gateway Service', () => {
         .post('/login')
         .send({ username: 'testuser', password: 'testpassword' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.data).toBeDefined('mockedToken');
+    expect(response.body.data).toBe('mockedToken');
   });
 
   it('should fail login with missing credentials', async () => {
@@ -42,7 +42,7 @@ describe('Gateway Service', () => {
         .post('/login');
 
 
-    expect(response.body.error).toBeDefined();
+    expect(response.body.error).toBe();
   });
 
   it('should forward add user request to user service', async () => {
@@ -50,14 +50,14 @@ describe('Gateway Service', () => {
         .post('/adduser')
         .send({ username: 'newuser', password: 'newpassword' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.data).toBeDefined('mockedUserId' );
+    expect(response.body.data).toBe('mockedUserId' );
   });
 
   it('should fail add user with missing data', async () => {
     const response = await request(app)
         .post('/adduser');
 
-    expect(response.body.error).toBeDefined();
+    expect(response.body.error).toBe();
   });
 
   it('should forward askllm request to the LLM service', async () => {
@@ -65,14 +65,14 @@ describe('Gateway Service', () => {
         .post('/hint')
         .send({ question: 'question', model: 'gemini', apiKey: 'apiKey' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.data).toBeDefined('llmanswer');
+    expect(response.body.data).toBe('llmanswer');
   });
 
   it('should fail askllm with missing parameters', async () => {
     const response = await request(app)
         .post('/hint');
 
-    expect(response.body.error).toBeDefined();
+    expect(response.body.error).toBe();
   });
 
   it('should return 404 for unknown routes', async () => {
