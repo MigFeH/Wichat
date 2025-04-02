@@ -29,7 +29,6 @@ app.get('/questions', async (req, res) => {
         }
 
         res.json(question);
-        return res.status(200);
     } catch (error) {
         res.status(500).json({ error: "Error generating questions" });
     }
