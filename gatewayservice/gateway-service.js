@@ -42,7 +42,21 @@ app.get('/api/stats',async(req,res)=>{
 });
 
 app.get('/questions', async (_req, res) => {
-  getQuestions('/questions',res)
+  try {
+    const wikiResponse = await axios.get(gameServiceUrl + '/questions', { timeout: 10000 });
+    if (wikiResponse.status !== 200) {
+      let statusCode = wikiResponse.status ? wikiResponse.status : 500;
+
+      console.error('Error with the wikidata service:', statusCode);
+      res.status(statusCode).json({ error: 'Error with the wikidata service' });
+
+    } else {
+      res.json(wikiResponse.data);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error });
+  }
 });
 
 app.post('/login', async (req, res) => {
@@ -79,23 +93,6 @@ app.post('/hint', async (req, res) => {
   }
 });
 
-async function getQuestions(specificPath, res){
-  try {
-    const wikiResponse = await axios.get(gameServiceUrl + specificPath, { timeout: 10000 });
-    if (wikiResponse.status !== 200) {
-      let statusCode = wikiResponse.status ? wikiResponse.status : 500;
-
-      console.error('Error with the wikidata service:', statusCode);
-      res.status(statusCode).json({ error: 'Error with the wikidata service' });
-
-    } else {
-      res.json(wikiResponse.data);
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error });
-  }
-}
 
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'
