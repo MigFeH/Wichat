@@ -33,8 +33,9 @@ describe('Gateway Service', () => {
     const response = await request(app)
         .post('/login')
         .send({ username: 'testuser', password: 'testpassword' });
+
     expect(response.statusCode).toBe(200);
-    expect(response.body.data).toBe('mockedToken');
+    expect(response.body.token).toBe('mockedToken');
   });
 
   it('should fail login with missing credentials', async () => {
@@ -49,8 +50,9 @@ describe('Gateway Service', () => {
     const response = await request(app)
         .post('/adduser')
         .send({ username: 'newuser', password: 'newpassword' });
+
     expect(response.statusCode).toBe(200);
-    expect(response.body.data).toBe('mockedUserId' );
+    expect(response.body.userId).toBe('mockedUserId');
   });
 
   it('should fail add user with missing data', async () => {
@@ -65,7 +67,7 @@ describe('Gateway Service', () => {
         .post('/hint')
         .send({ question: 'question', model: 'gemini', apiKey: 'apiKey' });
     expect(response.statusCode).toBe(200);
-    expect(response.body.data).toBe('llmanswer');
+    expect(response.body.answer).toBe('llmanswer');
   });
 
   it('should fail askllm with missing parameters', async () => {
