@@ -3,13 +3,13 @@ const cors = require('cors');
 const QuestionGeneration = require('./QuestionGeneration');
 
 const app = express();
-const port = 3000;
+const port = 8004;
 app.disable('x-powered-by'); // Add this line to remove the version information
 
 
 // Configure CORS with specific options
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:8004',
   methods: ['GET'], // Allow only GET requests
   allowedHeaders: ['Content-Type'],
   maxAge: 600 // Cache preflight request results for 10 minutes (600 seconds)

@@ -15,7 +15,7 @@ const port = 8000;
 const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
-const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:3000'
+const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:8004'
 
 app.use(cors());
 app.use(express.json());
@@ -39,11 +39,10 @@ app.get('/api/stats',async(req,res)=>{
 
 });
 
-app.get('/questions', async (_req, res) => {
+app.get('/questions', async (req, res) => {
 
-    const wikiResponse = await axios.get(gameServiceUrl + '/questions', { timeout: 5000 });
+    const wikiResponse = await axios.get(gameServiceUrl + '/questions', req.body);
     res.json(wikiResponse.data);
-
 
 });
 
