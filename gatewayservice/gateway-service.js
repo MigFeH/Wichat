@@ -42,15 +42,8 @@ app.get('/api/stats',async(req,res)=>{
 app.get('/questions', async (_req, res) => {
 
     const wikiResponse = await axios.get(gameServiceUrl + '/questions', { timeout: 5000 });
-    if (wikiResponse.status !== 200) {
-      let statusCode = wikiResponse.status ? wikiResponse.status : 500;
+    res.json(wikiResponse.data);
 
-      console.error('Error with the wikidata service:', statusCode);
-      res.status(statusCode).json({ error: 'Error with the wikidata service' });
-
-    } else {
-      res.json(wikiResponse.data);
-    }
 
 });
 
