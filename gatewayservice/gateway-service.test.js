@@ -77,6 +77,13 @@ describe('Gateway Service', () => {
     expect(response.body.error).toBe();
   });
 
+  it('should ask for the questions in /questions', async () => {
+    const response = await request(app).get('/questions');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.answer).toBe('questionAnswer');
+  });
+
 
 
   it('should return 404 for unknown routes', async () => {

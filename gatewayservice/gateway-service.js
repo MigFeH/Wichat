@@ -15,7 +15,7 @@ const port = 8000;
 const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
-const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:8004'
+const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:3000'
 
 app.use(cors());
 app.use(express.json());
