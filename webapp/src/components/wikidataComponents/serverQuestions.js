@@ -3,7 +3,7 @@ const cors = require('cors');
 const QuestionGeneration = require('./QuestionGeneration');
 
 const app = express();
-const port = 8004;
+const port = 3000;
 
 // Configure CORS with specific options
 const corsOptions = {
@@ -28,8 +28,7 @@ app.get('/questions', async (req, res) => {
             return res.status(404).json({ error: "No questions available" });
         }
 
-        res.json(question);
-        res.status(200);
+        res.status(200).json(question);
     } catch (error) {
         res.status(500).json({ error: "Error generating questions" });
     }
