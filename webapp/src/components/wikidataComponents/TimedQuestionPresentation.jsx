@@ -69,8 +69,12 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
             <Typography 
                 variant="body1" 
                 className={`timer ${timer <= 3 ? 'timer-low' : 'timer-normal'}`}
+                sx={{
+                    whiteSpace: 'nowrap',
+                    display: 'inline-block'
+                }}
             >
-                ⏳ Time remaining: {timer}s
+                {`⏳ Time remaining: ${timer}s`}
             </Typography>
             <BaseQuestionPresentation
                 score={score}
