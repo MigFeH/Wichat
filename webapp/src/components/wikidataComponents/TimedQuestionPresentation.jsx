@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from 'prop-types';
 import useStats from '../utils/QuestionUtils';
 import BaseQuestionPresentation from './BaseQuestionPresentation';
@@ -8,6 +8,14 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
     const { score, setScore, feedback, setFeedback, buttonsDisabled, setButtonsDisabled } = useStats(10);
     const [timer, setTimer] = useState(10);
     const maxRounds = 10;
+
+    const handleTimeout = useCallback(() => {
+        if (!buttonsDisabled) {
+            setFeedback("⏳ Time's over ❌ wrong answer");
+            setButtonsDisabled(true);
+            handleAnswer(false);
+        }
+    }, [buttonsDisabled, setFeedback, setButtonsDisabled]);
 
     useEffect(() => {
         if (!question) return;
@@ -25,14 +33,6 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
 
         return () => clearInterval(countdown);
     }, [question, handleTimeout]);
-
-    const handleTimeout = () => {
-        if (!buttonsDisabled) {
-            setFeedback("⏳ Time's over ❌ wrong answer");
-            setButtonsDisabled(true);
-            handleAnswer(false);
-        }
-    };
 
     const handleAnswer = (isCorrect) => {
         setScore(prev => ({
