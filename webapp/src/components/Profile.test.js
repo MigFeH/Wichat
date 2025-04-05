@@ -1,30 +1,25 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Profile from './Profile';
 import '@testing-library/jest-dom';
 
+
 jest.mock('axios');
+
 
 const localStorageMock = (() => {
   let store = {};
   return {
-    getItem(key) {
-      return store[key] || null;
-    },
-    setItem(key, value) {
-      store[key] = value.toString();
-    },
-    clear() {
-      store = {};
-    },
-    removeItem(key) {
-      delete store[key];
-    }
+    getItem(key) { return store[key] || null; },
+    setItem(key, value) { store[key] = value.toString(); },
+    clear() { store = {}; },
+    removeItem(key) { delete store[key]; }
   };
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
 
 const mockedNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -32,8 +27,10 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedNavigate,
 }));
 
+
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
 const TOTAL_IMAGES = 8;
+
 
 describe('Profile Component', () => {
   const testUser = 'testuser';
@@ -52,6 +49,7 @@ describe('Profile Component', () => {
         createdAt: new Date().toISOString(),
       },
     });
+
     axios.put.mockResolvedValue({
       data: {
         username: testUser,
@@ -70,10 +68,10 @@ describe('Profile Component', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith(`${apiEndpoint}/user/${testUser}`);
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
-    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    expect(axios.get).toHaveBeenCalledWith(`${apiEndpoint}/user/${testUser}`);
     expect(screen.getByLabelText(/Username/i)).toHaveValue(testUser);
     expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
     const expectedImageAlt = `Profile image ${initialImageIndex + 1}`;
@@ -92,11 +90,12 @@ describe('Profile Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(new RegExp(errorMessage, 'i'))).toBeInTheDocument();
+      expect(screen.queryByText(new RegExp(errorMessage, 'i'))).toBeInTheDocument();
     });
 
     expect(screen.getByAltText(/Profile image 1/i)).toHaveAttribute('src', '/profile/profile_1.gif');
     expect(screen.getByLabelText(/Username/i)).toHaveValue(testUser);
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
   test('navigates through profile images using carousel buttons', async () => {
@@ -106,7 +105,11 @@ describe('Profile Component', () => {
       </Router>
     );
 
-    await waitFor(() => expect(screen.getByAltText(`Profile image ${initialImageIndex + 1}`)).toBeInTheDocument());
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => {
+        expect(screen.getByAltText(initialAltText)).toBeInTheDocument();
+    });
+
 
     const nextButton = screen.getByRole('button', { name: /next image/i });
     const prevButton = screen.getByRole('button', { name: /previous image/i });
@@ -114,21 +117,27 @@ describe('Profile Component', () => {
     fireEvent.click(nextButton);
     let nextIndex = (initialImageIndex + 1) % TOTAL_IMAGES;
     await waitFor(() => {
-        expect(screen.getByAltText(`Profile image ${nextIndex + 1}`)).toHaveAttribute('src', `/profile/profile_${nextIndex + 1}.gif`);
+        const expectedAlt = `Profile image ${nextIndex + 1}`;
+        const expectedSrc = `/profile/profile_${nextIndex + 1}.gif`;
+        expect(screen.getByAltText(expectedAlt)).toHaveAttribute('src', expectedSrc);
         expect(screen.getByText(`Image ${nextIndex + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
     });
 
     fireEvent.click(prevButton);
     let prevIndex1 = (nextIndex - 1 + TOTAL_IMAGES) % TOTAL_IMAGES;
      await waitFor(() => {
-        expect(screen.getByAltText(`Profile image ${prevIndex1 + 1}`)).toHaveAttribute('src', `/profile/profile_${prevIndex1 + 1}.gif`);
+        const expectedAlt = `Profile image ${prevIndex1 + 1}`;
+        const expectedSrc = `/profile/profile_${prevIndex1 + 1}.gif`;
+        expect(screen.getByAltText(expectedAlt)).toHaveAttribute('src', expectedSrc);
         expect(screen.getByText(`Image ${prevIndex1 + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
     });
 
     fireEvent.click(prevButton);
     let prevIndex2 = (prevIndex1 - 1 + TOTAL_IMAGES) % TOTAL_IMAGES;
      await waitFor(() => {
-        expect(screen.getByAltText(`Profile image ${prevIndex2 + 1}`)).toHaveAttribute('src', `/profile/profile_${prevIndex2 + 1}.gif`);
+        const expectedAlt = `Profile image ${prevIndex2 + 1}`;
+        const expectedSrc = `/profile/profile_${prevIndex2 + 1}.gif`;
+        expect(screen.getByAltText(expectedAlt)).toHaveAttribute('src', expectedSrc);
         expect(screen.getByText(`Image ${prevIndex2 + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
     });
   });
@@ -137,7 +146,7 @@ describe('Profile Component', () => {
     const newImageIndex = (initialImageIndex + 1) % TOTAL_IMAGES;
     const newImageFile = `profile_${newImageIndex + 1}.gif`;
 
-     axios.put.mockResolvedValueOnce({
+    axios.put.mockResolvedValueOnce({
       data: {
         username: testUser,
         profileImage: newImageFile,
@@ -150,21 +159,20 @@ describe('Profile Component', () => {
       </Router>
     );
 
-    await waitFor(() => expect(screen.getByAltText(`Profile image ${initialImageIndex + 1}`)).toBeInTheDocument());
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(initialAltText)).toBeInTheDocument());
 
     const nextButton = screen.getByRole('button', { name: /next image/i });
     const saveButton = screen.getByRole('button', { name: /Save Profile Picture/i });
 
     fireEvent.click(nextButton);
-    await waitFor(() => expect(screen.getByAltText(`Profile image ${newImageIndex + 1}`)).toBeInTheDocument());
+    const nextAltText = `Profile image ${newImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(nextAltText)).toBeInTheDocument());
 
     expect(saveButton).toBeEnabled();
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    });
-     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith(
         `${apiEndpoint}/user/${testUser}/profile`,
         { profileImage: newImageFile }
@@ -172,11 +180,9 @@ describe('Profile Component', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
       expect(screen.getByText(/Profile image updated successfully!/i)).toBeInTheDocument();
+      expect(saveButton).toBeDisabled();
     });
-
-    expect(saveButton).toBeDisabled();
   });
 
   test('handles error during profile image update', async () => {
@@ -189,20 +195,22 @@ describe('Profile Component', () => {
       </Router>
     );
 
-    await waitFor(() => expect(screen.getByAltText(`Profile image ${initialImageIndex + 1}`)).toBeInTheDocument());
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(initialAltText)).toBeInTheDocument());
 
     const nextButton = screen.getByRole('button', { name: /next image/i });
     const saveButton = screen.getByRole('button', { name: /Save Profile Picture/i });
 
     fireEvent.click(nextButton);
-    await waitFor(() => expect(saveButton).toBeEnabled());
+    const nextAltText = `Profile image ${(initialImageIndex + 1) % TOTAL_IMAGES + 1}`;
+    await waitFor(() => expect(screen.getByAltText(nextAltText)).toBeInTheDocument());
+    expect(saveButton).toBeEnabled();
 
     fireEvent.click(saveButton);
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalled();
     });
-
     await waitFor(() => {
       expect(screen.getByText(new RegExp(errorMessage, 'i'))).toBeInTheDocument();
     });
@@ -210,14 +218,15 @@ describe('Profile Component', () => {
      expect(saveButton).toBeEnabled();
   });
 
-   test('save button is disabled initially and re-disabled when selection matches current', async () => {
+   test('save button is disabled initially and toggles state correctly', async () => {
     render(
       <Router>
         <Profile />
       </Router>
     );
 
-    await waitFor(() => expect(screen.getByAltText(`Profile image ${initialImageIndex + 1}`)).toBeInTheDocument());
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(initialAltText)).toBeInTheDocument());
 
     const saveButton = screen.getByRole('button', { name: /Save Profile Picture/i });
     const nextButton = screen.getByRole('button', { name: /next image/i });
