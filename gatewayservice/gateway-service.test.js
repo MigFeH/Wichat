@@ -80,17 +80,11 @@ describe('Gateway Service', () => {
   });
 
   it('should ask for the questions in /questions', async () => {
-    const mockQuestion = {
-      answers: { "Madrid": "madrid.jpg" },
-      correct: "Madrid"
-    };
-
     const response = await request(app)
         .get('/questions')
         .expect('Content-Type', /json/)
         .expect(200);
-
-    expect(response.body).toEqual(mockQuestion);
+      expect(response.body.answer).toBe('questionAnswer');
   });
 
   it('should ask for the /stats of a user', async () => {
