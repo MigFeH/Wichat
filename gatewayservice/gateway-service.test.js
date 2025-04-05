@@ -98,7 +98,7 @@ describe('Gateway Service', () => {
     expect(mockGetNextQuestion).toHaveBeenCalled();
   });
 
-  it('should ask for the questions in /questions', async () => {
+  it('should ask for the /stats of a user', async () => {
     const newUser = {
       username: 'testuser',
       password: 'testpassword',

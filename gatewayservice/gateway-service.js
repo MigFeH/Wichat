@@ -35,14 +35,14 @@ app.get('/health', (req, res) => {
 app.get('/api/stats',async(req,res)=>{
 
     const userResponse = await axios.get(userServiceUrl+'/api/stats', req.body);
-    res.json(userResponse.data);
+    res.json(userResponse).status(200);
 
 });
 
 app.get('/questions', async (req, res) => {
 
     const wikiResponse = await axios.get(gameServiceUrl + '/questions', req.body);
-    res.json(wikiResponse.data);
+    res.json(wikiResponse).status(200);
 
 });
 
