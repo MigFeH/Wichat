@@ -24,7 +24,7 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
         }, 1000);
 
         return () => clearInterval(countdown);
-    }, [question]);
+    }, [question, handleTimeout]);
 
     const handleTimeout = () => {
         if (!buttonsDisabled) {
