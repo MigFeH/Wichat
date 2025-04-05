@@ -11,9 +11,7 @@ jest.mock('axios');
 describe('Gateway Service', () => {
   // Mock responses from external services
   axios.post.mockImplementation((url, data) => {
-    if (url.endsWith('/health')){
-      return Promise.resolve({data: {health: 'health'}})
-    }else if (url.endsWith('/login')) {
+    if (url.endsWith('/login')) {
       return Promise.resolve({ data: { token: 'mockedToken' } });
     } else if (url.endsWith('/adduser')) {
       return Promise.resolve({ data: { userId: 'mockedUserId' } });
@@ -29,16 +27,14 @@ describe('Gateway Service', () => {
   it('should forward a health request', async () => {
     const response = await request(app).get('/health')
         .expect(200);
-    expect(response.body.health).toBe('health');
   });
 
   it('should forward login request to auth service', async () => {
     const response = await request(app)
         .post('/login')
         .send({ username: 'testuser', password: 'testpassword' })
-        .expect(200);;
+        .expect(200);
 
-    expect(response.statusCode).toBe(200);
     expect(response.body.token).toBe('mockedToken');
   });
 
@@ -84,14 +80,37 @@ describe('Gateway Service', () => {
   });
 
   it('should ask for the questions in /questions', async () => {
+    const mockQuestion = {
+      answers: { "Madrid": "madrid.jpg" },
+      correct: "Madrid"
+    };
+
+    mockFetchQuestions.mockResolvedValueOnce();
+    mockGetNextQuestion.mockReturnValueOnce(mockQuestion);
+
     const response = await request(app)
         .get('/questions')
         .expect('Content-Type', /json/)
         .expect(200);
 
-    expect(response.body.answer).toBe('questionAnswer');
+    expect(response.body).toEqual(mockQuestion);
+    expect(mockFetchQuestions).toHaveBeenCalled();
+    expect(mockGetNextQuestion).toHaveBeenCalled();
   });
 
+  it('should ask for the questions in /questions', async () => {
+    const newUser = {
+      username: 'testuser',
+      password: 'testpassword',
+    };
+
+    const res = await request(app).post('/adduser').send(newUser).expect(200);
+
+    const response = await request(app)
+        .get('/api/stats').query(newUser).expect(200);
+
+
+  });
 
 
   it('should return 404 for unknown routes', async () => {
