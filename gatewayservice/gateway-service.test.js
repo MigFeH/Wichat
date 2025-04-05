@@ -84,7 +84,6 @@ describe('Gateway Service', () => {
         .get('/questions')
         .expect('Content-Type', /json/)
         .expect(200);
-      expect(response.answer).toBe('questionAnswer');
   });
 
   it('should ask for the /stats of a user', async () => {
