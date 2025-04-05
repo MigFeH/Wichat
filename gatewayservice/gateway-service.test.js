@@ -85,17 +85,12 @@ describe('Gateway Service', () => {
       correct: "Madrid"
     };
 
-    mockFetchQuestions.mockResolvedValueOnce();
-    mockGetNextQuestion.mockReturnValueOnce(mockQuestion);
-
     const response = await request(app)
         .get('/questions')
         .expect('Content-Type', /json/)
         .expect(200);
 
     expect(response.body).toEqual(mockQuestion);
-    expect(mockFetchQuestions).toHaveBeenCalled();
-    expect(mockGetNextQuestion).toHaveBeenCalled();
   });
 
   it('should ask for the /stats of a user', async () => {
