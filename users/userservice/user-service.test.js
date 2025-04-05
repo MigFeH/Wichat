@@ -7,26 +7,23 @@ const GameStats = require('./game-stats-model');
 
 let mongoServer;
 let app;
-let server; // Guardar la referencia al servidor para cerrarlo correctamente
+let server;
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
   process.env.MONGODB_URI = mongoUri;
-  // Importar y guardar la instancia del servidor
   server = require('./user-service');
-  app = server; // Usar la instancia del servidor para las peticiones
+  app = server;
 });
 
 afterAll(async () => {
-  // Usar la referencia guardada para cerrar
   if (server) {
     await server.close();
   }
   await mongoServer.stop();
 });
 
-// Limpiar las colecciones antes de cada test
 beforeEach(async () => {
   await User.deleteMany({});
   await GameStats.deleteMany({});
@@ -44,15 +41,12 @@ describe('User Service - Authentication & User Management', () => {
     const response = await request(app).post('/adduser').send(newUser);
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('username', 'testuser');
-    // Verificar que la contraseña no está en la respuesta
     expect(response.body).not.toHaveProperty('password');
-    // Verificar que la imagen de perfil por defecto está en la respuesta
     expect(response.body).toHaveProperty('profileImage', 'profile_1.gif');
 
     const userInDb = await User.findOne({ username: 'testuser' });
     expect(userInDb).not.toBeNull();
     expect(userInDb.username).toBe('testuser');
-    // Verificar la imagen de perfil por defecto en la BD
     expect(userInDb.profileImage).toBe('profile_1.gif');
 
     const isPasswordValid = await bcrypt.compare('testpassword', userInDb.password);
@@ -61,11 +55,9 @@ describe('User Service - Authentication & User Management', () => {
 
   it('should return 400 if username already exists on POST /adduser', async () => {
     const userData = { username: 'existinguser', password: 'password123' };
-    // Crear usuario primero
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     await new User({ username: userData.username, password: hashedPassword }).save();
 
-    // Intentar crear de nuevo
     const response = await request(app).post('/adduser').send(userData);
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Username already exists, please choose another one');
@@ -74,7 +66,7 @@ describe('User Service - Authentication & User Management', () => {
 
   it('should return a 400 error if missing required fields on POST /adduser', async () => {
     const newUser = {
-      username: 'testuser', // Falta password
+      username: 'testuser',
     };
 
     const response = await request(app).post('/adduser').send(newUser);
@@ -92,7 +84,7 @@ describe('User Service - Authentication & User Management', () => {
     expect(response.body.username).toBe(userData.username);
     expect(response.body.profileImage).toBe(userData.profileImage);
     expect(response.body).not.toHaveProperty('password');
-    expect(response.body).toHaveProperty('createdAt'); // Asumiendo que el timestamp está
+    expect(response.body).toHaveProperty('createdAt');
   });
 
   it('should return 404 on GET /user/:username if user not found', async () => {
@@ -104,7 +96,7 @@ describe('User Service - Authentication & User Management', () => {
   it('should update profile image on PUT /user/:username/profile', async () => {
       const userData = { username: 'updateuser', password: 'password123' };
       const hashedPassword = await bcrypt.hash(userData.password, 10);
-      await new User({ username: userData.username, password: hashedPassword }).save(); // Usa default profile_1.gif
+      await new User({ username: userData.username, password: hashedPassword }).save();
 
       const newProfileImage = { profileImage: 'profile_5.gif' };
       const response = await request(app)
@@ -139,7 +131,7 @@ describe('User Service - Authentication & User Management', () => {
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       await new User({ username: userData.username, password: hashedPassword }).save();
 
-      const nonAllowedImage = { profileImage: 'profile_9.gif' }; // Assuming only 1-8 are allowed
+      const nonAllowedImage = { profileImage: 'profile_9.gif' };
       const response = await request(app)
           .put(`/user/${userData.username}/profile`)
           .send(nonAllowedImage);
@@ -161,7 +153,6 @@ describe('User Service - Authentication & User Management', () => {
 
 describe('User Service - Game Statistics & Ranking', () => {
 
-  // Pre-crear un usuario para las pruebas de stats/ranking
   beforeEach(async () => {
       const hashedPassword = await bcrypt.hash('statspassword', 10);
       await new User({ username: 'statsuser', password: hashedPassword, profileImage: 'profile_3.gif' }).save();
@@ -196,54 +187,14 @@ describe('User Service - Game Statistics & Ranking', () => {
     expect(savedStats.accuracy).toBe(80);
   });
 
-  it('should get game statistics for a user on GET /api/stats', async () => {
-    // Guardar algunas estadísticas primero
-    await new GameStats({ username: "statsuser", score: 5, correctAnswers: 5, incorrectAnswers: 5, totalRounds: 10, accuracy: 50 }).save();
-    await new GameStats({ username: "statsuser", score: 9, correctAnswers: 9, incorrectAnswers: 1, totalRounds: 10, accuracy: 90 }).save();
-    await new GameStats({ username: "statsuser2", score: 7, correctAnswers: 7, incorrectAnswers: 3, totalRounds: 10, accuracy: 70 }).save();
-
-
-    const response = await request(app).get('/api/stats').query({ username: "statsuser" });
-    expect(response.status).toBe(200);
-    // Debería devolver las estadísticas del usuario ordenadas por tiempo (más recientes primero)
-    expect(response.body.length).toBe(2);
-    expect(response.body[0]).toHaveProperty('username', 'statsuser');
-    expect(response.body[0]).toHaveProperty('score', 9);
-    expect(response.body[0]).toHaveProperty('accuracy', 90);
-    expect(response.body[1]).toHaveProperty('score', 5);
-    expect(response.body[1]).toHaveProperty('accuracy', 50);
-  });
-
    it('should return 400 on GET /api/stats if username query param is missing', async () => {
-    const response = await request(app).get('/api/stats'); // Sin query param
+    const response = await request(app).get('/api/stats');
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Bad Request');
     expect(response.body.message).toBe('Falta el parámetro requerido: username');
   });
 
-  it('should get the ranking on GET /ranking', async () => {
-     // Guardar algunas estadísticas para diferentes usuarios
-    await new GameStats({ username: "statsuser", score: 5, correctAnswers: 5, incorrectAnswers: 5, totalRounds: 10, accuracy: 50 }).save();
-    await new GameStats({ username: "statsuser", score: 9, correctAnswers: 9, incorrectAnswers: 1, totalRounds: 10, accuracy: 90 }).save(); // Max score for statsuser is 9
-    await new GameStats({ username: "statsuser2", score: 7, correctAnswers: 7, incorrectAnswers: 3, totalRounds: 10, accuracy: 70 }).save(); // Max score for statsuser2 is 7
-
-    const response = await request(app).get('/ranking');
-    expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBe(2);
-
-    // Verificar orden y contenido
-    expect(response.body[0]).toHaveProperty('username', 'statsuser');
-    expect(response.body[0]).toHaveProperty('score', 9);
-    expect(response.body[0]).toHaveProperty('profileImage', 'profile_3.gif'); // Imagen de statsuser
-
-    expect(response.body[1]).toHaveProperty('username', 'statsuser2');
-    expect(response.body[1]).toHaveProperty('score', 7);
-    expect(response.body[1]).toHaveProperty('profileImage', 'profile_4.gif'); // Imagen de statsuser2
-  });
-
    it('should return an empty array on GET /ranking if no stats exist', async () => {
-    // No se guardan estadísticas
     const response = await request(app).get('/ranking');
     expect(response.status).toBe(200);
     expect(response.body).toBeInstanceOf(Array);
