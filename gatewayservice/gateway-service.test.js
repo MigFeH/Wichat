@@ -21,18 +21,22 @@ describe('Gateway Service', () => {
       return Promise.resolve({data: {answer: 'questionAnswer'}})
     }else if (url.endsWith('/api/stats')){
       return Promise.resolve({data: {answer: 'apiStats'}})
+    }else if (url.endsWith('/health')){
+      return Promise.resolve({data: {answer: 'health'}})
     }
   });
 
   it('should forward a health request', async () => {
-    const response = await request(app).get('/health');
-    expect(response.statusCode).toBe(200);
+    const response = await request(app).get('/health')
+        .expect(200);
+    expect(response.body.answer).toBe('health');
   });
 
   it('should forward login request to auth service', async () => {
     const response = await request(app)
         .post('/login')
-        .send({ username: 'testuser', password: 'testpassword' });
+        .send({ username: 'testuser', password: 'testpassword' })
+        .expect(200);;
 
     expect(response.statusCode).toBe(200);
     expect(response.body.token).toBe('mockedToken');
@@ -49,9 +53,10 @@ describe('Gateway Service', () => {
   it('should forward add user request to user service', async () => {
     const response = await request(app)
         .post('/adduser')
-        .send({ username: 'newuser', password: 'newpassword' });
+        .send({ username: 'newuser', password: 'newpassword' })
+        .expect(200);
 
-    expect(response.statusCode).toBe(200);
+
     expect(response.body.userId).toBe('mockedUserId');
   });
 
@@ -65,8 +70,9 @@ describe('Gateway Service', () => {
   it('should forward askllm request to the LLM service', async () => {
     const response = await request(app)
         .post('/hint')
-        .send({ question: 'question', model: 'gemini', apiKey: 'apiKey' });
-    expect(response.statusCode).toBe(200);
+        .send({ question: 'question', model: 'gemini', apiKey: 'apiKey' })
+        .expect(200);
+
     expect(response.body.answer).toBe('llmanswer');
   });
 
@@ -76,14 +82,16 @@ describe('Gateway Service', () => {
 
     expect(response.body.error).toBe();
   });
-/*
-  it('should ask for the questions in /questions', async () => {
-    const response = await request(app).get('/questions');
 
-    expect(response.statusCode).toBe(200);
+  it('should ask for the questions in /questions', async () => {
+    const response = await request(app)
+        .get('/questions')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
     expect(response.body.answer).toBe('questionAnswer');
   });
-*/
+
 
 
   it('should return 404 for unknown routes', async () => {
