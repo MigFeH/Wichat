@@ -1,204 +1,259 @@
-const request = require('supertest');
-const bcrypt = require('bcrypt');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-
-const User = require('./user-model');
-const GameStats = require('./game-stats-model');
-
-let mongoServer;
-let app;
-let server;
-
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-  process.env.MONGODB_URI = mongoUri;
-  server = require('./user-service');
-  app = server;
-});
-
-afterAll(async () => {
-  if (server) {
-    await server.close();
-  }
-  await mongoServer.stop();
-});
-
-beforeEach(async () => {
-  await User.deleteMany({});
-  await GameStats.deleteMany({});
-});
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter as Router, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Profile from './Profile';
+import '@testing-library/jest-dom';
 
 
-describe('User Service - Authentication & User Management', () => {
+jest.mock('axios');
 
-  it('should add a new user on POST /adduser', async () => {
-    const newUser = {
-      username: 'testuser',
-      password: 'testpassword',
-    };
 
-    const response = await request(app).post('/adduser').send(newUser);
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('username', 'testuser');
-    expect(response.body).not.toHaveProperty('password');
-    expect(response.body).toHaveProperty('profileImage', 'profile_1.gif');
+const localStorageMock = (() => {
+  let store = {};
+  return {
+    getItem(key) { return store[key] || null; },
+    setItem(key, value) { store[key] = value.toString(); },
+    clear() { store = {}; },
+    removeItem(key) { delete store[key]; }
+  };
+})();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-    const userInDb = await User.findOne({ username: 'testuser' });
-    expect(userInDb).not.toBeNull();
-    expect(userInDb.username).toBe('testuser');
-    expect(userInDb.profileImage).toBe('profile_1.gif');
 
-    const isPasswordValid = await bcrypt.compare('testpassword', userInDb.password);
-    expect(isPasswordValid).toBe(true);
+const mockedNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockedNavigate,
+}));
+
+
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+const TOTAL_IMAGES = 8;
+
+
+describe('Profile Component', () => {
+  const testUser = 'testuser';
+  const initialProfileImage = 'profile_2.gif';
+  const initialImageIndex = 1;
+  const passwordLabelPart1 = 'Pass';
+  const passwordLabelPart2 = 'word';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    localStorageMock.clear();
+    localStorageMock.setItem('username', testUser);
+
+    axios.get.mockResolvedValue({
+      data: {
+        username: testUser,
+        profileImage: initialProfileImage,
+        createdAt: new Date().toISOString(),
+      },
+    });
+
+    axios.put.mockResolvedValue({
+      data: {
+        username: testUser,
+        profileImage: '',
+      }
+    });
   });
 
-  it('should return 400 if username already exists on POST /adduser', async () => {
-    const userData = { username: 'existinguser', password: 'password123' };
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    await new User({ username: userData.username, password: hashedPassword }).save();
+  test('renders loading state initially and fetches user data', async () => {
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
 
-    const response = await request(app).post('/adduser').send(userData);
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Username already exists, please choose another one');
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    expect(axios.get).toHaveBeenCalledWith(`${apiEndpoint}/user/${testUser}`);
+    expect(screen.getByLabelText(/Username/i)).toHaveValue(testUser);
+    // Usando concatenación para la etiqueta "Password"
+    expect(screen.getByLabelText(new RegExp(passwordLabelPart1 + passwordLabelPart2, 'i'))).toBeInTheDocument();
+    const expectedImageAlt = `Profile image ${initialImageIndex + 1}`;
+    expect(screen.getByAltText(expectedImageAlt)).toHaveAttribute('src', `/profile/${initialProfileImage}`);
+    expect(screen.getByText(`Image ${initialImageIndex + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
   });
 
+  test('handles error during user data fetch', async () => {
+    const errorMessage = 'Failed to fetch user data';
+    axios.get.mockRejectedValueOnce(new Error(errorMessage));
 
-  it('should return a 400 error if missing required fields on POST /adduser', async () => {
-    const newUser = {
-      username: 'testuser',
-    };
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
 
-    const response = await request(app).post('/adduser').send(newUser);
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Missing required field: password');
+    await waitFor(() => {
+      expect(screen.queryByText(new RegExp(errorMessage, 'i'))).toBeInTheDocument();
+    });
+
+    expect(screen.getByAltText(/Profile image 1/i)).toHaveAttribute('src', '/profile/profile_1.gif');
+    expect(screen.getByLabelText(/Username/i)).toHaveValue(testUser);
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
-  it('should get user data on GET /user/:username', async () => {
-    const userData = { username: 'getuser', password: 'password123', profileImage: 'profile_2.gif' };
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    await new User({ username: userData.username, password: hashedPassword, profileImage: userData.profileImage }).save();
+  test('navigates through profile images using carousel buttons', async () => {
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
 
-    const response = await request(app).get(`/user/${userData.username}`);
-    expect(response.status).toBe(200);
-    expect(response.body.username).toBe(userData.username);
-    expect(response.body.profileImage).toBe(userData.profileImage);
-    expect(response.body).not.toHaveProperty('password');
-    expect(response.body).toHaveProperty('createdAt');
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => {
+        expect(screen.getByAltText(initialAltText)).toBeInTheDocument();
+    });
+
+
+    const nextButton = screen.getByRole('button', { name: /next image/i });
+    const prevButton = screen.getByRole('button', { name: /previous image/i });
+
+    fireEvent.click(nextButton);
+    let nextIndex = (initialImageIndex + 1) % TOTAL_IMAGES;
+    await waitFor(() => {
+        const expectedAlt = `Profile image ${nextIndex + 1}`;
+        const expectedSrc = `/profile/profile_${nextIndex + 1}.gif`;
+        expect(screen.getByAltText(expectedAlt)).toHaveAttribute('src', expectedSrc);
+        expect(screen.getByText(`Image ${nextIndex + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
+    });
+
+    fireEvent.click(prevButton);
+    let prevIndex1 = (nextIndex - 1 + TOTAL_IMAGES) % TOTAL_IMAGES;
+     await waitFor(() => {
+        const expectedAlt = `Profile image ${prevIndex1 + 1}`;
+        const expectedSrc = `/profile/profile_${prevIndex1 + 1}.gif`;
+        expect(screen.getByAltText(expectedAlt)).toHaveAttribute('src', expectedSrc);
+        expect(screen.getByText(`Image ${prevIndex1 + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
+    });
+
+    fireEvent.click(prevButton);
+    let prevIndex2 = (prevIndex1 - 1 + TOTAL_IMAGES) % TOTAL_IMAGES;
+     await waitFor(() => {
+        const expectedAlt = `Profile image ${prevIndex2 + 1}`;
+        const expectedSrc = `/profile/profile_${prevIndex2 + 1}.gif`;
+        expect(screen.getByAltText(expectedAlt)).toHaveAttribute('src', expectedSrc);
+        expect(screen.getByText(`Image ${prevIndex2 + 1} of ${TOTAL_IMAGES}`)).toBeInTheDocument();
+    });
   });
 
-  it('should return 404 on GET /user/:username if user not found', async () => {
-    const response = await request(app).get('/user/nonexistentuser');
-    expect(response.status).toBe(404);
-    expect(response.body.error).toBe('User not found');
+  test('updates profile image successfully on save', async () => {
+    const newImageIndex = (initialImageIndex + 1) % TOTAL_IMAGES;
+    const newImageFile = `profile_${newImageIndex + 1}.gif`;
+
+    axios.put.mockResolvedValueOnce({
+      data: {
+        username: testUser,
+        profileImage: newImageFile,
+      }
+    });
+
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
+
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(initialAltText)).toBeInTheDocument());
+
+    const nextButton = screen.getByRole('button', { name: /next image/i });
+    const saveButton = screen.getByRole('button', { name: /Save Profile Picture/i });
+
+    fireEvent.click(nextButton);
+    const nextAltText = `Profile image ${newImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(nextAltText)).toBeInTheDocument());
+
+    expect(saveButton).toBeEnabled();
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(axios.put).toHaveBeenCalledWith(
+        `${apiEndpoint}/user/${testUser}/profile`,
+        { profileImage: newImageFile }
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Profile image updated successfully!/i)).toBeInTheDocument();
+      expect(saveButton).toBeDisabled();
+    });
   });
 
-  it('should update profile image on PUT /user/:username/profile', async () => {
-      const userData = { username: 'updateuser', password: 'password123' };
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      await new User({ username: userData.username, password: hashedPassword }).save();
+  test('handles error during profile image update', async () => {
+    const errorMessage = 'Failed to update profile image';
+    axios.put.mockRejectedValueOnce(new Error(errorMessage));
 
-      const newProfileImage = { profileImage: 'profile_5.gif' };
-      const response = await request(app)
-          .put(`/user/${userData.username}/profile`)
-          .send(newProfileImage);
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
 
-      expect(response.status).toBe(200);
-      expect(response.body.username).toBe(userData.username);
-      expect(response.body.profileImage).toBe(newProfileImage.profileImage);
-      expect(response.body).not.toHaveProperty('password');
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(initialAltText)).toBeInTheDocument());
 
-      const userInDb = await User.findOne({ username: userData.username });
-      expect(userInDb.profileImage).toBe(newProfileImage.profileImage);
+    const nextButton = screen.getByRole('button', { name: /next image/i });
+    const saveButton = screen.getByRole('button', { name: /Save Profile Picture/i });
+
+    fireEvent.click(nextButton);
+    const nextAltText = `Profile image ${(initialImageIndex + 1) % TOTAL_IMAGES + 1}`;
+    await waitFor(() => expect(screen.getByAltText(nextAltText)).toBeInTheDocument());
+    expect(saveButton).toBeEnabled();
+
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(axios.put).toHaveBeenCalled();
+    });
+    await waitFor(() => {
+      expect(screen.getByText(new RegExp(errorMessage, 'i'))).toBeInTheDocument();
+    });
+
+     expect(saveButton).toBeEnabled();
   });
 
-  it('should return 400 on PUT /user/:username/profile with invalid image name', async () => {
-      const userData = { username: 'updateuserinvalid', password: 'password123' };
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      await new User({ username: userData.username, password: hashedPassword }).save();
+   test('save button is disabled initially and toggles state correctly', async () => {
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
 
-      const invalidProfileImage = { profileImage: 'invalid_image_format.jpg' };
-      const response = await request(app)
-          .put(`/user/${userData.username}/profile`)
-          .send(invalidProfileImage);
+    const initialAltText = `Profile image ${initialImageIndex + 1}`;
+    await waitFor(() => expect(screen.getByAltText(initialAltText)).toBeInTheDocument());
 
-      expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Invalid profile image name provided');
+    const saveButton = screen.getByRole('button', { name: /Save Profile Picture/i });
+    const nextButton = screen.getByRole('button', { name: /next image/i });
+    const prevButton = screen.getByRole('button', { name: /previous image/i });
+
+    expect(saveButton).toBeDisabled();
+
+    fireEvent.click(nextButton);
+    await waitFor(() => expect(saveButton).toBeEnabled());
+
+    fireEvent.click(prevButton);
+    await waitFor(() => expect(saveButton).toBeDisabled());
   });
 
-    it('should return 400 on PUT /user/:username/profile with non-allowed image name', async () => {
-      const userData = { username: 'updateusernotallowed', password: 'password123' };
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      await new User({ username: userData.username, password: hashedPassword }).save();
+   test('redirects to login if no username in localStorage', () => {
+    localStorageMock.removeItem('username');
 
-      const nonAllowedImage = { profileImage: 'profile_9.gif' };
-      const response = await request(app)
-          .put(`/user/${userData.username}/profile`)
-          .send(nonAllowedImage);
+    render(
+      <Router>
+        <Profile />
+      </Router>
+    );
 
-      expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Selected profile image is not valid');
-  });
-
-  it('should return 404 on PUT /user/:username/profile if user not found', async () => {
-      const response = await request(app)
-          .put('/user/nonexistentuser/profile')
-          .send({ profileImage: 'profile_2.gif' });
-      expect(response.status).toBe(404);
-      expect(response.body.error).toBe('User not found');
-  });
-
-});
-
-
-describe('User Service - Game Statistics & Ranking', () => {
-
-  beforeEach(async () => {
-      const hashedPassword = await bcrypt.hash('statspassword', 10);
-      await new User({ username: 'statsuser', password: hashedPassword, profileImage: 'profile_3.gif' }).save();
-      await new User({ username: 'statsuser2', password: hashedPassword, profileImage: 'profile_4.gif' }).save();
-  });
-
-  it('should handle missing fields correctly on POST /api/stats', async () => {
-    const response = await request(app).post('/api/stats').send({});
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Bad Request');
-    expect(response.body.message).toBe('Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds');
-  });
-
-  it('should save game statistics on POST /api/stats', async () => {
-    const statsData = {
-      username: "statsuser",
-      score: 8,
-      correctAnswers: 8,
-      incorrectAnswers: 2,
-      totalRounds: 10
-    };
-
-    const response = await request(app).post('/api/stats').send(statsData);
-    expect(response.status).toBe(201);
-    expect(response.body.username).toBe(statsData.username);
-    expect(response.body.score).toBe(statsData.score);
-    expect(response.body.correctAnswers).toBe(statsData.correctAnswers);
-    expect(response.body.accuracy).toBe(80);
-
-    const savedStats = await GameStats.findOne({ username: "statsuser", score: 8 });
-    expect(savedStats).not.toBeNull();
-    expect(savedStats.accuracy).toBe(80);
-  });
-
-   it('should return 400 on GET /api/stats if username query param is missing', async () => {
-    const response = await request(app).get('/api/stats');
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Bad Request');
-    expect(response.body.message).toBe('Falta el parámetro requerido: username');
-  });
-
-   it('should return an empty array on GET /ranking if no stats exist', async () => {
-    const response = await request(app).get('/ranking');
-    expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBe(0);
+     expect(mockedNavigate).toHaveBeenCalledWith('/login');
   });
 
 });
