@@ -5,7 +5,13 @@ import { Home, SportsEsports, BarChart, Leaderboard, ExitToApp, AccountCircle } 
 
 const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#009efc', boxShadow: 'none' }}>
+      <AppBar
+        position="static"
+        sx={{
+          backgroundImage: 'linear-gradient(to bottom, #00c2ff, #0066c7)',
+          boxShadow: 'none'
+        }}
+      >
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button color="inherit" component={Link} to="/menu" startIcon={<Home />}>
