@@ -40,8 +40,13 @@ defineFeature(feature, test => {
       await expect(page).toClick('button', { text: 'Add User' })
     });
 
-    then('A confirmation message should be shown in the screen', async () => {
-        await expect(page).toMatchElement("div", { text: "User added successfully" });
+    then('I am redirected to the login page', async () => {
+        // Esperar 2 segundos antes de verificar
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Verificar que estamos en la página de login
+        const currentUrl = await page.url();
+        expect(currentUrl).toContain('/login');
     });
   })
 
