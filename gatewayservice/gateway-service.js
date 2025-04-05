@@ -42,7 +42,7 @@ app.get('/api/stats',async(req,res)=>{
 app.get('/questions', async (req, res) => {
 
     const wikiResponse = await axios.get(gameServiceUrl + '/questions', req.body);
-    res.json(wikiResponse.data);
+    res.json(wikiResponse.question);
 
 });
 

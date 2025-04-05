@@ -11,7 +11,9 @@ jest.mock('axios');
 describe('Gateway Service', () => {
   // Mock responses from external services
   axios.post.mockImplementation((url, data) => {
-    if (url.endsWith('/login')) {
+    if (url.endsWith('/health')){
+      return Promise.resolve({data: {health: 'health'}})
+    }else if (url.endsWith('/login')) {
       return Promise.resolve({ data: { token: 'mockedToken' } });
     } else if (url.endsWith('/adduser')) {
       return Promise.resolve({ data: { userId: 'mockedUserId' } });
@@ -21,15 +23,13 @@ describe('Gateway Service', () => {
       return Promise.resolve({data: {answer: 'questionAnswer'}})
     }else if (url.endsWith('/api/stats')){
       return Promise.resolve({data: {answer: 'apiStats'}})
-    }else if (url.endsWith('/health')){
-      return Promise.resolve({data: {answer: 'health'}})
     }
   });
 
   it('should forward a health request', async () => {
     const response = await request(app).get('/health')
         .expect(200);
-    expect(response.body.answer).toBe('health');
+    expect(response.body.health).toBe('health');
   });
 
   it('should forward login request to auth service', async () => {
