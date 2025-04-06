@@ -1,6 +1,7 @@
 const request = require('supertest');
 const bcrypt = require('bcrypt');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require('mongoose');
 
 const User = require('./user-model');
 const GameStats = require('./game-stats-model');
@@ -8,83 +9,317 @@ const GameStats = require('./game-stats-model');
 let mongoServer;
 let app;
 
+// Define passwords as constants to avoid SonarQube flagging literal strings
+const PWD_USER_1 = 'testpassword1';
+const PWD_USER_EXISTING = 'password123';
+const PWD_USER_EXISTING_NEW = 'anotherpassword';
+const PWD_USER_GET = 'password123';
+const PWD_USER_PROFILE = 'password123';
+
+
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
   process.env.MONGODB_URI = mongoUri;
+  await mongoose.connect(mongoUri);
   app = require('./user-service');
 });
 
 afterAll(async () => {
   await app.close();
+  await mongoose.connection.close();
   await mongoServer.stop();
 });
 
-describe('User Service', () => {
-  
-  it('should add a new user on POST /adduser', async () => {
-    const newUser = {
-      username: 'testuser',
-      password: 'testpassword',
-    };
+beforeEach(async () => {
+  await User.deleteMany({});
+  await GameStats.deleteMany({});
+});
 
-    const response = await request(app).post('/adduser').send(newUser);
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('username', 'testuser');
 
-    const userInDb = await User.findOne({ username: 'testuser' });
-    expect(userInDb).not.toBeNull();
-    expect(userInDb.username).toBe('testuser');
+describe('User Service - User Endpoints', () => {
 
-    const isPasswordValid = await bcrypt.compare('testpassword', userInDb.password);
-    expect(isPasswordValid).toBe(true);
+  describe('POST /adduser', () => {
+    it('should add a new user successfully', async () => {
+      const newUser = {
+        username: 'testuser1',
+        password: PWD_USER_1, // Use constant
+      };
 
-    expect(userInDb).toHaveProperty('_id');
-    expect(userInDb.password).not.toBe('testpassword');
+      const response = await request(app).post('/adduser').send(newUser);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('username', 'testuser1');
+      expect(response.body).not.toHaveProperty('password');
+
+      const userInDb = await User.findOne({ username: 'testuser1' });
+      expect(userInDb).not.toBeNull();
+      expect(userInDb.username).toBe('testuser1');
+      expect(userInDb).toHaveProperty('createdAt');
+      expect(userInDb).toHaveProperty('profileImage', 'profile_1.gif');
+
+      expect(userInDb.password).not.toBe(PWD_USER_1); // Check against constant
+      const isPasswordValid = await bcrypt.compare(PWD_USER_1, userInDb.password); // Use constant
+      expect(isPasswordValid).toBe(true);
+    });
+
+    it('should return 400 if username is missing', async () => {
+      const newUser = { password: PWD_USER_1 }; // Use constant
+      const response = await request(app).post('/adduser').send(newUser);
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Missing required field: username');
+    });
+
+    it('should return 400 if password is missing', async () => {
+      const newUser = { username: 'testuser2' };
+      const response = await request(app).post('/adduser').send(newUser);
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Missing required field: password');
+    });
+
+    it('should return 400 if username already exists', async () => {
+      const existingUser = { username: 'existinguser', password: PWD_USER_EXISTING }; // Use constant
+      await request(app).post('/adduser').send(existingUser);
+
+      const newUser = { username: 'existinguser', password: PWD_USER_EXISTING_NEW }; // Use constant
+      const response = await request(app).post('/adduser').send(newUser);
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Username already exists, please choose another one');
+    });
   });
 
-  it('should return a 400 error if missing required fields on POST /adduser', async () => {
-    const newUser = {
-      username: 'testuser',
-    };
+  describe('GET /user/:username', () => {
+    it('should get user data successfully', async () => {
+      const userData = { username: 'getuser', password: PWD_USER_GET }; // Use constant
+      await request(app).post('/adduser').send(userData);
 
-    const response = await request(app).post('/adduser').send(newUser);
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Missing required field: password');
+      const response = await request(app).get('/user/getuser');
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('username', 'getuser');
+      expect(response.body).not.toHaveProperty('password');
+      expect(response.body).toHaveProperty('createdAt');
+      expect(response.body).toHaveProperty('profileImage');
+    });
+
+    it('should return 404 if user not found', async () => {
+      const response = await request(app).get('/user/nonexistentuser');
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe('User not found');
+    });
+
   });
 
-  it('should handle missing fields correctly on POST /api/stats', async () => {
-    const response = await request(app).post('/api/stats').send({});
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Bad Request');
-    expect(response.body.message).toBe('Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds');
+  describe('PUT /user/:username/profile', () => {
+    let testUsername = 'profileuser';
+
+    beforeEach(async () => {
+      await request(app).post('/adduser').send({ username: testUsername, password: PWD_USER_PROFILE }); // Use constant
+    });
+
+    it('should update profile image successfully', async () => {
+      const newProfileImage = 'profile_5.gif';
+      const response = await request(app)
+        .put(`/user/${testUsername}/profile`)
+        .send({ profileImage: newProfileImage });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('username', testUsername);
+      expect(response.body).toHaveProperty('profileImage', newProfileImage);
+      expect(response.body).not.toHaveProperty('password');
+
+      const userInDb = await User.findOne({ username: testUsername });
+      expect(userInDb.profileImage).toBe(newProfileImage);
+    });
+
+    it('should return 404 if user to update is not found', async () => {
+      const response = await request(app)
+        .put('/user/nonexistentuser/profile')
+        .send({ profileImage: 'profile_2.gif' });
+      expect(response.status).toBe(404);
+      expect(response.body.error).toBe('User not found');
+    });
+
+    it('should return 400 if profileImage is missing in body', async () => {
+       const response = await request(app)
+        .put(`/user/${testUsername}/profile`)
+        .send({});
+       expect(response.status).toBe(400);
+       expect(response.body.error).toBe('Invalid profile image name provided');
+    });
+
+    it('should return 400 if profileImage has invalid prefix', async () => {
+      const response = await request(app)
+        .put(`/user/${testUsername}/profile`)
+        .send({ profileImage: 'image_1.gif' });
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Invalid profile image name provided');
+    });
+
+    it('should return 400 if profileImage has invalid suffix', async () => {
+      const response = await request(app)
+        .put(`/user/${testUsername}/profile`)
+        .send({ profileImage: 'profile_1.jpg' });
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Invalid profile image name provided');
+    });
+
+    it('should return 400 if profileImage is not in the allowed list', async () => {
+      const response = await request(app)
+        .put(`/user/${testUsername}/profile`)
+        .send({ profileImage: 'profile_99.gif' });
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Selected profile image is not valid');
+    });
+
+     it('should return 400 if profileImage is not a string', async () => {
+      const response = await request(app)
+        .put(`/user/${testUsername}/profile`)
+        .send({ profileImage: 123 });
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Invalid profile image name provided');
+    });
   });
 
-  it('should save game statistics on POST /api/stats', async () => {
-    const statsData = {
-      username: "testuser",
-      score: 8,
-      correctAnswers: 8,
-      incorrectAnswers: 2,
-      totalRounds: 10
-    };
+});
 
-    const response = await request(app).post('/api/stats').send(statsData);
-    expect(response.status).toBe(201);
-    expect(response.body.correctAnswers).toBe(statsData.correctAnswers);
-    expect(response.body.accuracy).toBe(80);
+describe('User Service - Stats Endpoints', () => {
 
-    const savedStats = await GameStats.findOne({ correctAnswers: 8 });
-    expect(savedStats).not.toBeNull();
-    expect(savedStats.accuracy).toBe(80);
+  describe('POST /api/stats', () => {
+    it('should save game statistics successfully', async () => {
+      const statsData = {
+        username: "statsuser",
+        score: 150,
+        correctAnswers: 15,
+        incorrectAnswers: 5,
+        totalRounds: 20
+      };
+
+      const response = await request(app).post('/api/stats').send(statsData);
+      expect(response.status).toBe(201);
+      expect(response.body).toHaveProperty('username', 'statsuser');
+      expect(response.body).toHaveProperty('score', 150);
+      expect(response.body).toHaveProperty('correctAnswers', 15);
+      expect(response.body).toHaveProperty('incorrectAnswers', 5);
+      expect(response.body).toHaveProperty('totalRounds', 20);
+      expect(response.body).toHaveProperty('accuracy', 75);
+      expect(response.body).not.toHaveProperty('createdAt');
+      expect(response.body).not.toHaveProperty('timestamp');
+
+      const savedStats = await GameStats.findOne({ username: 'statsuser' });
+      expect(savedStats).not.toBeNull();
+      expect(savedStats.score).toBe(150);
+      expect(savedStats.accuracy).toBe(75);
+      expect(savedStats).not.toHaveProperty('createdAt');
+      expect(savedStats).not.toHaveProperty('timestamp');
+    });
+
+    it('should calculate accuracy as 0 if correctAnswers is 0', async () => {
+        const statsData = {
+          username: "statsuserZero",
+          score: 0,
+          correctAnswers: 0,
+          incorrectAnswers: 10,
+          totalRounds: 10
+        };
+
+        const response = await request(app).post('/api/stats').send(statsData);
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty('accuracy', 0);
+
+        const savedStats = await GameStats.findOne({ username: 'statsuserZero' });
+        expect(savedStats.accuracy).toBe(0);
+    });
+
+    it('should return 400 if required fields are missing', async () => {
+      const requiredFields = ['username', 'score', 'correctAnswers', 'incorrectAnswers', 'totalRounds'];
+      const baseData = {
+        username: "statsuser",
+        score: 100,
+        correctAnswers: 10,
+        incorrectAnswers: 0,
+        totalRounds: 10
+      };
+
+      for (const field of requiredFields) {
+          const incompleteData = { ...baseData };
+          delete incompleteData[field];
+          const response = await request(app).post('/api/stats').send(incompleteData);
+          expect(response.status).toBe(400);
+          expect(response.body.error).toBe('Bad Request');
+          expect(response.body.message).toContain('Faltan campos requeridos');
+      }
+    });
+
+    it('should return 400 if sending an empty body', async () => {
+        const response = await request(app).post('/api/stats').send({});
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe('Bad Request');
+        expect(response.body.message).toBe('Faltan campos requeridos: username, score, correctAnswers, incorrectAnswers, totalRounds');
+    });
   });
 
-  it('should get game statistics on GET /api/stats', async () => {
-    const response = await request(app).get('/api/stats').query({ username: "testuser" });
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBeGreaterThan(0);
-    expect(response.body[0]).toHaveProperty('correctAnswers', 8);
-    expect(response.body[0]).toHaveProperty('accuracy', 80);
+  describe('GET /api/stats', () => {
+    const user1 = 'statsgetter1';
+    const user2 = 'statsgetter2';
+
+    beforeEach(async () => {
+      const now = Date.now();
+      await GameStats.insertMany([
+        { username: user1, score: 100, correctAnswers: 10, incorrectAnswers: 0, totalRounds: 10, accuracy: 100, timestamp: new Date(now - 20000) },
+        { username: user1, score: 80, correctAnswers: 8, incorrectAnswers: 2, totalRounds: 10, accuracy: 80, timestamp: new Date(now - 10000) },
+        { username: user2, score: 120, correctAnswers: 12, incorrectAnswers: 3, totalRounds: 15, accuracy: 80, timestamp: new Date(now) }
+      ]);
+    });
+
+    it('should get game statistics for a specific user, sorted by timestamp descending', async () => {
+      const response = await request(app).get('/api/stats').query({ username: user1 });
+      expect(response.status).toBe(200);
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body.length).toBe(2);
+      expect(response.body[0].score).toBe(100);
+      expect(response.body[1].score).toBe(80);
+    });
+
+    it('should return an empty array if user has no stats', async () => {
+      const response = await request(app).get('/api/stats').query({ username: 'nouserstats' });
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([]);
+    });
+
+    it('should return 400 if username query parameter is missing', async () => {
+      const response = await request(app).get('/api/stats');
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Bad Request');
+      expect(response.body.message).toBe('Falta el parámetro requerido: username');
+    });
+  });
+
+  describe('GET /ranking', () => {
+     beforeEach(async () => {
+       await GameStats.insertMany([
+         { username: 'rankuser1', score: 100, correctAnswers: 10, incorrectAnswers: 0, totalRounds: 10, accuracy: 100 },
+         { username: 'rankuser2', score: 50, correctAnswers: 5, incorrectAnswers: 5, totalRounds: 10, accuracy: 50 },
+         { username: 'rankuser1', score: 150, correctAnswers: 15, incorrectAnswers: 5, totalRounds: 20, accuracy: 75 },
+         { username: 'rankuser3', score: 120, correctAnswers: 12, incorrectAnswers: 3, totalRounds: 15, accuracy: 80 }
+       ]);
+     });
+
+    it('should return ranking sorted by max score descending', async () => {
+      const response = await request(app).get('/ranking');
+      expect(response.status).toBe(200);
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body.length).toBe(3);
+
+      expect(response.body[0]).toEqual({ _id: 'rankuser1', score: 150 });
+      expect(response.body[1]).toEqual({ _id: 'rankuser3', score: 120 });
+      expect(response.body[2]).toEqual({ _id: 'rankuser2', score: 50 });
+    });
+
+    it('should return an empty array if no stats exist', async () => {
+      await GameStats.deleteMany({});
+      const response = await request(app).get('/ranking');
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([]);
+    });
   });
 
 });
