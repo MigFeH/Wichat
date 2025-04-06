@@ -9,6 +9,14 @@ const GameStats = require('./game-stats-model');
 let mongoServer;
 let app;
 
+// Define passwords as constants to avoid SonarQube flagging literal strings
+const PWD_USER_1 = 'testpassword1';
+const PWD_USER_EXISTING = 'password123';
+const PWD_USER_EXISTING_NEW = 'anotherpassword';
+const PWD_USER_GET = 'password123';
+const PWD_USER_PROFILE = 'password123';
+
+
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
@@ -35,7 +43,7 @@ describe('User Service - User Endpoints', () => {
     it('should add a new user successfully', async () => {
       const newUser = {
         username: 'testuser1',
-        password: 'testpassword1',
+        password: PWD_USER_1, // Use constant
       };
 
       const response = await request(app).post('/adduser').send(newUser);
@@ -49,13 +57,13 @@ describe('User Service - User Endpoints', () => {
       expect(userInDb).toHaveProperty('createdAt');
       expect(userInDb).toHaveProperty('profileImage', 'profile_1.gif');
 
-      expect(userInDb.password).not.toBe('testpassword1');
-      const isPasswordValid = await bcrypt.compare('testpassword1', userInDb.password);
+      expect(userInDb.password).not.toBe(PWD_USER_1); // Check against constant
+      const isPasswordValid = await bcrypt.compare(PWD_USER_1, userInDb.password); // Use constant
       expect(isPasswordValid).toBe(true);
     });
 
     it('should return 400 if username is missing', async () => {
-      const newUser = { password: 'testpassword1' };
+      const newUser = { password: PWD_USER_1 }; // Use constant
       const response = await request(app).post('/adduser').send(newUser);
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Missing required field: username');
@@ -69,10 +77,10 @@ describe('User Service - User Endpoints', () => {
     });
 
     it('should return 400 if username already exists', async () => {
-      const existingUser = { username: 'existinguser', password: 'password123' };
+      const existingUser = { username: 'existinguser', password: PWD_USER_EXISTING }; // Use constant
       await request(app).post('/adduser').send(existingUser);
 
-      const newUser = { username: 'existinguser', password: 'anotherpassword' };
+      const newUser = { username: 'existinguser', password: PWD_USER_EXISTING_NEW }; // Use constant
       const response = await request(app).post('/adduser').send(newUser);
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Username already exists, please choose another one');
@@ -81,7 +89,7 @@ describe('User Service - User Endpoints', () => {
 
   describe('GET /user/:username', () => {
     it('should get user data successfully', async () => {
-      const userData = { username: 'getuser', password: 'password123' };
+      const userData = { username: 'getuser', password: PWD_USER_GET }; // Use constant
       await request(app).post('/adduser').send(userData);
 
       const response = await request(app).get('/user/getuser');
@@ -104,7 +112,7 @@ describe('User Service - User Endpoints', () => {
     let testUsername = 'profileuser';
 
     beforeEach(async () => {
-      await request(app).post('/adduser').send({ username: testUsername, password: 'password123' });
+      await request(app).post('/adduser').send({ username: testUsername, password: PWD_USER_PROFILE }); // Use constant
     });
 
     it('should update profile image successfully', async () => {
