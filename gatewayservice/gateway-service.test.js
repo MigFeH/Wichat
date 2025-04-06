@@ -6,10 +6,10 @@ afterAll(async () => {
     app.close();
   });
 
+jest.mock('axios');
+
 const PWD_USER_1 = 'testpassword1';
 const NEW_USER_1 = 'newpassword';
-
-jest.mock('axios');
 
 describe('Gateway Service', () => {
   // Mock responses from external services
