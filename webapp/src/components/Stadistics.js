@@ -4,7 +4,7 @@ import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow
 import axios from 'axios';
 import { PieChart, Pie, Cell } from 'recharts';
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
+const apiEndpoint = 'http://localhost:8001';
 
 const Stadistics = () => {
   const navigate = useNavigate();
