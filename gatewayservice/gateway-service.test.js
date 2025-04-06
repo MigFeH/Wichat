@@ -6,6 +6,9 @@ afterAll(async () => {
     app.close();
   });
 
+const PWD_USER_1 = 'testpassword1';
+const NEW_USER_1 = 'newpassword';
+
 jest.mock('axios');
 
 describe('Gateway Service', () => {
@@ -32,7 +35,7 @@ describe('Gateway Service', () => {
   it('should forward login request to auth service', async () => {
     const response = await request(app)
         .post('/login')
-        .send({ username: 'testuser', password: 'testpassword' })
+        .send({ username: 'testuser', password: PWD_USER_1 })
         .expect(200);
 
     expect(response.body.token).toBe('mockedToken');
@@ -49,7 +52,7 @@ describe('Gateway Service', () => {
   it('should forward add user request to user service', async () => {
     const response = await request(app)
         .post('/adduser')
-        .send({ username: 'newuser', password: 'newpassword' })
+        .send({ username: 'newuser', password: NEW_USER_1 })
         .expect(200);
 
 
@@ -89,7 +92,7 @@ describe('Gateway Service', () => {
   it('should ask for the /stats of a user', async () => {
     const newUser = {
       username: 'testuser',
-      password: 'testpassword',
+      password: PWD_USER_1,
     };
 
     const res = await request(app).post('/adduser').send(newUser).expect(200);
