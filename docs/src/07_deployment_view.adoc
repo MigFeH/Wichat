@@ -44,57 +44,17 @@ See https://docs.arc42.org/section-7/[Deployment View] in the arc42 documentatio
 ****
 endif::arc42help[]
 
-=== Infrastructure Level 1
+=== Infrastructure
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Describe (usually in a combination of diagrams, tables, and text):
+|===
+| Element | Description
+| _User service_ | Utilized by logged-in users, retrieves their data from the MongoDB database and displays it within the web application.
+| _Auth service_ | Ensure user authentication during their initial registration in the game. Collect and securely store all their information in the MongoDB database to facilitate seamless login experiences in subsequent sessions.
+| _Gateway service_ | Acts as a central entry point for client requests, routing them to appropriate backend microservices.
+| _WebApp_ | Interface for display to the user where the application is housed. Utilizes React as it main form of code and Javascript to interact with the Wikidata external service.
+| _LLMService_ | Manages the Language Module and the AI made for the hint system of the application
+| _MongoDB_ | The database management system, serves as the backend storage for the application's functionality. It stores user data, generated questions and other game-related information.
+|===
 
-* distribution of a system to multiple locations, environments, computers, processors, .., as well as physical connections between them
-* important justifications or motivations for this deployment structure
-* quality and/or performance features of this infrastructure
-* mapping of software artifacts to elements of this infrastructure
+image::InfraestructuraASW.png[]
 
-For multiple environments or alternative deployments please copy and adapt this section of arc42 for all relevant environments.
-****
-endif::arc42help[]
-
-_**<Overview Diagram>**_
-
-Motivation::
-
-_<explanation in text form>_
-
-Quality and/or Performance Features::
-
-_<explanation in text form>_
-
-Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
-
-
-=== Infrastructure Level 2
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can include the internal structure of (some) infrastructure elements from level 1.
-
-Please copy the structure from level 1 for each selected element.
-****
-endif::arc42help[]
-
-==== _<Infrastructure Element 1>_
-
-_<diagram + explanation>_
-
-==== _<Infrastructure Element 2>_
-
-_<diagram + explanation>_
-
-...
-
-==== _<Infrastructure Element n>_
-
-_<diagram + explanation>_
