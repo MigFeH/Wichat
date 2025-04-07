@@ -8,6 +8,13 @@ const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
 const ChatLLM = ({ currentCity }) => {  // ← Recibe la ciudad actual como prop
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [isChatVisible, setIsChatVisible] = useState(false); // Estado para controlar la visibilidad del chat
+
+  // Función para mostrar el chat y limpiar el historial
+  const showChat = () => {
+    setChatHistory([]); // Limpiar el historial del chat
+    setIsChatVisible(true); // Mostrar el chat
+  };
 
   // Función para enviar la pregunta al LLM
   const handleSendMessage = async () => {
@@ -39,27 +46,31 @@ const ChatLLM = ({ currentCity }) => {  // ← Recibe la ciudad actual como prop
   };
 
   return (
-    <Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-      <Typography variant="h6">Chat de Pistas</Typography>
-      <Box sx={{ maxHeight: 200, overflowY: 'auto', p: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-        {chatHistory.map((msg, index) => (
-          <Typography key={index} sx={{ textAlign: msg.role === 'user' ? 'right' : 'left', color: msg.role === 'user' ? 'blue' : 'green' }}>
-            <strong>{msg.role === 'user' ? 'Tú' : 'LLM'}:</strong> {msg.content}
-          </Typography>
-        ))}
-      </Box>
-      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-        <TextField 
-          fullWidth 
-          label="Pregunta al LLM..." 
-          variant="outlined" 
-          value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-        />
-        <Button variant="contained" color="primary" onClick={handleSendMessage}>
-          Enviar
-        </Button>
-      </Box>
+    <Box>
+      {isChatVisible && (
+        <Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+          <Typography variant="h6">Chat de Pistas</Typography>
+          <Box sx={{ maxHeight: 200, overflowY: 'auto', p: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
+            {chatHistory.map((msg, index) => (
+              <Typography key={index} sx={{ textAlign: msg.role === 'user' ? 'right' : 'left', color: msg.role === 'user' ? 'blue' : 'green' }}>
+                <strong>{msg.role === 'user' ? 'Tú' : 'LLM'}:</strong> {msg.content}
+              </Typography>
+            ))}
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+            <TextField 
+              fullWidth 
+              label="Pregunta al LLM..." 
+              variant="outlined" 
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+            />
+            <Button variant="contained" color="primary" onClick={handleSendMessage}>
+              Enviar
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };
