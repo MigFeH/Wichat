@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import QuestionPresentation from './wikidataComponents/QuestionPresentation.jsx';
@@ -7,7 +7,12 @@ import ChatLLM from './ChatLLM';
 
 const Game = () => {
   const navigate = useNavigate();
-  const { currentQuestion, questionGenerator, currentCity } = useGameLogic();
+  const chatRef = useRef(); // Crear una referencia para ChatLLM
+
+  // Pasar showChat al hook useGameLogic
+  const { currentQuestion, questionGenerator, currentCity } = useGameLogic(() => {
+    chatRef.current?.showChat(); // Llamar a showChat desde la referencia
+  });
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
@@ -19,10 +24,10 @@ const Game = () => {
       />
 
       <ChatLLM 
+        ref={chatRef} // Pasar la referencia al componente ChatLLM
         currentCity={currentCity} 
         data-testid="chat-llm"
       />
-
     </Container>
   );
 };

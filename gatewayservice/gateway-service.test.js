@@ -40,7 +40,7 @@ describe('Gateway Service', () => {
     expect(response.body.userId).toBe('mockedUserId');
   });
 
-  // Test /askllm endpoint
+  // Test /hintllm endpoint
   it('should forward hintllm request to the llm service', async () => {
     const response = await request(app)
       .post('/hintllm')
