@@ -15,11 +15,9 @@ const Game = () => {
         game={questionGenerator}
         navigate={navigate}
         question={currentQuestion}
+        chatComponent={chatComponent}
         data-testid="question-presentation"
       />
-
-      {/* Renderizar el componente ChatLLM */}
-      {chatComponent}
     </Container>
   );
 };
