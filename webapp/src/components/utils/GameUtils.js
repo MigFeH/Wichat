@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import QuestionGeneration from "../wikidataComponents/QuestionGeneration";
 
-const useGameLogic = () => {
+const useGameLogic = (showChat) => { // Aceptar showChat como argumento
     const [currentQuestion, setCurrentQuestion] = useState(null);
-    const [questionGenerator] = useState(() => new QuestionGeneration(setCurrentQuestion));
+    const [questionGenerator] = useState(() => new QuestionGeneration(setCurrentQuestion, showChat)); // Pasar showChat
     const [currentCity, setCurrentCity] = useState(null);
 
     useEffect(() => {
