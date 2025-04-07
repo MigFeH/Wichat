@@ -41,9 +41,9 @@ describe('Gateway Service', () => {
   });
 
   // Test /askllm endpoint
-  it('should forward askllm request to the llm service', async () => {
+  it('should forward hintllm request to the llm service', async () => {
     const response = await request(app)
-      .post('/askllm')
+      .post('/hintllm')
       .send({ question: 'question', apiKey: 'apiKey', model: 'gemini' });
 
     expect(response.statusCode).toBe(200);
