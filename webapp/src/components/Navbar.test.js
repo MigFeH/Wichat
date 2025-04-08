@@ -25,7 +25,7 @@ describe('Navbar Component', () => {
     expect(screen.getByRole('link', { name: /Statistics/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Ranking/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Profile/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Logout/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '☀️' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '🌙' })).toBeInTheDocument();
   });
@@ -66,7 +66,25 @@ describe('Navbar Component', () => {
     expect(screen.getByRole('link', { name: /Statistics/i })).toHaveAttribute('href', '/stadistics');
     expect(screen.getByRole('link', { name: /Ranking/i })).toHaveAttribute('href', '/ranking');
     expect(screen.getByRole('link', { name: /Profile/i })).toHaveAttribute('href', '/profile');
-    expect(screen.getByRole('link', { name: /Logout/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
+  });
 
+  test('handles logout correctly', () => {
+    // Setup localStorage with test values
+    localStorage.setItem('username', 'testuser');
+    localStorage.setItem('authToken', 'testtoken');
+
+    render(
+      <Router>
+        <Navbar toggleDarkTheme={mockToggleDarkTheme} toggleLightTheme={mockToggleLightTheme} />
+      </Router>
+    );
+
+    // Click logout button
+    fireEvent.click(screen.getByRole('button', { name: /Logout/i }));
+
+    // Verify localStorage items are removed
+    expect(localStorage.getItem('username')).toBeNull();
+    expect(localStorage.getItem('authToken')).toBeNull();
   });
 });
