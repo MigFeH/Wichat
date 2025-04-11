@@ -35,33 +35,24 @@ function HandTracker({ enabled }) {
       minTrackingConfidence: 0.7,
     });
 
-    handsRef.current.onResults(onResults);
-
-    cameraRef.current = new Camera(videoRef.current, {
-      onFrame: async () => {
-        await handsRef.current.send({ image: videoRef.current });
-      },
-      width: 640,
-      height: 480,
-    });
-
-    cameraRef.current.start();
-
-    function onResults(results) {
+    handsRef.current.onResults((results) => {
       if (cursorRef.current) {
         cursorRef.current.style.display = 'block';
       }
 
-      if (results.multiHandLandmarks?.length > 0) {
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const landmarks = results.multiHandLandmarks[0];
-        const indexFinger = landmarks[8];
+        const indexTip = landmarks[8]; // Punta del dedo índice
 
-        const x = indexFinger.x * window.innerWidth;
-        const y = indexFinger.y * window.innerHeight;
+        // Obtener el ancho de la ventana
+        const windowWidth = window.innerWidth;
+        
+        // Invertir la coordenada X
+        const invertedX = windowWidth - (indexTip.x * windowWidth);
+        const y = indexTip.y * window.innerHeight;
 
         if (cursorRef.current) {
-          cursorRef.current.style.left = `${x}px`;
-          cursorRef.current.style.top = `${y}px`;
+          cursorRef.current.style.transform = `translate(${invertedX}px, ${y}px)`;
         }
 
         const isOpen = isHandOpen(landmarks);
@@ -72,12 +63,22 @@ function HandTracker({ enabled }) {
           lastClickTimeRef.current = now;
         } else if (clickStateRef.current === 'closed' && isOpen) {
           if (now - lastClickTimeRef.current < 800) {
-            triggerClick(x, y);
+            triggerClick(invertedX, y);
           }
           clickStateRef.current = 'open';
         }
       }
-    }
+    });
+
+    cameraRef.current = new Camera(videoRef.current, {
+      onFrame: async () => {
+        await handsRef.current.send({ image: videoRef.current });
+      },
+      width: 640,
+      height: 480,
+    });
+
+    cameraRef.current.start();
 
     function isHandOpen(landmarks) {
       const isFingerExtended = (tip, dip) =>
