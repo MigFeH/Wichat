@@ -1,43 +1,131 @@
-import React from 'react';
-import { AppBar, Toolbar, Button, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { Home, SportsEsports, BarChart, Leaderboard, ExitToApp, AccountCircle } from '@mui/icons-material';
+import React, { useState } from 'react';
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  useMediaQuery,
+  useTheme
+} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  SportsEsports,
+  BarChart,
+  Leaderboard,
+  ExitToApp,
+  AccountCircle,
+  Menu as MenuIcon
+} from '@mui/icons-material';
 
 const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
-  return (
-      <AppBar
-        position="static"
-        sx={{
-          backgroundImage: 'linear-gradient(to bottom, #00c2ff, #0066c7)',
-          boxShadow: 'none'
-        }}
-      >
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button color="inherit" component={Link} to="/menu" startIcon={<Home />}>
-            Menu
-          </Button>
-          <Button color="inherit" component={Link} to="/game" startIcon={<SportsEsports />}>
-            Game
-          </Button>
-          <Button color="inherit" component={Link} to="/stadistics" startIcon={<BarChart />}>
-            Statistics
-          </Button>
-          <Button color="inherit" component={Link} to="/ranking" startIcon={<Leaderboard />}>
-            Ranking
-          </Button>
-          <Button color="inherit" component={Link} to="/profile" startIcon={<AccountCircle />}>
-            Profile
-          </Button>
-        </Box>
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button onClick={toggleLightTheme} color="inherit" sx={{ fontSize: '1.5rem' }}>☀️</Button>
-          <Button onClick={toggleDarkTheme} color="inherit" sx={{ fontSize: '1.5rem' }}>🌙</Button>
-          <Button color="inherit" component={Link} to="/login" startIcon={<ExitToApp />}>
-            Logout
-          </Button>
-        </Box>
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    localStorage.removeItem('authToken');
+    navigate('/login');
+  };
+
+  const navItems = [
+    { text: 'Menu', icon: <Home />, to: '/menu' },
+    { text: 'Game', icon: <SportsEsports />, to: '/game' },
+    { text: 'Statistics', icon: <BarChart />, to: '/stadistics' },
+    { text: 'Ranking', icon: <Leaderboard />, to: '/ranking' },
+    { text: 'Profile', icon: <AccountCircle />, to: '/profile' }
+  ];
+
+  const renderThemeButtons = () => (
+    <>
+      <Button
+        onClick={toggleLightTheme}
+        color="inherit"
+        sx={{ fontSize: '1.5rem' }}
+      >
+        ☀️
+      </Button>
+      <Button
+        onClick={toggleDarkTheme}
+        color="inherit"
+        sx={{ fontSize: '1.5rem' }}
+      >
+        🌙
+      </Button>
+    </>
+  );
+
+  const renderNavButtons = () => (
+    <Box className="nav-buttons-container">
+      {navItems.map(({ text, icon, to }) => (
+        <Button
+          key={text}
+          color="inherit"
+          component={Link}
+          to={to}
+          startIcon={icon}
+          className="nav-button"
+        >
+          {text}
+        </Button>
+      ))}
+    </Box>
+  );
+
+  const renderDrawerContent = () => ( // Navbar para móviles / tablet
+    <Box className="drawer-content" aria-label="backdrop" onClick={() => setDrawerOpen(false)}>
+      <List>
+        {navItems.map(({ text, icon, to }) => (
+          <ListItem button key={text} component={Link} to={to}>
+            <ListItemIcon>{icon}</ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
+        <ListItem button onClick={handleLogout}>
+          <ListItemIcon><ExitToApp /></ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItem>
+        <ListItem>{renderThemeButtons()}</ListItem>
+      </List>
+    </Box>
+  );
+
+  return (
+    <AppBar position="static" className="navbar">
+      <Toolbar className="navbar-toolbar">
+        {isMobile ? (
+          <>
+            <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(true)} aria-label="hamburger-menu">
+              <MenuIcon />
+            </IconButton>
+            <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)} aria-label="drawer">
+              {renderDrawerContent()}
+            </Drawer>
+          </>
+        ) : ( // Navbar para escritorio
+          <>
+            {renderNavButtons()}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1, lg: 2 } }}>
+              {renderThemeButtons()}
+              <Button
+                color="inherit"
+                onClick={handleLogout}
+                startIcon={<ExitToApp />}
+                className="nav-button"
+              >
+                Logout
+              </Button>
+            </Box>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );
