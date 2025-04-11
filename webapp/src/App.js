@@ -28,7 +28,6 @@ const lightTheme = createTheme({
   },
 });
 
-// Crear un componente interno que use el hook
 const AppContent = () => {
   const [theme, setTheme] = useState(lightTheme);
   const { isHandNavigationEnabled } = useHandNavigation();

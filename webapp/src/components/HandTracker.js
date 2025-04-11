@@ -35,6 +35,19 @@ function HandTracker({ enabled }) {
       minTrackingConfidence: 0.7,
     });
 
+    function areFingersTouching(landmarks) {
+      const thumbTip = landmarks[4]; // Punta del pulgar
+      const middleTip = landmarks[12]; // Punta del dedo corazón
+
+      // Calcular la distancia euclidiana entre los dos puntos
+      const distance = Math.sqrt(
+        Math.pow(thumbTip.x - middleTip.x, 2) +
+        Math.pow(thumbTip.y - middleTip.y, 2)
+      );
+
+      return distance < 0.05; // Considerar que están tocándose si la distancia es menor a 0.05
+    }
+
     handsRef.current.onResults((results) => {
       if (cursorRef.current) {
         cursorRef.current.style.display = 'block';
@@ -55,16 +68,14 @@ function HandTracker({ enabled }) {
           cursorRef.current.style.transform = `translate(${invertedX}px, ${y}px)`;
         }
 
-        const isOpen = isHandOpen(landmarks);
+        const areTouching = areFingersTouching(landmarks);
         const now = Date.now();
 
-        if (clickStateRef.current === 'open' && !isOpen) {
+        if (clickStateRef.current === 'open' && areTouching) {
           clickStateRef.current = 'closed';
           lastClickTimeRef.current = now;
-        } else if (clickStateRef.current === 'closed' && isOpen) {
-          if (now - lastClickTimeRef.current < 800) {
-            triggerClick(invertedX, y);
-          }
+          triggerClick(invertedX, y);
+        } else if (clickStateRef.current === 'closed' && !areTouching) {
           clickStateRef.current = 'open';
         }
       }
@@ -80,20 +91,6 @@ function HandTracker({ enabled }) {
 
     cameraRef.current.start();
 
-    function isHandOpen(landmarks) {
-      const isFingerExtended = (tip, dip) =>
-        landmarks[tip].y < landmarks[dip].y - 0.05;
-
-      const fingers = [
-        isFingerExtended(8, 6),
-        isFingerExtended(12, 10),
-        isFingerExtended(16, 14),
-        isFingerExtended(20, 18),
-      ];
-
-      return fingers.filter(Boolean).length >= 3;
-    }
-
     function triggerClick(x, y) {
       const clickEvent = new MouseEvent('click', {
         clientX: x,
@@ -101,14 +98,34 @@ function HandTracker({ enabled }) {
         bubbles: true,
         cancelable: true,
         view: window,
+        detail: 2
       });
+
+      // Cambiar el color del cursor al hacer clic
+      if (cursorRef.current) {
+        cursorRef.current.style.backgroundColor = 'blue'; // Cambiar a azul
+        setTimeout(() => {
+          cursorRef.current.style.backgroundColor = 'red'; // Volver al color original
+        }, 200); // Duración del cambio de color (200ms)
+      }
+
       document.elementFromPoint(x, y)?.dispatchEvent(clickEvent);
     }
   }, [enabled]);
 
   return (
     <>
-      <video ref={videoRef} style={{ display: 'none' }} />
+      <video
+        ref={videoRef}
+        style={{
+          position: 'absolute',
+          width: '150px', // Ancho del video
+          height: '100px', // Alto del video
+          borderRadius: '10px', // Bordes redondeados
+          zIndex: 1000, // Asegurar que esté encima de otros elementos
+        }}
+      />
+
       <div
         ref={cursorRef}
         style={{
