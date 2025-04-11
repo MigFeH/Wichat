@@ -27,7 +27,7 @@ import {
 const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 960px
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleLogout = () => {
@@ -113,7 +113,7 @@ const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
         ) : ( // Navbar para escritorio
           <>
             {renderNavButtons()}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1, lg: 2 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1, lg: 2 } }}> {/* md == medium == 960px || lg == large == 1280px */}
               {renderThemeButtons()}
               <Button
                 color="inherit"
