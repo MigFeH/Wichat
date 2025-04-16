@@ -12,6 +12,7 @@ import ProtectedRoute from './auth/ProtectedRoute';
 import Ranking from './components/Ranking';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
+import LocationGame from "./components/LocationGame";
 
 const darkTheme = createTheme({
   palette: {
@@ -53,6 +54,9 @@ const App = () => {
           } />
           <Route path="/timedGame" element={
             <ProtectedRoute element={<TimedGame />} />
+          } />
+          <Route path="/locationGame" element={
+            <ProtectedRoute element={<LocationGame />} />
           } />
           <Route path="/stadistics" element={
             <ProtectedRoute element={<Stadistics />} />
