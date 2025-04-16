@@ -55,14 +55,14 @@ Both the user and auth service share a Mongo database that is accessed with mong
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/28">Self report 1</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/95">Self report 2</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/104">Self report 3</a></td>
-    <td><a href="...">Self report 4</a></td>
+    <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/186">Self report 4</a></td>
   </tr>
   <tr>
     <td>Daniel González Pérez</td>
     <td><a href="https://github.com/danigpt">Daniel's github</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/45">Self report 1</a></td>
     <td><a href="https://github.com/Arquisoft/wichat_es2b/issues/102">Self report 2</a></td>
-    <td><a href="...">Self report 3</a></td>
-    <td><a href="...">Self report 4</a></td>
+    <td><a href="https://www.youtube.com/watch?v=EqISRgcZx5U">Self report 3</a></td>
+    <td><a href="https://www.youtube.com/watch?v=EqISRgcZx5U">Self report 4</a></td>
   </tr>
 </table>
