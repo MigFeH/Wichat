@@ -1,16 +1,26 @@
 import axios from "axios";
 
+let cityCache = []; // Lista de ciudades cargadas desde Wikidata
+
 export async function fetchRandomCity() {
+  // Si ya hay ciudades en caché, elige una al azar
+  if (cityCache.length > 0) {
+    const randomIndex = Math.floor(Math.random() * cityCache.length);
+    return cityCache[randomIndex];
+  }
+
+  // Consulta inicial a Wikidata
   const endpoint = "https://query.wikidata.org/sparql";
   const query = `
-    SELECT ?cityLabel ?lat ?lon WHERE {
+    SELECT ?city ?cityLabel ?lat ?lon WHERE {
       ?city wdt:P31/wdt:P279* wd:Q515.
       ?city p:P625 ?coordinate.
       ?coordinate psv:P625 ?value.
       ?value wikibase:geoLatitude ?lat.
       ?value wikibase:geoLongitude ?lon.
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "es". }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "es,en". }
     }
+    ORDER BY RAND()
     LIMIT 100
   `;
 
@@ -21,17 +31,30 @@ export async function fetchRandomCity() {
     const res = await axios.get(url, { headers });
     const results = res.data.results.bindings;
 
-    if (results.length === 0) throw new Error("No se encontraron ciudades.");
+    // Filtrar y transformar resultados válidos
+    cityCache = results
+        .filter((r) => {
+          const label = r.cityLabel?.value || "";
+          return label && !/^Q\d+$/.test(label); // Descarta códigos como "Q1234"
+        })
+        .map((r) => ({
+          name: r.cityLabel.value,
+          lat: parseFloat(r.lat.value),
+          lng: parseFloat(r.lon.value),
+        }));
 
-    const random = results[Math.floor(Math.random() * results.length)];
+    if (cityCache.length === 0) {
+      throw new Error("No se encontraron nombres válidos.");
+    }
 
-    return {
-      name: random.cityLabel.value,
-      lat: parseFloat(random.lat.value),
-      lng: parseFloat(random.lon.value),
-    };
+    // Elegir ciudad aleatoria de la caché
+    const randomIndex = Math.floor(Math.random() * cityCache.length);
+    return cityCache[randomIndex];
   } catch (error) {
     console.error("Error al consultar Wikidata:", error);
     throw error;
   }
 }
+
+
+
