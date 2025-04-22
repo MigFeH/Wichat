@@ -40,15 +40,12 @@ const AppContent = () => {
     setTheme(lightTheme);
   };
 
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === lightTheme ? darkTheme : lightTheme);
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Navbar toggleTheme={toggleTheme}/>
+      <Navbar toggleDarkTheme={toggleDarkTheme} toggleLightTheme={toggleLightTheme} />
       <HandTracker enabled={isHandNavigationEnabled} />
+
       <main>
         <Routes>
           <Route path="/" element={<Login />} />
