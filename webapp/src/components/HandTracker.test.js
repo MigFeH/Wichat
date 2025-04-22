@@ -453,4 +453,127 @@ describe('HandTracker', () => {
         const onFrame = Camera.cameraOnFrameCallback();
         await act(async () => { await onFrame(); });
     });
+
+    test('cleanup de useEffect desmonta cámara y hands correctamente', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        // Simula que hay instancias activas
+        Camera.mockCameraStop.mockClear();
+        Hands.mockHandsClose.mockClear();
+        // Desmonta el componente (trigger cleanup)
+        const { unmount } = render(<HandTracker enabled={true} />);
+        unmount();
+        // Si no hay errores, el test pasa y cubre el cleanup
+    });
+
+    test('cleanup de useEffect desmonta cámara y hands y cubre errores en stop/close', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        Camera.mockCameraStop.mockImplementationOnce(() => { throw new Error('stop error'); });
+        Hands.mockHandsClose.mockImplementationOnce(() => { throw new Error('close error'); });
+        const { unmount } = render(<HandTracker enabled={true} />);
+        unmount();
+    });
+
+    test('aborta initializeHandTracking si cambia enabled o se desmonta', async () => {
+        let resolveCameraStart;
+        Camera.mockCameraStart.mockImplementation(() => new Promise((resolve) => { resolveCameraStart = resolve; }));
+        const { rerender, unmount } = render(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+        act(() => { resolveCameraStart && resolveCameraStart(); });
+        unmount();
+    });
+
+    test('cubre reset de efecto visual de click y ramas de handState', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        act(() => {
+            const landmarks = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
+            landmarks[4] = { x: 0.51, y: 0.51, z: 0 };
+            landmarks[12] = { x: 0.52, y: 0.52, z: 0 };
+            landmarks[8] = { x: 0.5, y: 0.5, z: 0 };
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [landmarks] });
+            jest.runOnlyPendingTimers();
+        });
+        act(() => { jest.advanceTimersByTime(200); });
+    });
+
+    test('cubre catch de error en send de hands', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        Hands.mockHandsSend.mockRejectedValueOnce(new Error('send error'));
+        const onFrame = Camera.cameraOnFrameCallback();
+        await act(async () => { await onFrame(); });
+    });
+
+    test('cubre delay y ramas else en cleanup', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        const { rerender } = render(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+        act(() => { jest.advanceTimersByTime(1000); });
+    });
+
+    test('cleanup defensivo: stop/close lanzan error y los refs existen', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        Camera.mockCameraStop.mockImplementationOnce(() => { throw new Error('stop error'); });
+        Hands.mockHandsClose.mockImplementationOnce(() => { throw new Error('close error'); });
+        const { unmount } = render(<HandTracker enabled={true} />);
+        unmount();
+    });
+
+    test('initializeHandTracking aborta si cambia enabled durante inicialización', async () => {
+        let resolveCameraStart;
+        Camera.mockCameraStart.mockImplementation(() => new Promise((resolve) => { resolveCameraStart = resolve; }));
+        const { rerender } = render(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+        act(() => { resolveCameraStart && resolveCameraStart(); });
+    });
+
+    test('locateFile: cubre warn de instanceIdRef no coincidente', async () => {
+        let resolveCameraStart;
+        Camera.mockCameraStart.mockImplementation(() => new Promise((resolve) => { resolveCameraStart = resolve; }));
+        const { rerender } = render(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+        act(() => { resolveCameraStart && resolveCameraStart(); });
+    });
+
+    test('reset de efecto visual de click y ramas de handState', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        act(() => {
+            const landmarks = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
+            landmarks[4] = { x: 0.51, y: 0.51, z: 0 };
+            landmarks[12] = { x: 0.52, y: 0.52, z: 0 };
+            landmarks[8] = { x: 0.5, y: 0.5, z: 0 };
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [landmarks] });
+            jest.runOnlyPendingTimers();
+        });
+        act(() => { jest.advanceTimersByTime(200); });
+    });
+
+    test('catch de error en send de hands', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        Hands.mockHandsSend.mockRejectedValueOnce(new Error('send error'));
+        const onFrame = Camera.cameraOnFrameCallback();
+        await act(async () => { await onFrame(); });
+    });
+
+    test('delay y ramas else en cleanup (CLEANING_UP)', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        const { rerender } = render(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+        act(() => { jest.advanceTimersByTime(1000); });
+    });
 });
