@@ -492,6 +492,7 @@ function HandTracker({ enabled }) {
       <video
         ref={videoRef}
         playsInline autoPlay muted
+        data-testid="handtracker-video"
         style={{
             ...styles.video,
             visibility: showVideo ? 'visible' : 'hidden', // Show only when running
