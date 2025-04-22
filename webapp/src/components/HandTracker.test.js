@@ -413,4 +413,44 @@ describe('HandTracker', () => {
         // El overlay de error debe aparecer si el componente lo maneja
         // (ajusta el test si tu overlay de error depende de otra lógica)
     });
+
+    test('cubre error en hands.close()', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        Hands.mockHandsClose.mockRejectedValueOnce(new Error('close error'));
+        const { rerender } = render(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+    });
+
+    test('no hace nada si onResults recibe null o el componente está desmontado', async () => {
+        const { unmount } = render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        unmount();
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()(null);
+        });
+    });
+
+    test('overlay de loading y cleaning_up aparecen correctamente', async () => {
+        const { rerender } = render(<HandTracker enabled={false} />);
+        rerender(<HandTracker enabled={true} />);
+        expect(await screen.findByText(/configurando|iniciando|accediendo/i)).toBeInTheDocument();
+        rerender(<HandTracker enabled={false} />);
+        expect(await screen.findByText(/desactivando/i)).toBeInTheDocument();
+    });
+
+    test('cubre cleanup con y sin instancias', async () => {
+        const { rerender, unmount } = render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        rerender(<HandTracker enabled={false} />);
+        unmount();
+    });
+
+    test('cubre error en send de hands', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        Hands.mockHandsSend.mockRejectedValueOnce(new Error('send error'));
+        const onFrame = Camera.cameraOnFrameCallback();
+        await act(async () => { await onFrame(); });
+    });
 });
