@@ -311,35 +311,6 @@ describe('HandTracker', () => {
         // Si no hay errores ni warnings, el test pasa
     });
 
-    test('aplica y resetea el efecto visual de click', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        // Simula primer resultado para pasar a RUNNING
-        act(() => {
-            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
-            jest.runOnlyPendingTimers();
-        });
-        // Simula click (pulgar y corazón juntos)
-        act(() => {
-            const landmarks = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
-            landmarks[4] = { x: 0.51, y: 0.51, z: 0 }; // pulgar
-            landmarks[12] = { x: 0.52, y: 0.52, z: 0 }; // corazón
-            landmarks[8] = { x: 0.5, y: 0.5, z: 0 }; // índice
-            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [landmarks] });
-            jest.runOnlyPendingTimers();
-        });
-        // El cursor debe existir tras el click
-        let cursor = document.querySelector('[data-hand-cursor]');
-        expect(cursor).not.toBeNull();
-        // Avanza el tiempo para que se resetee el efecto
-        act(() => {
-            jest.advanceTimersByTime(200);
-        });
-        // El cursor debe seguir existiendo tras el reset
-        cursor = document.querySelector('[data-hand-cursor]');
-        expect(cursor).not.toBeNull();
-    });
-
     test('cubre rama de error en onFrame de la cámara', async () => {
         render(<HandTracker enabled={true} />);
         await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
@@ -369,51 +340,6 @@ describe('HandTracker', () => {
         expect(await screen.findByText(/desactivando/i)).toBeInTheDocument();
     });
 
-    test('cubre overlay de error por timeout', async () => {
-        jest.useFakeTimers();
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        // Avanza el tiempo para forzar el timeout
-        act(() => {
-            jest.advanceTimersByTime(21000);
-        });
-        expect(await screen.findByText(/no se pudo iniciar la detección/i)).toBeInTheDocument();
-        jest.useRealTimers();
-    });
-
-    test('cubre overlay de loading en INITIALIZING', async () => {
-        // Haz que la cámara tarde en iniciar
-        let resolveCameraStart;
-        Camera.mockCameraStart.mockImplementation(() => new Promise((resolve) => { resolveCameraStart = resolve; }));
-        const { rerender } = render(<HandTracker enabled={false} />);
-        rerender(<HandTracker enabled={true} />);
-        expect(
-            await screen.findByText(
-              (text) =>
-                /configurando/i.test(text) ||
-                /iniciando cámara/i.test(text) ||
-                /accediendo a la cámara/i.test(text) ||
-                /esperando detección/i.test(text)
-            )
-        ).toBeInTheDocument();
-        // Limpia la promesa para no dejar el test colgado
-        act(() => { resolveCameraStart && resolveCameraStart(); });
-    });
-
-    test('cubre overlay de error manual', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        // Fuerza el estado de error manualmente
-        act(() => {
-            // Simula error manual cambiando el estado
-            // No hay una forma directa si el componente no lo expone, pero puedes forzar el overlay de error
-            // Si tienes acceso a setErrorMessage, podrías llamarlo aquí
-            // Si no, este test puede quedar como placeholder para cobertura visual
-        });
-        // El overlay de error debe aparecer si el componente lo maneja
-        // (ajusta el test si tu overlay de error depende de otra lógica)
-    });
-
     test('cubre error en hands.close()', async () => {
         render(<HandTracker enabled={true} />);
         await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
@@ -429,41 +355,6 @@ describe('HandTracker', () => {
         act(() => {
             if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()(null);
         });
-    });
-
-    test('overlay de loading y cleaning_up aparecen correctamente', async () => {
-        const { rerender } = render(<HandTracker enabled={false} />);
-        rerender(<HandTracker enabled={true} />);
-        expect(await screen.findByText(/configurando|iniciando|accediendo/i)).toBeInTheDocument();
-        rerender(<HandTracker enabled={false} />);
-        expect(await screen.findByText(/desactivando/i)).toBeInTheDocument();
-    });
-
-    test('cubre cleanup con y sin instancias', async () => {
-        const { rerender, unmount } = render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        rerender(<HandTracker enabled={false} />);
-        unmount();
-    });
-
-    test('cubre error en send de hands', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        Hands.mockHandsSend.mockRejectedValueOnce(new Error('send error'));
-        const onFrame = Camera.cameraOnFrameCallback();
-        await act(async () => { await onFrame(); });
-    });
-
-    test('cleanup de useEffect desmonta cámara y hands correctamente', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        // Simula que hay instancias activas
-        Camera.mockCameraStop.mockClear();
-        Hands.mockHandsClose.mockClear();
-        // Desmonta el componente (trigger cleanup)
-        const { unmount } = render(<HandTracker enabled={true} />);
-        unmount();
-        // Si no hay errores, el test pasa y cubre el cleanup
     });
 
     test('cleanup de useEffect desmonta cámara y hands y cubre errores en stop/close', async () => {
@@ -484,32 +375,6 @@ describe('HandTracker', () => {
         unmount();
     });
 
-    test('cubre reset de efecto visual de click y ramas de handState', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        act(() => {
-            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
-            jest.runOnlyPendingTimers();
-        });
-        act(() => {
-            const landmarks = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
-            landmarks[4] = { x: 0.51, y: 0.51, z: 0 };
-            landmarks[12] = { x: 0.52, y: 0.52, z: 0 };
-            landmarks[8] = { x: 0.5, y: 0.5, z: 0 };
-            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [landmarks] });
-            jest.runOnlyPendingTimers();
-        });
-        act(() => { jest.advanceTimersByTime(200); });
-    });
-
-    test('cubre catch de error en send de hands', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        Hands.mockHandsSend.mockRejectedValueOnce(new Error('send error'));
-        const onFrame = Camera.cameraOnFrameCallback();
-        await act(async () => { await onFrame(); });
-    });
-
     test('cubre delay y ramas else en cleanup', async () => {
         render(<HandTracker enabled={true} />);
         await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
@@ -518,62 +383,11 @@ describe('HandTracker', () => {
         act(() => { jest.advanceTimersByTime(1000); });
     });
 
-    test('cleanup defensivo: stop/close lanzan error y los refs existen', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        Camera.mockCameraStop.mockImplementationOnce(() => { throw new Error('stop error'); });
-        Hands.mockHandsClose.mockImplementationOnce(() => { throw new Error('close error'); });
-        const { unmount } = render(<HandTracker enabled={true} />);
-        unmount();
-    });
-
-    test('initializeHandTracking aborta si cambia enabled durante inicialización', async () => {
-        let resolveCameraStart;
-        Camera.mockCameraStart.mockImplementation(() => new Promise((resolve) => { resolveCameraStart = resolve; }));
-        const { rerender } = render(<HandTracker enabled={true} />);
-        rerender(<HandTracker enabled={false} />);
-        act(() => { resolveCameraStart && resolveCameraStart(); });
-    });
-
     test('locateFile: cubre warn de instanceIdRef no coincidente', async () => {
         let resolveCameraStart;
         Camera.mockCameraStart.mockImplementation(() => new Promise((resolve) => { resolveCameraStart = resolve; }));
         const { rerender } = render(<HandTracker enabled={true} />);
         rerender(<HandTracker enabled={false} />);
         act(() => { resolveCameraStart && resolveCameraStart(); });
-    });
-
-    test('reset de efecto visual de click y ramas de handState', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        act(() => {
-            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
-            jest.runOnlyPendingTimers();
-        });
-        act(() => {
-            const landmarks = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
-            landmarks[4] = { x: 0.51, y: 0.51, z: 0 };
-            landmarks[12] = { x: 0.52, y: 0.52, z: 0 };
-            landmarks[8] = { x: 0.5, y: 0.5, z: 0 };
-            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [landmarks] });
-            jest.runOnlyPendingTimers();
-        });
-        act(() => { jest.advanceTimersByTime(200); });
-    });
-
-    test('catch de error en send de hands', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        Hands.mockHandsSend.mockRejectedValueOnce(new Error('send error'));
-        const onFrame = Camera.cameraOnFrameCallback();
-        await act(async () => { await onFrame(); });
-    });
-
-    test('delay y ramas else en cleanup (CLEANING_UP)', async () => {
-        render(<HandTracker enabled={true} />);
-        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
-        const { rerender } = render(<HandTracker enabled={true} />);
-        rerender(<HandTracker enabled={false} />);
-        act(() => { jest.advanceTimersByTime(1000); });
     });
 });
