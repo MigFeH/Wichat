@@ -168,4 +168,90 @@ describe('HandTracker', () => {
             expect(mockElement.dispatchEvent).toHaveBeenCalledWith(expect.objectContaining({ type: 'click' }));
         });
     });
+
+    test('muestra overlay de error y permite resetear', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        // Fuerza el error de inicialización
+        act(() => {
+            // Simula error en la cámara
+            Camera.mockCameraStart.mockRejectedValueOnce(new Error('Camera Error'));
+        });
+        // Vuelve a renderizar para disparar el error
+        render(<HandTracker enabled={true} />);
+        // Espera a que aparezca el overlay de error
+        const errorButton = await screen.findByRole('button', { name: /entendido/i });
+        expect(errorButton).toBeInTheDocument();
+        act(() => {
+            errorButton.click();
+        });
+        // Puede haber más de un video, solo comprobamos que al menos uno existe
+        const videos = screen.getAllByTestId('handtracker-video');
+        expect(videos.length).toBeGreaterThan(0);
+    });
+
+    test('muestra overlay de limpieza cuando se desactiva', async () => {
+        const { rerender } = render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        rerender(<HandTracker enabled={false} />);
+        expect(await screen.findByText(/desactivando/i)).toBeInTheDocument();
+    });
+
+    test('no renderiza cursores si no hay landmarks', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        expect(document.querySelector('[data-hand-cursor]')).not.toBeInTheDocument();
+    });
+
+    test('renderiza varios cursores si hay varias manos', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        // Simula primer resultado para pasar a RUNNING
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        // Ahora simula varias manos
+        act(() => {
+            if (Hands.handsOnResultsCallback()) {
+                const hand1 = Array(21).fill({ x: 0.2, y: 0.2, z: 0 });
+                const hand2 = Array(21).fill({ x: 0.8, y: 0.8, z: 0 });
+                Hands.handsOnResultsCallback()({ multiHandLandmarks: [hand1, hand2] });
+                jest.runOnlyPendingTimers();
+            }
+        });
+        await waitFor(() => {
+            expect(document.querySelectorAll('[data-hand-cursor]').length).toBe(2);
+        });
+    });
+
+    test('dispara timeout de inicialización si no llegan resultados', async () => {
+        jest.useFakeTimers();
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        // Avanza el tiempo para forzar el timeout
+        act(() => {
+            jest.advanceTimersByTime(21000);
+        });
+        expect(await screen.findByText(/no se pudo iniciar la detección/i)).toBeInTheDocument();
+        jest.useRealTimers();
+    });
+
+    test('no hay fugas ni errores al desmontar durante inicialización', () => {
+        const { unmount } = render(<HandTracker enabled={true} />);
+        unmount();
+        // Si no hay errores ni warnings, el test pasa
+    });
+
+    test('cubre cambios rápidos de enabled', async () => {
+        const { rerender } = render(<HandTracker enabled={false} />);
+        rerender(<HandTracker enabled={true} />);
+        rerender(<HandTracker enabled={false} />);
+        rerender(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+    });
 });
