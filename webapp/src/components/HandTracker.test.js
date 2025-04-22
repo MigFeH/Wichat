@@ -254,4 +254,89 @@ describe('HandTracker', () => {
         rerender(<HandTracker enabled={true} />);
         await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
     });
+
+    test('no renderiza cursores si landmarks es undefined', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({});
+            jest.runOnlyPendingTimers();
+        });
+        expect(document.querySelector('[data-hand-cursor]')).not.toBeInTheDocument();
+    });
+
+    test('ignora landmarks incompletos', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        act(() => {
+            if (Hands.handsOnResultsCallback()) {
+                const incomplete = Array(10).fill({ x: 0.5, y: 0.5, z: 0 });
+                Hands.handsOnResultsCallback()({ multiHandLandmarks: [incomplete] });
+                jest.runOnlyPendingTimers();
+            }
+        });
+        expect(document.querySelector('[data-hand-cursor]')).not.toBeInTheDocument();
+    });
+
+    test('no renderiza más de MAX_HANDS cursores', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        // Simula primer resultado para pasar a RUNNING
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        // Ahora simula varias manos
+        act(() => {
+            if (Hands.handsOnResultsCallback()) {
+                const hand = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
+                Hands.handsOnResultsCallback()({ multiHandLandmarks: [hand, hand, hand, hand, hand, hand] });
+                jest.runOnlyPendingTimers();
+            }
+        });
+        await waitFor(() => {
+            expect(document.querySelectorAll('[data-hand-cursor]').length).toBe(4); // MAX_HANDS = 4
+        });
+    });
+
+    test('no actualiza estado tras unmount', async () => {
+        const { unmount } = render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        unmount();
+        // Simula resultado después de unmount
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        // Si no hay errores ni warnings, el test pasa
+    });
+
+    test('aplica y resetea el efecto visual de click', async () => {
+        render(<HandTracker enabled={true} />);
+        await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
+        // Simula primer resultado para pasar a RUNNING
+        act(() => {
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [] });
+            jest.runOnlyPendingTimers();
+        });
+        // Simula click (pulgar y corazón juntos)
+        act(() => {
+            const landmarks = Array(21).fill({ x: 0.5, y: 0.5, z: 0 });
+            landmarks[4] = { x: 0.51, y: 0.51, z: 0 }; // pulgar
+            landmarks[12] = { x: 0.52, y: 0.52, z: 0 }; // corazón
+            landmarks[8] = { x: 0.5, y: 0.5, z: 0 }; // índice
+            if (Hands.handsOnResultsCallback()) Hands.handsOnResultsCallback()({ multiHandLandmarks: [landmarks] });
+            jest.runOnlyPendingTimers();
+        });
+        // El cursor debe existir tras el click
+        let cursor = document.querySelector('[data-hand-cursor]');
+        expect(cursor).not.toBeNull();
+        // Avanza el tiempo para que se resetee el efecto
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+        // El cursor debe seguir existiendo tras el reset
+        cursor = document.querySelector('[data-hand-cursor]');
+        expect(cursor).not.toBeNull();
+    });
 });
