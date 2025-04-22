@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Hands } from '@mediapipe/hands';
 import { Camera } from '@mediapipe/camera_utils';
+import PropTypes from 'prop-types';
 
 // --- Core Configuration Constants ---
 
@@ -121,7 +122,6 @@ function HandTracker({ enabled }) {
   /** Effect to keep the mutable `operationalStateRef` synchronized with the `operationalState` state variable. */
   useEffect(() => {
     operationalStateRef.current = operationalState;
-    // console.log(`HandTracker State Change: New State = ${operationalState}`); // Development log (removed)
   }, [operationalState]);
 
   /** Effect handling component mounting and unmounting. Sets initial state and performs final cleanup. */
@@ -137,7 +137,7 @@ function HandTracker({ enabled }) {
       // Basic cleanup without state management or async waits, as component is gone
       if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e){} } cameraRef.current = null;
       if (handsRef.current) { try { handsRef.current.close(); } catch(e){} } handsRef.current = null;
-       if (videoRef.current && videoRef.current.srcObject) {
+       if (videoRef.current?.srcObject) {
            try { videoRef.current.srcObject.getTracks().forEach(track => track.stop()); } catch(e){}
            videoRef.current.srcObject = null;
        }
@@ -516,5 +516,9 @@ function HandTracker({ enabled }) {
     </>
   );
 }
+
+HandTracker.propTypes = {
+  enabled: PropTypes.bool.isRequired,
+};
 
 export default HandTracker;
