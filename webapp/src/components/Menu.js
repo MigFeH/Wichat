@@ -23,7 +23,8 @@ const Menu = () => {
     return (
         <Container 
             component="main" 
-            maxWidth="md" 
+            maxWidth="md"
+
             sx={{
                 textAlign: 'center', 
                 display: 'flex', 
