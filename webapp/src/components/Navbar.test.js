@@ -20,22 +20,20 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Navbar Component', () => {
-  const mockToggleDarkTheme = jest.fn();
-  const mockToggleLightTheme = jest.fn();
+  const mockToggleTheme = jest.fn();
 
   const renderNavbar = () => {
     return render(
       <ThemeProvider theme={createTheme()}>
         <Router>
-          <Navbar toggleDarkTheme={mockToggleDarkTheme} toggleLightTheme={mockToggleLightTheme} />
+          <Navbar toggleTheme={mockToggleTheme} />
         </Router>
       </ThemeProvider>
     );
   };
 
   beforeEach(() => {
-    mockToggleDarkTheme.mockClear();
-    mockToggleLightTheme.mockClear();
+    mockToggleTheme.mockClear();
     mockNavigate.mockClear();
     useMediaQuery.mockClear();
     localStorage.clear();
@@ -50,24 +48,19 @@ describe('Navbar Component', () => {
     expect(screen.getByRole('link', { name: /Ranking/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Profile/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '☀️' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '🌙' })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // El switch
   });
 
-  test('triggers light theme toggle on button click', () => {
+  test('triggers UI theme switch', () => {
     renderNavbar();
 
-    fireEvent.click(screen.getByRole('button', { name: '☀️' }));
-    expect(mockToggleLightTheme).toHaveBeenCalledTimes(1);
-    expect(mockToggleDarkTheme).not.toHaveBeenCalled();
-  });
+    const switchButton = screen.getByRole('checkbox');
 
-  test('triggers dark theme toggle on button click', () => {
-    renderNavbar();
+    fireEvent.click(switchButton);
+    expect(mockToggleTheme).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByRole('button', { name: '🌙' }));
-    expect(mockToggleDarkTheme).toHaveBeenCalledTimes(1);
-    expect(mockToggleLightTheme).not.toHaveBeenCalled();
+    fireEvent.click(switchButton);
+    expect(mockToggleTheme).toHaveBeenCalledTimes(2);
   });
 
   test('navigates to the correct links on click', () => {
@@ -79,8 +72,7 @@ describe('Navbar Component', () => {
     expect(screen.getByRole('link', { name: /Ranking/i })).toHaveAttribute('href', '/ranking');
     expect(screen.getByRole('link', { name: /Profile/i })).toHaveAttribute('href', '/profile');
     expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '☀️' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '🌙' })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // El switch
   });
 
   test('renders drawer content correctly in mobile view', () => {
@@ -99,8 +91,7 @@ describe('Navbar Component', () => {
     expect(screen.getByText(/Ranking/i)).toBeInTheDocument();
     expect(screen.getByText(/Profile/i)).toBeInTheDocument();
     expect(screen.getByText(/Logout/i)).toBeInTheDocument();
-    expect(screen.getByText('☀️')).toBeInTheDocument();
-    expect(screen.getByText('🌙')).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // El switch
   });
 
   test('handles logout button click in desktop view', () => {
