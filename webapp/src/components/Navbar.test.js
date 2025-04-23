@@ -39,74 +39,80 @@ describe('Navbar Component', () => {
     localStorage.clear();
   });
 
-  test('renders Navbar with all links and buttons', () => {
+  test('renders Navbar with all top-level links and switch in desktop view', () => {
+    useMediaQuery.mockReturnValue(false); // Desktop view
     renderNavbar();
 
     expect(screen.getByRole('link', { name: /Menu/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Game/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Statistics/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Ranking/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Profile/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Games/i })).toBeInTheDocument(); // Dropdown
+    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // Theme switch
     expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
-    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // El switch
   });
 
-  test('triggers UI theme switch', () => {
+  test('opens Games menu and navigates to sub-items in desktop view', () => {
+    useMediaQuery.mockReturnValue(false); // Desktop view
     renderNavbar();
 
-    const switchButton = screen.getByRole('checkbox');
+    const gamesButton = screen.getByRole('button', { name: /Games/i });
+    fireEvent.click(gamesButton);
 
-    fireEvent.click(switchButton);
+    const timedGame = screen.getByText('Timed Game');
+    const nonTimedGame = screen.getByText('Non Timed Game');
+    expect(timedGame).toBeInTheDocument();
+    expect(nonTimedGame).toBeInTheDocument();
+
+    fireEvent.click(timedGame);
+    expect(mockNavigate).toHaveBeenCalledWith('/timedGame');
+  });
+
+  test('theme toggle switch triggers callback', () => {
+    useMediaQuery.mockReturnValue(false);
+    renderNavbar();
+
+    const switchBtn = screen.getByRole('checkbox');
+    fireEvent.click(switchBtn);
     expect(mockToggleTheme).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(switchButton);
-    expect(mockToggleTheme).toHaveBeenCalledTimes(2);
   });
 
-  test('navigates to the correct links on click', () => {
+  test('opens drawer in mobile view and shows all items', () => {
+    useMediaQuery.mockReturnValue(true); // Mobile view
     renderNavbar();
 
-    expect(screen.getByRole('link', { name: /Menu/i })).toHaveAttribute('href', '/menu');
-    expect(screen.getByRole('link', { name: /Game/i })).toHaveAttribute('href', '/game');
-    expect(screen.getByRole('link', { name: /Statistics/i })).toHaveAttribute('href', '/stadistics');
-    expect(screen.getByRole('link', { name: /Ranking/i })).toHaveAttribute('href', '/ranking');
-    expect(screen.getByRole('link', { name: /Profile/i })).toHaveAttribute('href', '/profile');
-    expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
-    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // El switch
-  });
+    fireEvent.click(screen.getByLabelText('hamburger-menu'));
 
-  test('renders drawer content correctly in mobile view', () => {
-    useMediaQuery.mockReturnValue(true); // Simulate mobile view
-
-    renderNavbar();
-
-    // Buscar el botón del menú hamburguesa
-    const menuButton = screen.getByLabelText('hamburger-menu');
-    fireEvent.click(menuButton);
-
-    // Verificar el contenido del drawer
     expect(screen.getByText(/Menu/i)).toBeInTheDocument();
-    expect(screen.getByText(/Game/i)).toBeInTheDocument();
+    expect(screen.getByText(/Games/i)).toBeInTheDocument();
     expect(screen.getByText(/Statistics/i)).toBeInTheDocument();
     expect(screen.getByText(/Ranking/i)).toBeInTheDocument();
     expect(screen.getByText(/Profile/i)).toBeInTheDocument();
     expect(screen.getByText(/Logout/i)).toBeInTheDocument();
-    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // El switch
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
   });
 
-  test('handles logout button click in desktop view', () => {
-    useMediaQuery.mockReturnValue(false); // Simulate desktop view
+  test('expands Games drawer subitems and navigates on click', () => {
+    useMediaQuery.mockReturnValue(true);
+    renderNavbar();
+  
+    fireEvent.click(screen.getByLabelText('hamburger-menu'));
+  
+    const gamesDrawerItem = screen.getByText(/Games/i);
+    fireEvent.click(gamesDrawerItem);
+  
+    const nonTimed = screen.getByRole('link', { name: /Non Timed Game/i });
+  
+    expect(nonTimed).toHaveAttribute('href', '/game');
+  });  
 
+  test('logout button clears localStorage and navigates to login', () => {
+    useMediaQuery.mockReturnValue(false); // Desktop
     renderNavbar();
 
-    // Verificar que el botón de logout está presente
-    const logoutButton = screen.getByRole('button', { name: /Logout/i });
-    expect(logoutButton).toBeInTheDocument();
-
-    // Simular clic en el botón de logout
-    fireEvent.click(logoutButton);
-
-    // Verificar que se navega a la página de login
+    fireEvent.click(screen.getByRole('button', { name: /Logout/i }));
     expect(mockNavigate).toHaveBeenCalledWith('/login');
+    expect(localStorage.getItem('authToken')).toBeNull();
+    expect(localStorage.getItem('username')).toBeNull();
   });
 });

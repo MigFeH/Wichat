@@ -11,7 +11,10 @@ import {
   ListItemIcon,
   ListItemText,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Menu,
+  MenuItem,
+  Collapse
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -21,76 +24,33 @@ import {
   Leaderboard,
   ExitToApp,
   AccountCircle,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  ExpandLess,
+  ExpandMore,
+  Close
 } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-
-const iconColor = '#fdd835'; // Color amarillo para el icono del sol y la luna
-const railColor = '#fff'; // Color blanco del rail por el que se mueve el switch
-
-const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width: 62,
-  height: 34,
-  padding: 7,
-  '& .MuiSwitch-switchBase': {
-    margin: 1,
-    padding: 0,
-    transform: 'translateX(6px)',
-
-    // Estilos cuando el switch está CHEQUEADO (luna)
-    '&.Mui-checked': {
-      color: railColor,
-      transform: 'translateX(22px)',
-      '& .MuiSwitch-thumb:before': {
-        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          iconColor, // <-- Color amarillo para la LUNA
-        )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
-      },
-      '& + .MuiSwitch-track': {
-        opacity: 1,
-        backgroundColor: railColor,
-        border: `1px solid ${theme.palette.grey[400]}`, // Borde sutil para visibilidad
-      },
-    },
-  },
-
-  // Estilos para el círculo (thumb)
-  '& .MuiSwitch-thumb': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c', // Mantenemos el color del thumb (el fondo del círculo)
-    width: 32,
-    height: 32,
-
-    // Estilos para el icono DENTRO del thumb (SOL por defecto)
-    '&::before': {
-      content: "''",
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      left: 0,
-      top: 0,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center',
-      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-        iconColor, // <-- Color amarillo para el SOL
-      )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
-    },
-  },
-
-  // Estilos para el fondo (track) cuando está APAGADO
-  '& .MuiSwitch-track': {
-    opacity: 1,
-    backgroundColor: railColor, // <-- Fondo blanco cuando está APAGADO
-    borderRadius: 20 / 2,
-    border: `1px solid ${theme.palette.grey[400]}`, // Borde sutil para visibilidad
-  },
-}));
+import UIThemeSwitch from './UIThemeSwitch.jsx';
 
 const Navbar = ({ toggleTheme }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  
   const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 960px
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const [gamesMenuOpen, setGamesMenuOpen] = useState(false);
+  const toggleGamesMenu = () => setGamesMenuOpen((prev) => !prev);
+
+  const [gamesMenuAnchorEl, setGamesMenuAnchorEl] = useState(null);
+  const isGamesMenuOpen = Boolean(gamesMenuAnchorEl);
+
+  const handleGamesMenuOpen = (event) => {
+    setGamesMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleGamesMenuClose = () => {
+    setGamesMenuAnchorEl(null);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('username');
@@ -100,47 +60,126 @@ const Navbar = ({ toggleTheme }) => {
 
   const navItems = [
     { text: 'Menu', icon: <Home />, to: '/menu' },
-    { text: 'Game', icon: <SportsEsports />, to: '/game' },
+    { 
+      text: 'Games', 
+      icon: <SportsEsports />, 
+      subItems: [
+        { text: 'Non Timed Game', to: '/game' },
+        { text: 'Timed Game', to: '/timedGame' }
+      ] 
+    },
     { text: 'Statistics', icon: <BarChart />, to: '/stadistics' },
     { text: 'Ranking', icon: <Leaderboard />, to: '/ranking' },
     { text: 'Profile', icon: <AccountCircle />, to: '/profile' }
   ];
 
+  const NavButtonItem = ({ item }) => {
+    if (item.subItems) { // Para los desplegables (Ej: Games)
+      return (
+        <Box>
+        <Button
+          color="inherit"
+          startIcon={item.icon}
+          onClick={handleGamesMenuOpen}
+          endIcon={isGamesMenuOpen ? <ExpandLess /> : <ExpandMore />}
+          className="nav-button"
+        >
+          {item.text}
+        </Button>
+
+        <Menu
+          anchorEl={gamesMenuAnchorEl}
+          open={isGamesMenuOpen}
+          onClose={handleGamesMenuClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        >
+          {item.subItems.map((subItem) => (
+            <MenuItem
+              key={subItem.to}
+              onClick={() => {
+                navigate(subItem.to);
+                handleGamesMenuClose();
+              }}
+            >
+              {subItem.text}
+            </MenuItem>
+          ))}
+        </Menu>
+      </Box>
+
+      );
+    }
+  
+    return (
+      <Button
+        color="inherit"
+        component={Link}
+        to={item.to}
+        startIcon={item.icon}
+        className="nav-button"
+      >
+        {item.text}
+      </Button>
+    );
+  };  
+
+  const DrawerItem = ({ item }) => {
+    if (item.subItems) {
+      return (
+        <>
+          <ListItem button onClick={toggleGamesMenu}>
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
+            {gamesMenuOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={gamesMenuOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.subItems.map((subItem) => (
+                <ListItem button component={Link} to={subItem.to} sx={{ pl: 4 }} key={subItem.to}>
+                  <ListItemText primary={subItem.text} />
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </>
+      );
+    }
+  
+    return (
+      <ListItem button component={Link} to={item.to}>
+        <ListItemIcon>{item.icon}</ListItemIcon>
+        <ListItemText primary={item.text} />
+      </ListItem>
+    );
+  };
+
   const renderThemeButtons = () => (
-    <>
-    <MaterialUISwitch
+    <UIThemeSwitch
       sx={{ m: 1 }}
       onClick={toggleTheme}
       checked={theme.palette.mode === 'dark'}
     />
-    </>
   );
 
   const renderNavButtons = () => (
     <Box className="nav-buttons-container">
-      {navItems.map(({ text, icon, to }) => (
-        <Button
-          key={text}
-          color="inherit"
-          component={Link}
-          to={to}
-          startIcon={icon}
-          className="nav-button"
-        >
-          {text}
-        </Button>
+      {navItems.map((item) => (
+        <NavButtonItem key={item.text} item={item} />
       ))}
     </Box>
   );
-
-  const renderDrawerContent = () => ( // Navbar para móviles / tablet
-    <Box className="drawer-content" aria-label="backdrop" onClick={() => setDrawerOpen(false)}>
+  
+  const renderDrawerContent = () => (
+    <Box sx={{ width: 250 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+        <IconButton onClick={() => setDrawerOpen(false)}>
+          <Close />
+        </IconButton>
+      </Box>
       <List>
-        {navItems.map(({ text, icon, to }) => (
-          <ListItem button key={text} component={Link} to={to}>
-            <ListItemIcon>{icon}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
+        {navItems.map((item) => (
+          <DrawerItem key={item.text} item={item} />
         ))}
         <ListItem button onClick={handleLogout}>
           <ListItemIcon><ExitToApp /></ListItemIcon>
@@ -149,17 +188,26 @@ const Navbar = ({ toggleTheme }) => {
         <ListItem>{renderThemeButtons()}</ListItem>
       </List>
     </Box>
-  );
+  );  
 
   return (
     <AppBar position="static" className="navbar">
       <Toolbar className="navbar-toolbar">
-        {isMobile ? (
+        {isMobile ? ( // Navbar para movil/tablet
           <>
             <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(true)} aria-label="hamburger-menu">
               <MenuIcon />
             </IconButton>
-            <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)} aria-label="drawer">
+            <Drawer
+              anchor="left"
+              open={drawerOpen}
+              onClose={() => {}}
+              ModalProps={{
+                keepMounted: true,
+                disableEscapeKeyDown: true,
+                hideBackdrop: false,
+              }}
+            >
               {renderDrawerContent()}
             </Drawer>
           </>
