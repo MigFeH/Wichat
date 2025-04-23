@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { TableContainer, Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
 import { PieChart, Pie, Cell } from 'recharts';
 
@@ -36,7 +36,7 @@ const Stadistics = () => {
   };
 
   return (
-    <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
+    <Container component="main" width="80vw" sx={{ marginTop: 4 }}>
       <Button 
         variant="contained" 
         onClick={handleBackClick}
@@ -52,7 +52,7 @@ const Stadistics = () => {
           {error}
         </Typography>
       )}
-      <Paper>
+      <TableContainer component={Paper} sx={{ display: "flex", width: "90vw" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -97,7 +97,7 @@ const Stadistics = () => {
             ))}
           </TableBody>
         </Table>
-      </Paper>
+      </TableContainer>
     </Container>
   );
 };

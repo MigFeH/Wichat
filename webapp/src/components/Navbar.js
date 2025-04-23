@@ -35,7 +35,7 @@ const Navbar = ({ toggleTheme }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   
-  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 960px
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [gamesMenuOpen, setGamesMenuOpen] = useState(false);

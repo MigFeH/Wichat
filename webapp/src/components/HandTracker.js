@@ -50,11 +50,10 @@ const OpsState = {
 // --- Component Styles ---
 const styles = {
   video: {
-    position: 'fixed',
-    bottom: '10px',
-    left: '10px',
-    width: '160px',
-    height: '120px',
+    width: "29%",
+    position: "absolute",
+    bottom: "1rem",
+    left: "1rem",
     borderRadius: '8px',
     border: '1px solid gray',
     zIndex: 1000, // Ensure video is behind cursor and overlays
@@ -496,7 +495,7 @@ function HandTracker({ enabled }) {
         data-testid="handtracker-video"
         style={{
             ...styles.video,
-            visibility: showVideo ? 'visible' : 'hidden', // Show only when running
+            visibility: showVideo ? 'visible' : 'hidden' // Show only when running
          }}
       />
 
