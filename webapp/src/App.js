@@ -12,6 +12,9 @@ import ProtectedRoute from './auth/ProtectedRoute';
 import Ranking from './components/Ranking';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
+import HandTracker from './components/HandTracker';
+import { HandNavigationProvider } from './components/HandNavigationContext';
+import { useHandNavigation } from './components/HandNavigationContext';
 
 const darkTheme = createTheme({
   palette: {
@@ -25,8 +28,9 @@ const lightTheme = createTheme({
   },
 });
 
-const App = () => {
+const AppContent = () => {
   const [theme, setTheme] = useState(lightTheme);
+  const { isHandNavigationEnabled } = useHandNavigation();
 
   const toggleDarkTheme = () => {
     setTheme(darkTheme);
@@ -36,14 +40,12 @@ const App = () => {
     setTheme(lightTheme);
   };
 
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === lightTheme ? darkTheme : lightTheme);
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Navbar toggleTheme={toggleTheme}/>
+      <Navbar toggleDarkTheme={toggleDarkTheme} toggleLightTheme={toggleLightTheme} />
+      <HandTracker enabled={isHandNavigationEnabled} />
+
       <main>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -70,6 +72,15 @@ const App = () => {
         </Routes>
       </main>
     </ThemeProvider>
+  );
+};
+
+// Componente principal que provee el contexto
+const App = () => {
+  return (
+    <HandNavigationProvider>
+      <AppContent />
+    </HandNavigationProvider>
   );
 };
 
