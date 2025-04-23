@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Typography, Box, Card, CardMedia, Button, IconButton, TextField, CircularProgress, Alert } from '@mui/material';
+import { Container, Typography, Box, Card, CardMedia, Button, IconButton, TextField, CircularProgress, Alert, Checkbox, FormControlLabel, Tooltip } from '@mui/material';
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useHandNavigation } from './HandNavigationContext';
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
 const TOTAL_IMAGES = 8;
@@ -16,6 +17,7 @@ const Profile = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const { isHandNavigationEnabled, toggleHandNavigation } = useHandNavigation();
 
   const profileImageFiles = Array.from({ length: TOTAL_IMAGES }, (_, i) => `profile_${i + 1}.gif`);
 
@@ -77,6 +79,15 @@ const Profile = () => {
       setError('Failed to update profile image. ' + (err.response?.data?.error || err.message));
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleHandNavigationChange = (event) => {
+    toggleHandNavigation(event.target.checked);
+    // Opcional: Añadir feedback visual
+    if (event.target.checked) {
+      // Mostrar mensaje de que necesita permitir acceso a la cámara
+      console.log('Camera access required for hand navigation');
     }
   };
 
@@ -156,6 +167,37 @@ const Profile = () => {
           >
             {isUpdating ? <CircularProgress size={24} color="inherit" /> : 'Save Profile Picture'}
           </Button>
+
+          <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isHandNavigationEnabled}
+                  onChange={handleHandNavigationChange}
+                  inputProps={{ 'aria-label': 'hand-navigation-toggle' }}
+                />
+              }
+              label="Enable hand navigation"
+            />
+            <Tooltip 
+              title="Use hand gestures to navigate through the application. Hold your hand in front of the camera and move it to control the interface."
+              arrow
+              placement="bottom"
+            >
+              <Typography 
+                variant="body2" 
+                color="text.secondary" 
+                sx={{ 
+                  mt: 1,
+                  cursor: 'help',
+                  textAlign: 'center',
+                  maxWidth: 400 
+                }}
+              >
+                ℹ️ Hover for information about hand navigation
+              </Typography>
+            </Tooltip>
+          </Box>
         </Box>
       )}
     </Container>

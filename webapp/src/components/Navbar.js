@@ -11,7 +11,10 @@ import {
   ListItemIcon,
   ListItemText,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Menu,
+  MenuItem,
+  Collapse
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -21,14 +24,22 @@ import {
   Leaderboard,
   ExitToApp,
   AccountCircle,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  ExpandLess,
+  ExpandMore,
+  Close
 } from '@mui/icons-material';
+import UIThemeSwitch from './UIThemeSwitch.jsx';
 
-const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
+const Navbar = ({ toggleTheme }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 960px
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const [gamesMenuOpen, setGamesMenuOpen] = useState(false);
+  const toggleGamesMenu = () => setGamesMenuOpen((prev) => !prev);
 
   const handleLogout = () => {
     localStorage.removeItem('username');
@@ -38,56 +49,139 @@ const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
 
   const navItems = [
     { text: 'Menu', icon: <Home />, to: '/menu' },
-    { text: 'Game', icon: <SportsEsports />, to: '/game' },
+    { 
+      text: 'Games', 
+      icon: <SportsEsports />, 
+      subItems: [
+        { text: 'Non Timed Game', to: '/game' },
+        { text: 'Timed Game', to: '/timedGame' }
+      ] 
+    },
     { text: 'Statistics', icon: <BarChart />, to: '/stadistics' },
     { text: 'Ranking', icon: <Leaderboard />, to: '/ranking' },
     { text: 'Profile', icon: <AccountCircle />, to: '/profile' }
   ];
 
+  const NavButtonItem = ({ item }) => {
+    const buttonRef = React.useRef(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+  
+    const handleOpen = () => {
+      if (buttonRef.current) {
+        setAnchorEl(buttonRef.current);
+      }
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+  
+    if (item.subItems) { // Da true si el elemento tiene subelementos (Ej: Games)
+      return (
+        <Box>
+          <Button
+            ref={buttonRef}
+            color="inherit"
+            startIcon={item.icon}
+            onClick={handleOpen}
+            endIcon={Boolean(anchorEl) ? <ExpandLess /> : <ExpandMore />}
+            className="nav-button"
+          >
+            {item.text}
+          </Button>
+  
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          >
+            {item.subItems.map((subItem) => ( // los subelementos
+              <MenuItem
+                key={subItem.to}
+                onClick={() => {
+                  navigate(subItem.to);
+                  handleClose();
+                }}
+              >
+                {subItem.text}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
+      );
+    }
+  
+    return (
+      <Button
+        color="inherit"
+        component={Link}
+        to={item.to}
+        startIcon={item.icon}
+        className="nav-button"
+      >
+        {item.text}
+      </Button>
+    );
+  };  
+
+  const DrawerItem = ({ item }) => {
+    if (item.subItems) {
+      return (
+        <>
+          <ListItem button onClick={toggleGamesMenu}>
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
+            {gamesMenuOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={gamesMenuOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.subItems.map((subItem) => (
+                <ListItem button component={Link} to={subItem.to} sx={{ pl: 4 }} key={subItem.to}>
+                  <ListItemText primary={subItem.text} />
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </>
+      );
+    }
+  
+    return (
+      <ListItem button component={Link} to={item.to}>
+        <ListItemIcon>{item.icon}</ListItemIcon>
+        <ListItemText primary={item.text} />
+      </ListItem>
+    );
+  };
+
   const renderThemeButtons = () => (
-    <>
-      <Button
-        onClick={toggleLightTheme}
-        color="inherit"
-        sx={{ fontSize: '1.5rem' }}
-      >
-        ☀️
-      </Button>
-      <Button
-        onClick={toggleDarkTheme}
-        color="inherit"
-        sx={{ fontSize: '1.5rem' }}
-      >
-        🌙
-      </Button>
-    </>
+    <UIThemeSwitch
+      sx={{ m: 1 }}
+      onClick={toggleTheme}
+      checked={theme.palette.mode === 'dark'}
+    />
   );
 
   const renderNavButtons = () => (
     <Box className="nav-buttons-container">
-      {navItems.map(({ text, icon, to }) => (
-        <Button
-          key={text}
-          color="inherit"
-          component={Link}
-          to={to}
-          startIcon={icon}
-          className="nav-button"
-        >
-          {text}
-        </Button>
+      {navItems.map((item) => (
+        <NavButtonItem key={item.text} item={item} />
       ))}
     </Box>
   );
-
-  const renderDrawerContent = () => ( // Navbar para móviles / tablet
-    <Box className="drawer-content" aria-label="backdrop" onClick={() => setDrawerOpen(false)}>
+  
+  const renderDrawerContent = () => (
+    <Box sx={{ width: 250 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+        <IconButton onClick={() => setDrawerOpen(false)}>
+          <Close />
+        </IconButton>
+      </Box>
       <List>
-        {navItems.map(({ text, icon, to }) => (
-          <ListItem button key={text} component={Link} to={to}>
-            <ListItemIcon>{icon}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
+        {navItems.map((item) => (
+          <DrawerItem key={item.text} item={item} />
         ))}
         <ListItem button onClick={handleLogout}>
           <ListItemIcon><ExitToApp /></ListItemIcon>
@@ -96,24 +190,33 @@ const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
         <ListItem>{renderThemeButtons()}</ListItem>
       </List>
     </Box>
-  );
+  );  
 
   return (
     <AppBar position="static" className="navbar">
       <Toolbar className="navbar-toolbar">
-        {isMobile ? (
+        {isMobile ? ( // Navbar para movil/tablet
           <>
             <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(true)} aria-label="hamburger-menu">
               <MenuIcon />
             </IconButton>
-            <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)} aria-label="drawer">
+            <Drawer
+              anchor="left"
+              open={drawerOpen}
+              onClose={() => {}}
+              ModalProps={{
+                keepMounted: true,
+                disableEscapeKeyDown: true,
+                hideBackdrop: false,
+              }}
+            >
               {renderDrawerContent()}
             </Drawer>
           </>
         ) : ( // Navbar para escritorio
           <>
             {renderNavButtons()}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1, lg: 2 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1, lg: 2 } }}> {/* md == medium == 960px || lg == large == 1280px */}
               {renderThemeButtons()}
               <Button
                 color="inherit"

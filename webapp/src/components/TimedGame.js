@@ -1,26 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Container, CircularProgress } from '@mui/material';
+import React from 'react';
+import { Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import TimedQuestionPresentation from './wikidataComponents/TimedQuestionPresentation.jsx';
 import useGameLogic from './utils/GameUtils';
 import ChatLLM from './ChatLLM';
-
-const TimedProgress = () => {
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setProgress((oldProgress) => {
-                const newProgress = oldProgress + 1;
-                return newProgress >= 100 ? 100 : newProgress;
-            });
-        }, 100);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return <CircularProgress data-testid="progress-circle" variant="determinate" value={progress} />;
-};
 
 const TimedGame = () => {
     const navigate = useNavigate();
@@ -34,7 +17,6 @@ const TimedGame = () => {
                 question={currentQuestion}
                 data-testid="timed-question-presentation"
             />
-            <TimedProgress data-testid="timed-progress" />
             <ChatLLM currentCity={currentCity} data-testid="chat-llm" />
         </Container>
     );
