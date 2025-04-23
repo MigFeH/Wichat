@@ -41,17 +41,6 @@ const Navbar = ({ toggleTheme }) => {
   const [gamesMenuOpen, setGamesMenuOpen] = useState(false);
   const toggleGamesMenu = () => setGamesMenuOpen((prev) => !prev);
 
-  const [gamesMenuAnchorEl, setGamesMenuAnchorEl] = useState(null);
-  const isGamesMenuOpen = Boolean(gamesMenuAnchorEl);
-
-  const handleGamesMenuOpen = (event) => {
-    setGamesMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleGamesMenuClose = () => {
-    setGamesMenuAnchorEl(null);
-  };
-
   const handleLogout = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('authToken');
@@ -74,40 +63,53 @@ const Navbar = ({ toggleTheme }) => {
   ];
 
   const NavButtonItem = ({ item }) => {
-    if (item.subItems) { // Para los desplegables (Ej: Games)
+    const buttonRef = React.useRef(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+  
+    const handleOpen = () => {
+      if (buttonRef.current) {
+        setAnchorEl(buttonRef.current);
+      }
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+  
+    if (item.subItems) { // Da true si el elemento tiene subelementos (Ej: Games)
       return (
         <Box>
-        <Button
-          color="inherit"
-          startIcon={item.icon}
-          onClick={handleGamesMenuOpen}
-          endIcon={isGamesMenuOpen ? <ExpandLess /> : <ExpandMore />}
-          className="nav-button"
-        >
-          {item.text}
-        </Button>
-
-        <Menu
-          anchorEl={gamesMenuAnchorEl}
-          open={isGamesMenuOpen}
-          onClose={handleGamesMenuClose}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        >
-          {item.subItems.map((subItem) => (
-            <MenuItem
-              key={subItem.to}
-              onClick={() => {
-                navigate(subItem.to);
-                handleGamesMenuClose();
-              }}
-            >
-              {subItem.text}
-            </MenuItem>
-          ))}
-        </Menu>
-      </Box>
-
+          <Button
+            ref={buttonRef}
+            color="inherit"
+            startIcon={item.icon}
+            onClick={handleOpen}
+            endIcon={Boolean(anchorEl) ? <ExpandLess /> : <ExpandMore />}
+            className="nav-button"
+          >
+            {item.text}
+          </Button>
+  
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          >
+            {item.subItems.map((subItem) => ( // los subelementos
+              <MenuItem
+                key={subItem.to}
+                onClick={() => {
+                  navigate(subItem.to);
+                  handleClose();
+                }}
+              >
+                {subItem.text}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
       );
     }
   
