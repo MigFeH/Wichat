@@ -5,8 +5,11 @@
 }
 
 .wave-container {
-    width: 100vw;
-    align-content: flex-end; /* Hace que la ola quede siempre fija en la parte inferior de la página */
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
     pointer-events: none;
     animation: waveRise 8s ease-in-out forwards; /* Animación de subida */
 }
@@ -30,7 +33,7 @@
         transform: translateX(-50%);
     }
 }
-
+ 
 /* Animación para que la ola suba lentamente */
 @keyframes waveRise {
     from {

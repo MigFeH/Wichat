@@ -50,9 +50,9 @@ const OpsState = {
 // --- Component Styles ---
 const styles = {
   video: {
-    width: "29%",
+    width: "11%",
     position: "absolute",
-    bottom: "1rem",
+    top: "5rem",
     left: "1rem",
     borderRadius: '8px',
     border: '1px solid gray',
@@ -125,6 +125,7 @@ function HandTracker({ enabled }) {
 
   /** Effect handling component mounting and unmounting. Sets initial state and performs final cleanup. */
   useEffect(() => {
+    const videoElement = videoRef.current;
     isMountedRef.current = true;
     setOperationalState(OpsState.IDLE);
     operationalStateRef.current = OpsState.IDLE;
@@ -136,10 +137,10 @@ function HandTracker({ enabled }) {
       // Basic cleanup without state management or async waits, as component is gone
       if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e){ console.log("Error while stopping the camera ref"); } } cameraRef.current = null;
       if (handsRef.current) { try { handsRef.current.close(); } catch(e){ console.log("Error while stopping the hands ref"); } } handsRef.current = null;
-       if (videoRef.current?.srcObject) {
-           try { videoRef.current.srcObject.getTracks().forEach(track => track.stop()); } catch(e){ console.log("Error while stopping the video tracks"); }
+       if (videoElement?.srcObject) {
+           try { videoElement.srcObject.getTracks().forEach(track => track.stop()); } catch(e){ console.log("Error while stopping the video tracks ", e); }
           // Nullify the video stream to prevent memory leaks and ensure no further processing occurs
-           videoRef.current.srcObject = null;
+           videoElement.srcObject = null;
        }
        operationalStateRef.current = OpsState.IDLE; // Ensure ref reflects inactive state on unmount
     };
