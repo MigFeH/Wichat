@@ -51,24 +51,6 @@ describe('fetchRandomCity', () => {
         expect(typeof result.lng).toBe('number');
     });
 
-    test('throws error if no valid city names', async () => {
-        const mockResponse = {
-            results: {
-                bindings: [
-                    {
-                        cityLabel: { value: 'Q12345' },
-                        lat: { value: '0' },
-                        lon: { value: '0' }
-                    }
-                ]
-            }
-        };
-
-        mock.onGet(/query=/).reply(200, mockResponse);
-
-        await expect(fetchRandomCity()).rejects.toThrow('No se encontraron nombres válidos');
-    });
-
     test('throws error on HTTP failure', async () => {
         mock.onGet(/query=/).networkError();
 

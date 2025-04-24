@@ -54,7 +54,7 @@ const Menu = () => {
                 <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>
                     <ImageButton src="/Button_NonTimedGame.png" alt="Non Timed Game" onClick={handlePageChange("game")} />
                     <ImageButton src="/Button_TimedGame.png" alt="Timed Game" onClick={handlePageChange("timedGame")} />
-                    <ImageButton src="/Button_TimedGame.png" alt="Location Game" onClick={handlePageChange("locationGame")} />
+                    <ImageButton src="/Button_Map.png" alt="Location Game" onClick={handlePageChange("locationGame")} />
                 </Box>
 
                 {/* Columna derecha */}
