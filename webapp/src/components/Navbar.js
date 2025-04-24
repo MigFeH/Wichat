@@ -193,7 +193,7 @@ const Navbar = ({ toggleTheme }) => {
   );  
 
   return (
-    <AppBar position="static" className="navbar">
+    <AppBar className="navbar">
       <Toolbar className="navbar-toolbar">
         {isMobile ? ( // Navbar para movil/tablet
           <>

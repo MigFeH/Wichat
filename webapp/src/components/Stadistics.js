@@ -52,7 +52,7 @@ const Stadistics = () => {
           {error}
         </Typography>
       )}
-      <TableContainer component={Paper} sx={{ display: "flex", width: "90vw" }}>
+      <TableContainer component={Paper} sx={{ display: "flex", width: "100%" }}>
         <Table>
           <TableHead>
             <TableRow>
