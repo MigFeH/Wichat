@@ -50,6 +50,8 @@ jobs:
     needs: [e2e-tests]
     steps:
     - uses: actions/checkout@v4
+    - name: Set up .env file
+      run: echo "REACT_APP_LLM_API_KEY=${{ secrets.REACT_APP_LLM_API_KEY }}" > webapp/.env
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       env:

@@ -48,16 +48,27 @@ app.get('/questions', async (req, res) => {
 
 app.post('/login', async (req, res) => {
 
-    const authResponse = await axios.post(authServiceUrl+'/login', req.body);
-    res.json(authResponse.data);
-
+    try
+    {
+      const authResponse = await axios.post(authServiceUrl+'/login', req.body);
+      res.json(authResponse.data);
+    } catch (error) 
+    {
+      res.status(400).json({ error: error.response.data.error });
+    }
 });
 
 app.post('/adduser', async (req, res) => {
 
-    // Forward the add user request to the user service
-    const userResponse = await axios.post(userServiceUrl+'/adduser', req.body);
-    res.json(userResponse.data);
+    try
+    {
+      // Forward the add user request to the user service
+      const userResponse = await axios.post(userServiceUrl+'/adduser', req.body);
+      res.json(userResponse.data);
+    } catch (error) 
+    {
+      res.status(400).json({ error: error.response.data.error });
+    }
 
 });
 
