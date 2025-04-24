@@ -58,7 +58,7 @@ function validateRequiredFields(req, requiredFields) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(question, apiKey, model = 'empathy', gameSystemInstruction) {
+async function sendQuestionToLLM(question, apiKey, model = 'gemini',systemInstruction = '') {
   try {
     const config = llmConfigs[model];
     if (!config) {
@@ -66,7 +66,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'empathy', gameSystem
     }
 
     const url = config.url(apiKey);
-    const requestData = config.transformRequest(gameSystemInstruction, question);
+    const requestData = config.transformRequest(systemInstruction,question);
 
     const headers = {
       'Content-Type': 'application/json',
