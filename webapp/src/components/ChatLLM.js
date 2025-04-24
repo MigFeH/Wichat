@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+const apiEndpoint = process.env.GATEWAY_SERVICE_URL || 'http://localhost:8000';
+const apiKey = process.env.REACT_APP_LLM_API_KEY;
 
 const ChatLLM = ({ currentCity }) => {  // ← Recibe la ciudad actual como prop
   const [userInput, setUserInput] = useState('');
@@ -19,7 +19,7 @@ const ChatLLM = ({ currentCity }) => {  // ← Recibe la ciudad actual como prop
     setChatHistory((prev) => [...prev, userMessage]);
 
     try {
-      const response = await axios.post(`${apiEndpoint}/hintllm`, {
+      const response = await axios.post(`${apiEndpoint}/hint`, {
         question: `${currentCity || "ciudad desconocida"}:${userInput}`,
         model: 'gemini',
         apiKey: apiKey

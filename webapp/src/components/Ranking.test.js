@@ -12,8 +12,6 @@ jest.mock('react-router-dom', () => ({
 }));
 jest.mock('axios');
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8001';
-
 describe('Ranking Component', () => {
   beforeEach(() => {
     axios.get.mockClear();
@@ -44,9 +42,9 @@ describe('Ranking Component', () => {
 
   test('renders ranking data correctly', async () => {
     const rankingData = [
-      { username: 'user1', score: 10, profileImage: 'profile_5.gif' },
-      { username: 'user2', score: 8, profileImage: 'profile_default.png' },
-      { username: 'user3', score: 5 }, // User without profile image
+      { _id: 'user1', score: 10, profileImage: 'profile_5.gif' },
+      { _id: 'user2', score: 8, profileImage: 'profile_default.png' },
+      { _id: 'user3', score: 5 }, // User without profile image
     ];
     axios.get.mockResolvedValueOnce({ data: rankingData });
     render(

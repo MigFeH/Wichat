@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button, Avatar } from '@mui/material';
 import axios from 'axios';
 
-const apiEndpoint = 'http://localhost:8001';
+const apiEndpoint = process.env.USER_SERVICE_URL || 'http://localhost:8001';
 
 const Ranking = () => {
   const navigate = useNavigate();
@@ -78,17 +78,17 @@ const Ranking = () => {
             </TableHead>
             <TableBody>
               {ranking.map((user, index) => (
-                <TableRow key={user.username}>
+                <TableRow key={user._id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Avatar
                       src={`/profile/${user.profileImage || 'profile_1.gif'}`}
-                      alt={user.username}
+                      alt={user._id}
                       onError={handleImageError}
                       sx={{ width: 40, height: 40 }}
                     />
                   </TableCell>
-                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user._id}</TableCell>
                   <TableCell align="right">{user.score}</TableCell>
                 </TableRow>
               ))}
