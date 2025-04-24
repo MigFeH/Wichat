@@ -14,13 +14,16 @@ describe('Location Component', () => {
         <LocationGame />
       </BrowserRouter>
     );
-    expect(screen.getByText('LocationGuesser')).toBeInTheDocument();
+    expect(screen.getByText('Encuentra la ciudad')).toBeInTheDocument();
 
   });
 
   it('calls fetchQuestions on mount', async () => {
     const mockFetchCity = jest.fn();
-    require('./wikidataComponents/MappedCities.js').default.mockImplementation(() => {
+    require('./wikidataComponents/MappedCities.js')
+    let mockMappedCity = {};
+
+    mockMappedCity.mockImplementation(() => {
       return { long:34, lat: 34, name: mockFetchCity };
     });
 
@@ -29,6 +32,6 @@ describe('Location Component', () => {
         <LocationGame />
       </BrowserRouter>
     );
-    await waitFor(() => expect(mockFetchCity).toHaveBeenCalled());
+    await waitFor(() => expect(mockMappedCity).toHaveBeenCalled());
   });
 });

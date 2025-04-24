@@ -9,6 +9,9 @@ jest.mock('./MappedCities', () => ({
     fetchRandomCity: jest.fn()
 }));
 
+// Control manual del onGuess simulado
+let mockOnGuess = null;
+
 // Mock básico de Leaflet
 jest.mock('react-leaflet', () => {
     const React = require('react');
@@ -17,7 +20,12 @@ jest.mock('react-leaflet', () => {
         TileLayer: () => <div data-testid="tile-layer" />,
         Marker: ({ position }) => <div data-testid="marker">{`Marker at ${position}`}</div>,
         Polyline: ({ positions }) => <div data-testid="polyline">{`Polyline from ${positions[0]} to ${positions[1]}`}</div>,
-        useMapEvents: () => null
+        useMapEvents: ({ click }) => {
+            mockOnGuess = (latlng) => {
+                if (click) click({ latlng });
+            };
+            return null;
+        }
     };
 });
 
@@ -30,6 +38,7 @@ describe('LocationGuesser en instancia', () => {
 
     beforeEach(() => {
         MappedCities.fetchRandomCity.mockResolvedValue(mockCity);
+        mockOnGuess = null;
     });
 
     test('renders initial elements', async () => {
@@ -47,14 +56,10 @@ describe('LocationGuesser en instancia', () => {
             render(<LocationGuesser />);
         });
 
-        const component = screen.getByTestId('map');
-
-        // Simula un clic cerca de Barcelona
         act(() => {
-            component.props.children[2].props.onGuess({ lat: 41.3874, lng: 2.1686 }); // Barcelona
+            mockOnGuess({ lat: 41.3874, lng: 2.1686 }); // Barcelona
         });
 
-        // Esperar por la actualización del estado
         expect(await screen.findByText(/Fin del juego/)).toBeInTheDocument();
         expect(await screen.findByText(/¡Estás a/)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Nueva partida' })).toBeInTheDocument();
@@ -65,10 +70,8 @@ describe('LocationGuesser en instancia', () => {
             render(<LocationGuesser />);
         });
 
-        const component = screen.getByTestId('map');
-
         act(() => {
-            component.props.children[2].props.onGuess({ lat: 41.3874, lng: 2.1686 }); // Guess
+            mockOnGuess({ lat: 41.3874, lng: 2.1686 }); // Guess
         });
 
         const button = await screen.findByRole('button', { name: 'Nueva partida' });
@@ -86,20 +89,17 @@ describe('LocationGuesser en instancia', () => {
             render(<LocationGuesser />);
         });
 
-        const component = screen.getByTestId('map');
-        const onGuess = component.props.children[2].props.onGuess;
-
         act(() => {
-            onGuess({ lat: 41.3874, lng: 2.1686 });
+            mockOnGuess({ lat: 41.3874, lng: 2.1686 }); // Primera guess
         });
 
-        // Intento de segunda adivinanza (no debería actualizar nada)
         const prevDistanceText = screen.getByText(/¡Estás a/).textContent;
 
         act(() => {
-            onGuess({ lat: 45.0, lng: 10.0 }); // Nueva posición
+            mockOnGuess({ lat: 45.0, lng: 10.0 }); // Segundo intento (no debe tener efecto)
         });
 
         expect(screen.getByText(/¡Estás a/).textContent).toBe(prevDistanceText);
     });
 });
+
