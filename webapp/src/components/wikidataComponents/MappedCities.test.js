@@ -11,7 +11,7 @@ describe('fetchRandomCity', () => {
     });
 
     test('returns a cached city if cache is filled', async () => {
-        const mockCity = { name: 'Madrid', lat: 40.4, lng: -3.7 };
+        const mockCity = { name: 'Barcelona', lat: 41.3874, lng: 2.1686 };
         __setCityCacheForTest([mockCity]);
 
         const result = await fetchRandomCity();
