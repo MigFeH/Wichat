@@ -154,5 +154,6 @@ jobs:
         key: ${{ secrets.DEPLOY_KEY }}
         command: |
           wget https://raw.githubusercontent.com/arquisoft/wichat_es2b/master/docker-compose.yml -O docker-compose.yml
+          export LLM_API_KEY=${{ secrets.LLM_API_KEY }}
           docker compose --profile prod down
           docker compose --profile prod up -d --pull always
