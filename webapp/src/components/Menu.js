@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, useMediaQuery, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 
@@ -15,6 +15,11 @@ const ImageButton = styled('img')({
 
 const Menu = () => {
     const navigate = useNavigate();
+    const theme = useTheme();
+
+    const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px
+    const widthResponsive=isMobile ? '50vh' : '100%';
+    const heightResponsive=isMobile ? 'auto' : '100%';
 
     const handlePageChange = (page) => () => {
         navigate(`/${page}`);
@@ -22,16 +27,18 @@ const Menu = () => {
 
     return (
         <Container 
-            component="main" 
-            maxWidth="md"
+
+            /*component="main"*/ 
+            /*maxWidth="md"*/ 
 
             sx={{
-                textAlign: 'center', 
+                /*textAlign: 'center', */
                 display: 'flex', 
                 flexDirection: 'column', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                height: '100%'
+                /*alignItems: 'center', 
+                justifyContent: 'center',*/
+                width: widthResponsive,
+                height: heightResponsive
             }}
         >
             {/* Imagen principal */}
@@ -44,25 +51,29 @@ const Menu = () => {
 
             {/* Contenedor de botones en dos columnas */}
             <Box 
-                display="flex" 
-                justifyContent="space-between" 
+                display="flex"
+                flexDirection={ isMobile ? 'column' : 'row' }
+                justifyContent="space-between"
+                alignItems="center"
                 width="100%" 
-                maxWidth="100%" 
+                maxWidth="100%"
                 marginTop={3}
+                gap={{ xs: 2 /* Espacio entre filas */, md: 4 /* Espacio entre columnas */ }}
             >
                 {/* Columna izquierda */}
-                <Box display="flex" flexDirection="column" alignItems="flex-start" gap={2}>
+                <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
                     <ImageButton src="/Button_NonTimedGame.png" alt="Non Timed Game" onClick={handlePageChange("game")} />
                     <ImageButton src="/Button_TimedGame.png" alt="Timed Game" onClick={handlePageChange("timedGame")} />
                     <ImageButton src="/Button_TimedGame.png" alt="Location Game" onClick={handlePageChange("locationGame")} />
                 </Box>
 
                 {/* Columna derecha */}
-                <Box display="flex" flexDirection="column" alignItems="flex-end" gap={2}>
+                <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
                     <ImageButton src="/Button_Stadistics.png" alt="Statistics" onClick={handlePageChange("stadistics")} />
                     <ImageButton src="/Button_Ranking.png" alt="Ranking" onClick={handlePageChange("ranking")} />
                 </Box>
             </Box>
+
 
             {/* Sonido de fondo */}
             <audio id="wave-sound" src="/olas-del-mar.mp3" autoPlay loop></audio>
