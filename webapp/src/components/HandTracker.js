@@ -138,7 +138,7 @@ function HandTracker({ enabled }) {
       if (cameraRef.current) { try { cameraRef.current.stop(); } catch(e){ console.log("Error while stopping the camera ref"); } } cameraRef.current = null;
       if (handsRef.current) { try { handsRef.current.close(); } catch(e){ console.log("Error while stopping the hands ref"); } } handsRef.current = null;
        if (videoElement?.srcObject) {
-           try { videoElement.srcObject.getTracks().forEach(track => track.stop()); } catch(e){ console.log("Error while stopping the video tracks"); }
+           try { videoElement.srcObject.getTracks().forEach(track => track.stop()); } catch(e){ console.log("Error while stopping the video tracks ", e); }
           // Nullify the video stream to prevent memory leaks and ensure no further processing occurs
            videoElement.srcObject = null;
        }
