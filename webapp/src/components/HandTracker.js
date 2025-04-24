@@ -50,9 +50,9 @@ const OpsState = {
 // --- Component Styles ---
 const styles = {
   video: {
-    width: "29%",
+    width: "11%",
     position: "absolute",
-    bottom: "1rem",
+    top: "5rem",
     left: "1rem",
     borderRadius: '8px',
     border: '1px solid gray',

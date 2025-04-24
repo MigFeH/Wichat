@@ -16,18 +16,6 @@ const ImageButton = styled('img')({
 const Menu = () => {
     const navigate = useNavigate();
     const theme = useTheme();
-    
-    /*
-    const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px        esta config es muy buena para 600px (sm)
-    const widthResponsive=isMobile ? '80%' : '100%';
-    const heightResponsive=isMobile ? '70%' : '100%';
-    */
-
-    /*
-    const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px
-    const widthResponsive=isMobile ? '55vw' : '100%';
-    const heightResponsive=isMobile ? 'auto' : '100%';
-    */
 
     const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px
     const widthResponsive=isMobile ? '50vh' : '100%';
@@ -42,11 +30,11 @@ const Menu = () => {
             /*component="main"*/ 
             /*maxWidth="md"*/ 
             sx={{
-                textAlign: 'center', 
+                /*textAlign: 'center', */
                 display: 'flex', 
                 flexDirection: 'column', 
-                alignItems: 'center', 
-                justifyContent: 'center',
+                /*alignItems: 'center', 
+                justifyContent: 'center',*/
                 width: widthResponsive,
                 height: heightResponsive
             }}
