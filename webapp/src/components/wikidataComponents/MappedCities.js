@@ -2,9 +2,12 @@ import axios from "axios";
 
 let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 
-function getRandom(){
+// Usage of Math.random() is safe here because it's not used for any security-sensitive purpose.
+// It only randomizes city selection for gameplay UX.
+function getRandom() {
   return Math.random();
 }
+
 
 export async function fetchRandomCity() {
   // Si ya hay ciudades en caché, elige una al azar
