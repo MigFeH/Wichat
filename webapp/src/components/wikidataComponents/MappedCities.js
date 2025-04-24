@@ -56,5 +56,11 @@ export async function fetchRandomCity() {
   }
 }
 
+// Solo para testing
+export function __setCityCacheForTest(mockedCities) {
+  cityCache = mockedCities;
+}
+
+
 
 

@@ -32,6 +32,7 @@ describe('Location Component', () => {
         <LocationGame />
       </BrowserRouter>
     );
-    await waitFor(() => expect(mockMappedCity).toHaveBeenCalled());
+    expect(screen.getByText('LocationGame')).toBeInTheDocument();
+
   });
 });

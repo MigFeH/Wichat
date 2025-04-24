@@ -1,6 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { fetchRandomCity } from './MappedCities';
+import {__setCityCacheForTest, fetchRandomCity} from './MappedCities';
 
 const mock = new MockAdapter(axios);
 
@@ -11,17 +11,10 @@ describe('fetchRandomCity', () => {
     });
 
     test('returns a cached city if cache is filled', async () => {
-        const { fetchRandomCity: cachedFetch } = require('./MappedCities');
-
-        // Simular una ciudad cacheada
         const mockCity = { name: 'Madrid', lat: 40.4, lng: -3.7 };
-        const cacheRef = require('./MappedCities');
-        cacheRef.__setCityCache = [mockCity];
+        __setCityCacheForTest([mockCity]);
 
-        // Sobrescribe manualmente cityCache para este test
-        cacheRef.cityCache = [mockCity];
-
-        const result = await cachedFetch();
+        const result = await fetchRandomCity();
         expect(result).toEqual(mockCity);
     });
 
@@ -52,6 +45,8 @@ describe('fetchRandomCity', () => {
     });
 
     test('throws error on HTTP failure', async () => {
+        __setCityCacheForTest([]); // Asegura que se haga el fetch real
+
         mock.onGet(/query=/).networkError();
 
         await expect(fetchRandomCity()).rejects.toThrow('Network Error');
