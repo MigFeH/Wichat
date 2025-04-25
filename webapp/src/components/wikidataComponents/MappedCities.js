@@ -4,18 +4,9 @@ let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 
 // Usage of Math.random() is safe here because it's not used for any security-sensitive purpose.
 // It only randomizes city selection for gameplay UX.
-function getRandom(min, max) {
-  const range = max - min + 1;
-  const maxRange = 0xFFFFFFFF;
-  const array = new Uint32Array(1);
-
-  do {
-    window.crypto.getRandomValues(array);
-  } while (array[0] > maxRange - (maxRange % range));
-
-  return min + (array[0] % range);
+function getRandom() {
+  return Math.random();
 }
-
 
 
 export async function fetchRandomCity() {
