@@ -20,6 +20,7 @@ const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:8004';
 app.use(cors());
 app.use(express.json());
 
+
 //Prometheus configuration
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);
