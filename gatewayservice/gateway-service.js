@@ -44,11 +44,10 @@ const webVitalsMetrics = {
 // Registra las métricas
 Object.values(webVitalsMetrics).forEach(metric => register.registerMetric(metric));
 
-const defaultMetricsRegistry = promBundle({includeMethod: true}).metricsMiddleware.promClient.register;
 
 app.get('/metrics', async (req, res) => {
     res.set('Content-Type', promClient.register.contentType);
-    const metricsFromDefault = await defaultMetricsRegistry.metrics();
+    const metricsFromDefault = await metricsMiddleware.metrics();
     const metricsFromFrontend = await register.metrics();
     res.end(metricsFromDefault + '\n' + metricsFromFrontend);
 });
