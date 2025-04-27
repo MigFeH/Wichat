@@ -27,6 +27,33 @@ app.use(metricsMiddleware);
 
 //ENDPOINTS
 
+const promClient = require('prom-client'); // Agrega arriba
+
+// Crea un "registry" personalizado
+const register = new promClient.Registry();
+
+// Define las métricas que quieres exponer
+const webVitalsMetrics = {
+    CLS: new promClient.Gauge({ name: 'web_vitals_cls', help: 'Cumulative Layout Shift' }),
+    FID: new promClient.Gauge({ name: 'web_vitals_fid', help: 'First Input Delay' }),
+    FCP: new promClient.Gauge({ name: 'web_vitals_fcp', help: 'First Contentful Paint' }),
+    LCP: new promClient.Gauge({ name: 'web_vitals_lcp', help: 'Largest Contentful Paint' }),
+    TTFB: new promClient.Gauge({ name: 'web_vitals_ttfb', help: 'Time to First Byte' }),
+};
+
+// Registra las métricas
+Object.values(webVitalsMetrics).forEach(metric => register.registerMetric(metric));
+
+const defaultMetricsRegistry = promBundle({includeMethod: true}).metricsMiddleware.promClient.register;
+
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', promClient.register.contentType);
+    const metricsFromDefault = await defaultMetricsRegistry.metrics();
+    const metricsFromFrontend = await register.metrics();
+    res.end(metricsFromDefault + '\n' + metricsFromFrontend);
+});
+
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
@@ -60,6 +87,23 @@ app.post('/adduser', async (req, res) => {
     const userResponse = await axios.post(userServiceUrl+'/adduser', req.body);
     res.json(userResponse.data);
 
+});
+
+// Endpoint para recibir métricas del frontend
+app.post('/frontend-metrics', (req, res) => {
+    const metric = req.body;
+
+    if (metric.name && metric.value !== undefined) {
+        const gauge = webVitalsMetrics[metric.name.toUpperCase()];
+        if (gauge) {
+            gauge.set(metric.value);
+            res.status(200).json({ status: 'Metric updated' });
+        } else {
+            res.status(400).json({ status: 'Unknown metric name' });
+        }
+    } else {
+        res.status(400).json({ status: 'Invalid metric format' });
+    }
 });
 
 app.post('/hint', async (req, res) => {
