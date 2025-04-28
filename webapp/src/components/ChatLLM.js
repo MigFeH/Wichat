@@ -8,18 +8,7 @@ const apiKey = process.env.REACT_APP_LLM_API_KEY;
 const ChatLLM = forwardRef(({ currentCity }, ref) => {
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
-  const [isChatVisible, setIsChatVisible] = useState(false); // Estado para controlar la visibilidad del chat
-
-  // Exponer métodos al componente padre
-  useImperativeHandle(ref, () => ({
-    showChat: () => {
-      setChatHistory([]); // Limpiar el historial del chat
-      setIsChatVisible(true); // Mostrar el chat
-    },
-    hideChat: () => {
-      setIsChatVisible(false); // Ocultar el chat
-    },
-  }));
+  //const [isChatVisible, setIsChatVisible] = useState(false); // Estado para controlar la visibilidad del chat
 
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;
@@ -48,7 +37,6 @@ const ChatLLM = forwardRef(({ currentCity }, ref) => {
   };
 
   return (
-    isChatVisible && (
       <Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
         <Typography variant="h6">Chat de Pistas</Typography>
         <Box sx={{ maxHeight: 200, overflowY: 'auto', p: 1, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
@@ -77,7 +65,6 @@ const ChatLLM = forwardRef(({ currentCity }, ref) => {
           </Button>
         </Box>
       </Box>
-    )
   );
 });
 
