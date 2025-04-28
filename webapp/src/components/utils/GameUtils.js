@@ -9,9 +9,7 @@ const useGameLogic = () => {
 
     // Crear el generador de preguntas y pasar showChat
     const [questionGenerator] = useState(() => 
-        new QuestionGeneration(setCurrentQuestion, () => {
-            chatRef.current?.showChat(); // Llamar a showChat del ChatLLM
-        })
+        new QuestionGeneration(setCurrentQuestion)
     );
 
     useEffect(() => {
