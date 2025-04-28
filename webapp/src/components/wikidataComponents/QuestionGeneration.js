@@ -1,11 +1,10 @@
 class QuestionGeneration {
-    constructor(setQuestion, showChat) {
+    constructor(setQuestion) {
         this.setQuestion = setQuestion;
         this.questionsCache = [];
         this.currentIndex = 0;
         this.isFetching = false;
         this.currentCity = null; // Guardará la ciudad actual
-        this.showChat = showChat; // Guardara la referencia para mostrar el chat 
     }
 
     async fetchQuestions() {
@@ -48,6 +47,9 @@ class QuestionGeneration {
             const response = await fetch(`${WikidataUrl}?query=${encodeURIComponent(sparqlQuery)}&format=json`, {
                 headers: { 'Accept': 'application/sparql-results+json' }
             });
+            if (!response.data) {
+                throw new Error('Invalid response data');
+            }
             const data = await response.json();
             
             return data.results.bindings
@@ -57,7 +59,7 @@ class QuestionGeneration {
                     image: item.image.value
                 }));
         } catch (error) {
-            console.error("API Error:", error);
+            console.error('Error fetching questions:', error);
             return [];
         }
     }
@@ -85,7 +87,6 @@ class QuestionGeneration {
         const correctCity = options[randomIndex];
 
         this.currentCity = correctCity.city;
-        this.showChat(); // Mostrar el chat al usuario
 
         return {
             answers: options.reduce((acc, item) => {
