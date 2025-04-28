@@ -47,9 +47,6 @@ class QuestionGeneration {
             const response = await fetch(`${WikidataUrl}?query=${encodeURIComponent(sparqlQuery)}&format=json`, {
                 headers: { 'Accept': 'application/sparql-results+json' }
             });
-            if (!response.data) {
-                throw new Error('Invalid response data');
-            }
             const data = await response.json();
             
             return data.results.bindings
@@ -59,7 +56,7 @@ class QuestionGeneration {
                     image: item.image.value
                 }));
         } catch (error) {
-            console.error('Error fetching questions:', error);
+            console.error("API Error:", error);
             return [];
         }
     }
