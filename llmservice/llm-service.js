@@ -7,12 +7,12 @@ const port = 8003;
 // Middleware to parse JSON in request body
 app.use(express.json());
 
-const gameSystemInstruction = "Actuarás como un juego de adivinanzas de ciudades. Recibirás mensajes con el siguiente formato: '<Ciudad>:<Mensaje del usuario>'. Tu objetivo es ayudar al usuario a adivinar la ciudad oculta, proporcionando pistas útiles y relevantes basadas en sus preguntas. Bajo ninguna circunstancia debes revelar el nombre de la ciudad. Mantén las respuestas concisas y enfocadas en proporcionar pistas que ayuden al usuario a deducir la ciudad. Si el usuario hace una pregunta que no está relacionada con la adivinanza, responde de forma educada y vuelve a enfocar la conversación en el juego.";
+const gameSystemInstruction = "Actuarás como un juego de adivinanzas de ciudades. Recibirás mensajes con el siguiente formato: '<Ciudad>:<Mensaje del usuario>'. Tu objetivo es ayudar al usuario a adivinar la ciudad oculta, proporcionando pistas útiles y relevantes basadas en sus preguntas. Bajo ninguna circunstancia debes revelar el nombre de la ciudad, tampoco digas el nombre de ninguna ciudad en tus respuestas como al decir \"No no es <Nombre de ciudad>, puesto este mensaje será borrado por el filtro y el jugador descubrira que te pregunto sobre la ciudad correcta. Mantén las respuestas concisas y enfocadas en proporcionar pistas que ayuden al usuario a deducir la ciudad. Si el usuario hace una pregunta que no está relacionada con la adivinanza, responde de forma educada y vuelve a enfocar la conversación en el juego.";
 
 // Define configurations for different LLM APIs
 const llmConfigs = {
   gemini: {
-    url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+    url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     transformRequest: (systemInstruction,question) => ({
       contents: [
         {
@@ -86,35 +86,36 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini',systemInstru
 // Function to check if the response contains the city name
 function validateResponseDoesNotContainCity(response, cityName) {
   if (response.toLowerCase().includes(cityName.toLowerCase())) {
-    throw new Error('The response contains restricted information.');
+    return "Lo siento, tu pregunta ha revelado accidentalmente el nombre de la ciudad, por lo que he tenido que filtrarlo. ¿Tienes otra pregunta?";
   }
+  return response
 }
 
 app.post('/hint', async (req, res) => {
   try {
-    //console.log('Received request:', req.body);
+    console.log('Received request:', req.body);
 
     // Check if required fields are present in the request body
-    //console.log('Validating required fields...');
+    console.log('Validating required fields...');
     validateRequiredFields(req, ['question', 'model', 'apiKey']);
-    //console.log('Validation passed.');
+    console.log('Validation passed.');
 
     const { question, model, apiKey } = req.body;
     const cityName = question.split(':')[0]; // Extract the city name from the question
-    //console.log(`Question: ${question}`);
-    //console.log(`Model: ${model}`);
-    //console.log(`API Key: ${apiKey}`);
-    //console.log(`City Name: ${cityName}`);
+    console.log(`Question: ${question}`);
+    console.log(`Model: ${model}`);
+    console.log(`API Key: ${apiKey}`);
+    console.log(`City Name: ${cityName}`);
 
-    //console.log('Sending question to LLM...');
-    const answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
-    //console.log('Received answer from LLM:', answer);
+    console.log('Sending question to LLM...');
+    let answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
+    console.log('Received answer from LLM:', answer);
 
     // Validate that the response does not contain the city name
-    validateResponseDoesNotContainCity(answer, cityName);
+    answer = validateResponseDoesNotContainCity(answer, cityName);
 
     res.json({ answer });
-    //console.log('Response sent.');
+    console.log('Response sent.');
 
   } catch (error) {
     console.log('Error occurred:', error.message);
