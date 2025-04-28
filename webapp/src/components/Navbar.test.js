@@ -2,76 +2,117 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Navbar from './Navbar';
 import { BrowserRouter as Router } from 'react-router-dom';
+import '@testing-library/jest-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material';
+
+// Mock Material-UI hooks
+jest.mock('@mui/material', () => ({
+  ...jest.requireActual('@mui/material'),
+  useMediaQuery: jest.fn(),
+}));
+
+// Mock useNavigate
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
 
 describe('Navbar Component', () => {
-  test('renders Navbar with links and buttons', () => {
-    render(
-      <Router>
-        <Navbar />
-      </Router>
-    );
+  const mockToggleTheme = jest.fn();
 
-    expect(screen.getByText('Menu')).toBeInTheDocument();
-    expect(screen.getByText('Game')).toBeInTheDocument();
-    expect(screen.getByText('Statistics')).toBeInTheDocument();
-    expect(screen.getByText('Ranking')).toBeInTheDocument();
-    expect(screen.getByText('Logout')).toBeInTheDocument();
+  const renderNavbar = () => {
+    return render(
+      <ThemeProvider theme={createTheme()}>
+        <Router>
+          <Navbar toggleTheme={mockToggleTheme} />
+        </Router>
+      </ThemeProvider>
+    );
+  };
+
+  beforeEach(() => {
+    mockToggleTheme.mockClear();
+    mockNavigate.mockClear();
+    useMediaQuery.mockClear();
+    localStorage.clear();
   });
 
-  test('triggers light theme toggle on button click', () => {
-    const toggleLightTheme = jest.fn();
+  test('renders Navbar with all top-level links and switch in desktop view', () => {
+    useMediaQuery.mockReturnValue(false); // Desktop view
+    renderNavbar();
 
-    render(
-      <Router>
-        <Navbar toggleLightTheme={toggleLightTheme} />
-      </Router>
-    );
-
-    fireEvent.click(screen.getByText('☀️'));
-    expect(toggleLightTheme).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('link', { name: /Menu/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Statistics/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Ranking/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Profile/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Games/i })).toBeInTheDocument(); // Dropdown
+    expect(screen.getByRole('checkbox')).toBeInTheDocument(); // Theme switch
+    expect(screen.getByRole('button', { name: /Logout/i })).toBeInTheDocument();
   });
 
-  test('triggers dark theme toggle on button click', () => {
-    const toggleDarkTheme = jest.fn();
+  test('opens Games menu and navigates to sub-items in desktop view', () => {
+    useMediaQuery.mockReturnValue(false); // Desktop view
+    renderNavbar();
 
-    render(
-      <Router>
-        <Navbar toggleDarkTheme={toggleDarkTheme} />
-      </Router>
-    );
+    const gamesButton = screen.getByRole('button', { name: /Games/i });
+    fireEvent.click(gamesButton);
 
-    fireEvent.click(screen.getByText('🌙'));
-    expect(toggleDarkTheme).toHaveBeenCalledTimes(1);
+    const timedGame = screen.getByText('Timed Game');
+    const nonTimedGame = screen.getByText('Non Timed Game');
+    expect(timedGame).toBeInTheDocument();
+    expect(nonTimedGame).toBeInTheDocument();
+
+    fireEvent.click(timedGame);
+    expect(mockNavigate).toHaveBeenCalledWith('/timedGame');
   });
 
-  test('navigates to the correct link', () => {
-    render(
-      <Router>
-        <Navbar />
-      </Router>
-    );
+  test('theme toggle switch triggers callback', () => {
+    useMediaQuery.mockReturnValue(false);
+    renderNavbar();
 
-    fireEvent.click(screen.getByText('Menu'));
-    expect(window.location.pathname).toBe('/menu');
+    const switchBtn = screen.getByRole('checkbox');
+    fireEvent.click(switchBtn);
+    expect(mockToggleTheme).toHaveBeenCalledTimes(1);
+  });
 
-    // Open the Game menu
-    fireEvent.click(screen.getByText('Game'));
-    expect(screen.getByText('Normal')).toBeInTheDocument();
-    expect(screen.getByText('Timed Game')).toBeInTheDocument();
+  test('opens drawer in mobile view and shows all items', () => {
+    useMediaQuery.mockReturnValue(true); // Mobile view
+    renderNavbar();
 
-    // Navigate to Normal game
-    fireEvent.click(screen.getByText('Normal'));
-    expect(window.location.pathname).toBe('/game');
+    fireEvent.click(screen.getByLabelText('hamburger-menu'));
 
-    // Reopen the Game menu and navigate to Timed Game
-    fireEvent.click(screen.getByText('Game'));
-    fireEvent.click(screen.getByText('Timed Game'));
-    expect(window.location.pathname).toBe('/timedGame');
+    expect(screen.getByText(/Menu/i)).toBeInTheDocument();
+    expect(screen.getByText(/Games/i)).toBeInTheDocument();
+    expect(screen.getByText(/Statistics/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ranking/i)).toBeInTheDocument();
+    expect(screen.getByText(/Profile/i)).toBeInTheDocument();
+    expect(screen.getByText(/Logout/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+  });
 
-    fireEvent.click(screen.getByText('Statistics'));
-    expect(window.location.pathname).toBe('/stadistics');
+  test('expands Games drawer subitems and navigates on click', () => {
+    useMediaQuery.mockReturnValue(true);
+    renderNavbar();
+  
+    fireEvent.click(screen.getByLabelText('hamburger-menu'));
+  
+    const gamesDrawerItem = screen.getByText(/Games/i);
+    fireEvent.click(gamesDrawerItem);
+  
+    const nonTimed = screen.getByRole('link', { name: /Non Timed Game/i });
+  
+    expect(nonTimed).toHaveAttribute('href', '/game');
+  });  
 
-    fireEvent.click(screen.getByText('Ranking'));
-    expect(window.location.pathname).toBe('/ranking');
+  test('logout button clears localStorage and navigates to login', () => {
+    useMediaQuery.mockReturnValue(false); // Desktop
+    renderNavbar();
+
+    fireEvent.click(screen.getByRole('button', { name: /Logout/i }));
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
+    expect(localStorage.getItem('authToken')).toBeNull();
+    expect(localStorage.getItem('username')).toBeNull();
   });
 });

@@ -23,10 +23,14 @@ h1 {
 }
 
 .image-container {
-    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2em;
 }
 
 .city-image {
+    display: block;
     max-width: 100%;
     height: 300px;
     object-fit: cover;
@@ -74,3 +78,56 @@ h1 {
     color: '#666'
 }
 
+.navbar {
+    background-image: linear-gradient(to bottom, #00c2ff, #0066c7);
+    box-shadow: none;
+    width: 100%;
+}
+  
+.navbar-toolbar {
+    display: flex;
+    justify-content: space-between;
+}
+  
+.nav-buttons-container {
+    display: flex;
+    gap: 8px;
+}
+  
+@media (min-width: 960px) {
+    .nav-buttons-container {
+        gap: 16px;
+    }
+}
+  
+.nav-button {
+    font-size: 0.75rem;
+    padding-left: 8px;
+    padding-right: 8px;
+    min-width: auto;
+}
+  
+@media (min-width: 1200px) {
+    .nav-button {
+        font-size: 1rem;
+        padding-left: 16px;
+        padding-right: 16px;
+        min-width: 64px;
+    }
+}
+  
+.drawer-content {
+    width: 250px;
+}
+  
+.right-buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+  
+@media (min-width: 960px) {
+    .right-buttons-container {
+        gap: 16px;
+    }
+}

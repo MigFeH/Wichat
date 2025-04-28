@@ -19,6 +19,7 @@ const useGameLogic = () => {
     }, [questionGenerator]);
 
     useEffect(() => {
+        console.log("Current question:", currentQuestion);
         if (currentQuestion) {
             setCurrentCity(currentQuestion.correct);
         }

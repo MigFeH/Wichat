@@ -1,61 +1,234 @@
-// src/components/Navbar.js
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Button, Box, Menu, MenuItem } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { Home, SportsEsports, BarChart, Leaderboard, ExitToApp } from '@mui/icons-material';
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  useMediaQuery,
+  useTheme,
+  Menu,
+  MenuItem,
+  Collapse
+} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  SportsEsports,
+  BarChart,
+  Leaderboard,
+  ExitToApp,
+  AccountCircle,
+  Menu as MenuIcon,
+  ExpandLess,
+  ExpandMore,
+  Close
+} from '@mui/icons-material';
+import UIThemeSwitch from './UIThemeSwitch.jsx';
 
-const Navbar = ({ toggleDarkTheme, toggleLightTheme }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
+const Navbar = ({ toggleTheme }) => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+  
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleGameMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [gamesMenuOpen, setGamesMenuOpen] = useState(false);
+  const toggleGamesMenu = () => setGamesMenuOpen((prev) => !prev);
+
+  const handleLogout = () => {
+    localStorage.removeItem('username');
+    localStorage.removeItem('authToken');
+    navigate('/login');
   };
 
-  const handleGameMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const navItems = [
+    { text: 'Menu', icon: <Home />, to: '/menu' },
+    { 
+      text: 'Games', 
+      icon: <SportsEsports />, 
+      subItems: [
+        { text: 'Non Timed Game', to: '/game' },
+        { text: 'Timed Game', to: '/timedGame' }
+      ] 
+    },
+    { text: 'Statistics', icon: <BarChart />, to: '/stadistics' },
+    { text: 'Ranking', icon: <Leaderboard />, to: '/ranking' },
+    { text: 'Profile', icon: <AccountCircle />, to: '/profile' }
+  ];
 
-  return (
-    <AppBar position="static" sx={{ backgroundColor: '#009efc', boxShadow: 'none' }}>
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button color="inherit" component={Link} to="/menu" startIcon={<Home />}>
-            Menu
-          </Button>
+  const NavButtonItem = ({ item }) => {
+    const buttonRef = React.useRef(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+  
+    const handleOpen = () => {
+      if (buttonRef.current) {
+        setAnchorEl(buttonRef.current);
+      }
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+  
+    if (item.subItems) { // Da true si el elemento tiene subelementos (Ej: Games)
+      return (
+        <Box>
           <Button
+            ref={buttonRef}
             color="inherit"
-            startIcon={<SportsEsports />}
-            onClick={handleGameMenuOpen}
+            startIcon={item.icon}
+            onClick={handleOpen}
+            endIcon={Boolean(anchorEl) ? <ExpandLess /> : <ExpandMore />}
+            className="nav-button"
           >
-            Game
+            {item.text}
           </Button>
+  
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
-            onClose={handleGameMenuClose}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
           >
-            <MenuItem component={Link} to="/game" onClick={handleGameMenuClose}>
-              Normal
-            </MenuItem>
-            <MenuItem component={Link} to="/timedGame" onClick={handleGameMenuClose}>
-              Timed Game
-            </MenuItem>
+            {item.subItems.map((subItem) => ( // los subelementos
+              <MenuItem
+                key={subItem.to}
+                onClick={() => {
+                  navigate(subItem.to);
+                  handleClose();
+                }}
+              >
+                {subItem.text}
+              </MenuItem>
+            ))}
           </Menu>
-          <Button color="inherit" component={Link} to="/stadistics" startIcon={<BarChart />}>
-            Statistics
-          </Button>
-          <Button color="inherit" component={Link} to="/ranking" startIcon={<Leaderboard />}>
-            Ranking
-          </Button>
         </Box>
+      );
+    }
+  
+    return (
+      <Button
+        color="inherit"
+        component={Link}
+        to={item.to}
+        startIcon={item.icon}
+        className="nav-button"
+      >
+        {item.text}
+      </Button>
+    );
+  };  
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button onClick={toggleLightTheme} color="inherit" sx={{ fontSize: '1.5rem' }}>☀️</Button>
-          <Button onClick={toggleDarkTheme} color="inherit" sx={{ fontSize: '1.5rem' }}>🌙</Button>
-          <Button color="inherit" component={Link} to="/login" startIcon={<ExitToApp />}>
-            Logout
-          </Button>
-        </Box>
+  const DrawerItem = ({ item }) => {
+    if (item.subItems) {
+      return (
+        <>
+          <ListItem button onClick={toggleGamesMenu}>
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
+            {gamesMenuOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={gamesMenuOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.subItems.map((subItem) => (
+                <ListItem button component={Link} to={subItem.to} sx={{ pl: 4 }} key={subItem.to}>
+                  <ListItemText primary={subItem.text} />
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </>
+      );
+    }
+  
+    return (
+      <ListItem button component={Link} to={item.to}>
+        <ListItemIcon>{item.icon}</ListItemIcon>
+        <ListItemText primary={item.text} />
+      </ListItem>
+    );
+  };
+
+  const renderThemeButtons = () => (
+    <UIThemeSwitch
+      sx={{ m: 1 }}
+      onClick={toggleTheme}
+      checked={theme.palette.mode === 'dark'}
+    />
+  );
+
+  const renderNavButtons = () => (
+    <Box className="nav-buttons-container">
+      {navItems.map((item) => (
+        <NavButtonItem key={item.text} item={item} />
+      ))}
+    </Box>
+  );
+  
+  const renderDrawerContent = () => (
+    <Box sx={{ width: 250 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+        <IconButton onClick={() => setDrawerOpen(false)}>
+          <Close />
+        </IconButton>
+      </Box>
+      <List>
+        {navItems.map((item) => (
+          <DrawerItem key={item.text} item={item} />
+        ))}
+        <ListItem button onClick={handleLogout}>
+          <ListItemIcon><ExitToApp /></ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItem>
+        <ListItem>{renderThemeButtons()}</ListItem>
+      </List>
+    </Box>
+  );  
+
+  return (
+    <AppBar className="navbar">
+      <Toolbar className="navbar-toolbar">
+        {isMobile ? ( // Navbar para movil/tablet
+          <>
+            <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(true)} aria-label="hamburger-menu">
+              <MenuIcon />
+            </IconButton>
+            <Drawer
+              anchor="left"
+              open={drawerOpen}
+              onClose={() => {}}
+              ModalProps={{
+                keepMounted: true,
+                disableEscapeKeyDown: true,
+                hideBackdrop: false,
+              }}
+            >
+              {renderDrawerContent()}
+            </Drawer>
+          </>
+        ) : ( // Navbar para escritorio
+          <>
+            {renderNavButtons()}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1, lg: 2 } }}> {/* md == medium == 960px || lg == large == 1280px */}
+              {renderThemeButtons()}
+              <Button
+                color="inherit"
+                onClick={handleLogout}
+                startIcon={<ExitToApp />}
+                className="nav-button"
+              >
+                Logout
+              </Button>
+            </Box>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );

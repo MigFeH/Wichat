@@ -79,6 +79,9 @@ services:
       - gatewayservice
     ports:
       - "3000:3000"
+    environment:
+      GATEWAY_SERVICE_URL: http://gatewayservice:8000
+      USER_SERVICE_URL: http://userservice:8001
 
   prometheus:
     image: prom/prometheus

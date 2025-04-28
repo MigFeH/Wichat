@@ -50,6 +50,8 @@ jobs:
     needs: [e2e-tests]
     steps:
     - uses: actions/checkout@v4
+    - name: Set up .env file
+      run: echo "REACT_APP_LLM_API_KEY=${{ secrets.REACT_APP_LLM_API_KEY }}" > webapp/.env
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       env:
@@ -140,18 +142,20 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
         workdir: gatewayservice
-  # deploy:
-  #   name: Deploy over SSH
-  #   runs-on: ubuntu-latest
-  #   needs: [docker-push-userservice,docker-push-authservice,docker-push-llmservice,docker-push-gatewayservice,docker-push-webapp]
-  #   steps:
-  #   - name: Deploy over SSH
-  #     uses: fifsky/ssh-action@master
-  #     with:
-  #       host: ${{ secrets.DEPLOY_HOST }}
-  #       user: ${{ secrets.DEPLOY_USER }}
-  #       key: ${{ secrets.DEPLOY_KEY }}
-  #       command: |
-  #         wget https://raw.githubusercontent.com/arquisoft/wichat_es2b/master/docker-compose.yml -O docker-compose.yml
-  #         docker compose --profile prod down
-  #         docker compose --profile prod up -d --pull always
+        
+  deploy:
+    name: Deploy over SSH
+    runs-on: ubuntu-latest
+    needs: [docker-push-userservice,docker-push-authservice,docker-push-llmservice,docker-push-gatewayservice,docker-push-webapp]
+    steps:
+    - name: Deploy over SSH
+      uses: fifsky/ssh-action@master
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        user: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.DEPLOY_KEY }}
+        command: |
+          wget https://raw.githubusercontent.com/arquisoft/wichat_es2b/master/docker-compose.yml -O docker-compose.yml
+          export LLM_API_KEY=${{ secrets.LLM_API_KEY }}
+          docker compose --profile prod down
+          docker compose --profile prod up -d --pull always
