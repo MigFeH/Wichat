@@ -3,9 +3,8 @@ import axios from "axios";
 let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 
 function getRandom() {
-  const crypto = window.crypto || window.msCrypto;
-  var array = new Uint32Array(1);
-  return crypto.getRandomValues(array);
+  const crypto = require('crypto');
+  return crypto.randomBytes(1);
 }
 
 export async function fetchRandomCity() {
