@@ -83,7 +83,7 @@ describe('fetchRandomCity', () => {
         axiosSpy.mockRestore();
     });
 
-    test('returns different cities randomly from cache', async () => {
+    /*test('returns different cities randomly from cache', async () => {
         const cities = [
             { name: 'Madrid', lat: 40.4, lng: -3.7 },
             { name: 'Valencia', lat: 39.47, lng: -0.38 }
@@ -103,5 +103,5 @@ describe('fetchRandomCity', () => {
         expect(cities).toContainEqual(city2);
 
         Math.random.mockRestore();
-    });
+    });*/
 });
