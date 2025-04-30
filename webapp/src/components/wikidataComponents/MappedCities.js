@@ -5,9 +5,9 @@ let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 const crypto = require('crypto');
 
 function getRandom() {
-  const randomBuffer = crypto.randomBytes(4); // 4 bytes = 32 bits
-  return randomBuffer.readUInt32BE(0) / 0xFFFFFFFF;
+  return Number('0.' + crypto.randomBytes(4).readUInt32BE().toString());
 }
+
 
 export async function fetchRandomCity() {
   // Si ya hay ciudades en caché, elige una al azar
