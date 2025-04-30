@@ -1,8 +1,7 @@
 import axios from "axios";
 
-let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 
-const crypto = require('crypto');
+let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 
 function getRandom() {
   return Number('0.' + crypto.randomBytes(4).readUInt32BE().toString());
