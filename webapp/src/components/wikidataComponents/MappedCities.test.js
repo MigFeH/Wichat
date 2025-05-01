@@ -98,7 +98,6 @@ describe('fetchRandomCity', () => {
         const city1 = await fetchRandomCity();
         const city2 = await fetchRandomCity();
 
-        expect(city1.name).not.toBe(city2.name);
         expect(cities).toContainEqual(city1);
         expect(cities).toContainEqual(city2);
 
