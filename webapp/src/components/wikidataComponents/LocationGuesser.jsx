@@ -59,9 +59,10 @@ export default function CityGuessGame() {
           >
             {/* Cambiar la capa del mapa por una sin etiquetas */}
             <TileLayer
-                url="https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}.png?access-token=YOUR_ACCESS_TOKEN"
-                attribution="Tiles courtesy of Jawg Maps"
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
             />
+
 
 
 
