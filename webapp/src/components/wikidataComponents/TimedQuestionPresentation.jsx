@@ -67,8 +67,8 @@ const TimedQuestionPresentation = ({ game, navigate, question }) => {
     return (
         <>
             <Typography 
-                variant="body1" 
-                className={`timer ${timer <= 3 ? 'timer-low' : 'timer-normal'}`}
+                variant="p" 
+                className={`timer ${timer <= 3 ? 'timer-low' : ''}`}
                 sx={{
                     whiteSpace: 'nowrap',
                     display: 'inline-block'
