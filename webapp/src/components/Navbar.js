@@ -54,7 +54,8 @@ const Navbar = ({ toggleTheme }) => {
       icon: <SportsEsports />, 
       subItems: [
         { text: 'Non Timed Game', to: '/game' },
-        { text: 'Timed Game', to: '/timedGame' }
+        { text: 'Timed Game', to: '/timedGame' },
+        { text: 'Map Game', to: '/locationGame'}
       ] 
     },
     { text: 'Statistics', icon: <BarChart />, to: '/stadistics' },
