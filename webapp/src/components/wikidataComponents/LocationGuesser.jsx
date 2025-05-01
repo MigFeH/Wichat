@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, useMapEvents } from 'react-leaflet';
 import { getDistance } from 'geolib';
 import { fetchRandomCity } from './MappedCities';
+import'../style/estilo.css';
 
 function CityGuessMap({ onGuess, disabled }) {
   useMapEvents({
