@@ -59,8 +59,8 @@ export default function CityGuessGame() {
           >
             {/* Cambiar la capa del mapa por una sin etiquetas */}
             <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="© OpenStreetMap"
+                url="https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}.png?access-token=YOUR_ACCESS_TOKEN"
+                attribution="Tiles courtesy of Jawg Maps"
             />
 
 
