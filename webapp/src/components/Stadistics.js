@@ -40,7 +40,7 @@ const Stadistics = () => {
       <Button 
         variant="contained" 
         onClick={handleBackClick}
-        sx={{ marginBottom: 2 }}
+        sx={{ marginBottom: 2, marginTop: "1rem" }}
       >
         Back to Menu
       </Button>

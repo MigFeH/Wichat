@@ -51,9 +51,9 @@ const OpsState = {
 const styles = {
   video: {
     width: "11%",
-    position: "absolute",
+    position: "fixed",
     top: "5rem",
-    left: "1rem",
+    right: "1rem",
     borderRadius: '8px',
     border: '1px solid gray',
     zIndex: 1000, // Ensure video is behind cursor and overlays

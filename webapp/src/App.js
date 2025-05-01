@@ -43,7 +43,7 @@ const AppContent = () => {
       <Navbar toggleTheme={toggleTheme} />
       <HandTracker enabled={isHandNavigationEnabled} />
 
-      <main style={{ position: "absolute", top: "7vh", width: "100vw", height: "auto", left: "50%", transform: "translate(-50%, 0%)" }}>
+      <main style={{ position: "inherit", width: "100vw", marginTop: "4rem" }}>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />

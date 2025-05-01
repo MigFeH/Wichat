@@ -45,11 +45,11 @@ const Ranking = () => {
   };
 
   return (
-    <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
+    <Container component="main" width="80vw" sx={{ marginTop: 4 }}>
       <Button
         variant="contained"
         onClick={handleBackClick}
-        sx={{ marginBottom: 2 }}
+        sx={{ marginBottom: 2, marginTop: "1rem" }}
       >
         Back to Menu
       </Button>
