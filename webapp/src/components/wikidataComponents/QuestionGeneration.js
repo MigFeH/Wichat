@@ -4,7 +4,6 @@ class QuestionGeneration {
         this.questionsCache = [];
         this.currentIndex = 0;
         this.isFetching = false;
-        this.currentCity = null; // Guardará la ciudad actual
     }
 
     async fetchQuestions() {
@@ -12,90 +11,103 @@ class QuestionGeneration {
         this.isFetching = true;
 
         try {
-            if (this.questionsCache.length === 0) {
-                this.questionsCache = await this.generateQuestions();
+            if (this.questionsCache.length < this.currentIndex + 4) {
+                this.questionsCache = await this.generateAndShuffleQuestions();
                 this.currentIndex = 0;
             }
 
-            if (this.questionsCache.length > 0) {
+            if (this.questionsCache.length >= this.currentIndex + 4) {
                 const question = this.getNextQuestion();
                 if (question) {
                     this.setQuestion(question);
-                    this.currentCity = question.correct; // Guardamos la ciudad seleccionada
+                } else {
+                     this.setQuestion(null);
                 }
+            } else {
+                 this.setQuestion(null);
             }
         } catch (error) {
             console.error("Error fetching questions:", error);
+            this.questionsCache = [];
+            this.currentIndex = 0;
+            this.setQuestion(null);
         } finally {
             this.isFetching = false;
         }
     }
 
-    async generateQuestions() {
+    async generateAndShuffleQuestions() {
         const WikidataUrl = "https://query.wikidata.org/sparql";
         const sparqlQuery = `
         SELECT DISTINCT ?city ?cityLabel ?image WHERE {
             ?city wdt:P31 wd:Q515.
             ?city wdt:P18 ?image.
             SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-            FILTER(CONTAINS(STR(?image), "http"))
+            FILTER(STRSTARTS(STR(?image), "http"))
         }
-        ORDER BY RAND()
-        LIMIT 40`;
+        LIMIT 100`;
 
         try {
             const response = await fetch(`${WikidataUrl}?query=${encodeURIComponent(sparqlQuery)}&format=json`, {
                 headers: { 'Accept': 'application/sparql-results+json' }
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json();
-            
-            return data.results.bindings
-                .filter(item => item.image?.value)
+
+            let processedResults = data.results.bindings
+                .filter(item => item.image?.value && item.cityLabel?.value)
                 .map(item => ({
                     city: item.cityLabel.value,
                     image: item.image.value
                 }));
+
+             processedResults = Array.from(new Map(processedResults.map(item => [item.city, item])).values());
+
+            this.shuffleArray(processedResults);
+
+            return processedResults;
+
         } catch (error) {
-            console.error("API Error:", error);
+            console.error("Error fetching or processing Wikidata results:", error);
             return [];
         }
     }
 
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = this.getSecureRandom(i + 1);
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
     getSecureRandom(max) {
-        // Create a new array with 1 element
         const array = new Uint32Array(1);
-        // Get cryptographically secure random values
         window.crypto.getRandomValues(array);
-        // Convert to number between 0 and max-1
-        return Math.floor((array[0] / (0xffffffff + 1)) * max);
+        return Math.floor((array[0] / (0xFFFFFFFF + 1)) * max);
     }
 
     getNextQuestion() {
-        if (!this.questionsCache.length || this.currentIndex + 4 > this.questionsCache.length) {
-            this.questionsCache = [];
+        if (!this.questionsCache || this.currentIndex + 4 > this.questionsCache.length) {
             return null;
         }
 
         const options = this.questionsCache.slice(this.currentIndex, this.currentIndex + 4);
         this.currentIndex += 4;
-        
-        // Use cryptographically secure random number generator
+
         const randomIndex = this.getSecureRandom(options.length);
-        const correctCity = options[randomIndex];
+        const correctOption = options[randomIndex];
 
-        this.currentCity = correctCity.city;
-
-        return {
+        const question = {
             answers: options.reduce((acc, item) => {
                 acc[item.city] = item.image;
                 return acc;
             }, {}),
-            correct: correctCity.city
+            correct: correctOption.city
         };
-    }
 
-    getCurrentCity() {
-        return this.currentCity;
+        return question;
     }
 }
 
