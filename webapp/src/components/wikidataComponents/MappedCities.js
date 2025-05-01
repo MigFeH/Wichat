@@ -3,15 +3,22 @@ import axios from "axios";
 
 let cityCache = []; // Lista de ciudades cargadas desde Wikidata
 
-function getRandom() {
-  return Number('0.' + crypto.randomBytes(4).readUInt32BE().toString());
+function getRandom(max) {
+  let num = (Date.now() +'');
+  num = parseInt(num.at(num.length-1));
+
+  while(num > max){
+    num -= max
+  }
+
+  return num/10;
 }
 
 
 export async function fetchRandomCity() {
   // Si ya hay ciudades en caché, elige una al azar
   if (cityCache.length > 0) {
-    const randomIndex = Math.floor(getRandom() * cityCache.length);
+    const randomIndex = Math.floor(getRandom(10) * cityCache.length);
     return cityCache[randomIndex];
   }
 
@@ -54,7 +61,7 @@ export async function fetchRandomCity() {
     }
 
     // Elegir ciudad aleatoria de la caché
-    const randomIndex = Math.floor(getRandom() * cityCache.length);
+    const randomIndex = Math.floor(getRandom(10) * cityCache.length);
     return cityCache[randomIndex];
   } catch (error) {
     console.error("Error al consultar Wikidata:", error);
