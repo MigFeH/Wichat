@@ -12,9 +12,19 @@ describe('QuestionGeneration', () => {
         jest.clearAllMocks();
         setQuestion = jest.fn();
         questionGen = new QuestionGeneration(setQuestion);
-
         global.fetch = jest.fn();
 
+        // --- INICIO DE LA CORRECCIÓN ---
+        // Asegurar que global.crypto y getRandomValues existan antes de espiar
+        if (typeof global.crypto === 'undefined') {
+            global.crypto = {};
+        }
+        if (typeof global.crypto.getRandomValues !== 'function') {
+            global.crypto.getRandomValues = jest.fn();
+        }
+        // --- FIN DE LA CORRECCIÓN ---
+
+        // Ahora es seguro espiar
         cryptoSpy = jest.spyOn(global.crypto, 'getRandomValues').mockImplementation(array => {
             array[0] = 0;
             return array;
@@ -141,6 +151,7 @@ describe('QuestionGeneration', () => {
         questionGen.questionsCache = [{ city: 'A', image: 'a.jpg' }, { city: 'B', image: 'b.jpg' }];
         questionGen.currentIndex = 0;
         expect(questionGen.getNextQuestion()).toBeNull();
+        // Crypto should not have been called again here, as it failed before reaching the random part
         expect(cryptoSpy).not.toHaveBeenCalled();
     });
 
@@ -154,6 +165,8 @@ describe('QuestionGeneration', () => {
         ];
         questionGen.questionsCache = [...cache];
         questionGen.currentIndex = 0;
+        // Reset calls from beforeEach if needed for precise counting within this test
+        cryptoSpy.mockClear();
 
         const question = questionGen.getNextQuestion();
 
@@ -172,7 +185,7 @@ describe('QuestionGeneration', () => {
 
         expect(questionGen.getNextQuestion()).toBeNull();
         expect(questionGen.currentIndex).toBe(4);
-        expect(cryptoSpy).toHaveBeenCalledTimes(1);
+        expect(cryptoSpy).toHaveBeenCalledTimes(1); // No additional call
     });
 
     test('fetchQuestions fetches new questions when cache is low and sets question', async () => {
