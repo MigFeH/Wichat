@@ -18,7 +18,7 @@ const Menu = () => {
     const theme = useTheme();
 
     const isMobile = useMediaQuery(theme.breakpoints.down('md')); // md == medium == 900px
-    const widthResponsive=isMobile ? '50vh' : '100%';
+    const widthResponsive=isMobile ? '50vh' : '100vh';
     const heightResponsive=isMobile ? 'auto' : '100%';
 
     const handlePageChange = (page) => () => {
