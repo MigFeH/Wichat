@@ -48,20 +48,7 @@ services:
     networks:
       - mynetwork
 
-  gameservice:
-    container_name: gameservice-wichat_es2b
-    image: ghcr.io/arquisoft/wichat_es2b/gameservice:latest
-    profiles: ["dev", "prod"]
-    build: ./gameservice
-    depends_on:
-      - mongodb
-    ports:
-    - "8004:8004"
-    networks:
-    - mynetwork
-    environment:
-      MONGODB_URI: mongodb://mongodb:27017/userdb
-
+  
   gatewayservice:
     container_name: gatewayservice-wichat_es2b
     image: ghcr.io/arquisoft/wichat_es2b/gatewayservice:latest
