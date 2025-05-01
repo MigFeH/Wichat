@@ -83,4 +83,26 @@ describe('fetchRandomCity', () => {
         axiosSpy.mockRestore();
     });
 
+    test('returns different cities randomly from cache', async () => {
+        const cities = [
+            { name: 'Madrid', lat: 40.4, lng: -3.7 },
+            { name: 'Valencia', lat: 39.47, lng: -0.38 }
+        ];
+
+        __setCityCacheForTest(cities);
+
+        jest.spyOn(global.Math, 'random')
+            .mockReturnValueOnce(0)     // First city
+            .mockReturnValueOnce(0.99); // Second city
+
+        const city1 = await fetchRandomCity();
+        const city2 = await fetchRandomCity();
+
+        expect(city1.name).not.toBe(city2.name);
+        expect(cities).toContainEqual(city1);
+        expect(cities).toContainEqual(city2);
+
+        Math.random.mockRestore();
+    });
+
 });
