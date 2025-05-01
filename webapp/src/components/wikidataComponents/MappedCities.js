@@ -4,7 +4,7 @@ let cityCache = [];
 
 export async function fetchRandomCity() {
   if (cityCache.length > 0) {
-    const randomIndex = Math.floor(Math.random() * cityCache.length);
+    const randomIndex = Math.floor(Math.random() * cityCache.length); // NOSONAR - Justification: Used for non-security critical random selection in a game.
     return cityCache[randomIndex];
   }
 
@@ -43,7 +43,7 @@ export async function fetchRandomCity() {
       throw new Error("No se encontraron nombres válidos en la primera carga.");
     }
 
-    const randomIndex = Math.floor(Math.random() * cityCache.length);
+    const randomIndex = Math.floor(Math.random() * cityCache.length); // NOSONAR - Justification: Used for non-security critical random selection in a game.
     return cityCache[randomIndex];
   } catch (error) {
     console.error("Error al consultar Wikidata:", error);
