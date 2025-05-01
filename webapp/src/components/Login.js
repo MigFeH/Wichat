@@ -48,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs" sx={{minHeight: "100vh", width: "100%", padding: 0 }}>
+    <Container component="main" maxWidth="xs" sx={{maxHeight: "100vh", width: "100%", padding: 0 }}>
       <img src="/Logotipo_Wechat_mini_bg.png" alt="Logo" className="logo" />
             
       <Typography component="h1" variant="h5">
