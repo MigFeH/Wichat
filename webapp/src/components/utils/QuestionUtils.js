@@ -5,10 +5,12 @@ const useStats = (maxRounds = 10) => {
     const [feedback, setFeedback] = useState(null);
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
+    const apiEndpoint = process.env.REACT_APP_USER_SERVICE_ENDPOINT || 'http://localhost:8001';
+
     useEffect(() => {
         const saveStats = async () => {
             try {
-                const response = await fetch('http://localhost:8001/api/stats', {
+                const response = await fetch(`${apiEndpoint}/api/stats`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
