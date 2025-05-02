@@ -7,7 +7,7 @@ import useGameLogic from './utils/GameUtils';
 const Game = () => {
   const navigate = useNavigate();
 
-  const { currentQuestion, questionGenerator, currentCity, chatComponent } = useGameLogic();
+  const { currentQuestion, questionGenerator, chatComponent } = useGameLogic();
 
   return (
     <Container component="main" maxWidth="md" sx={{ marginTop: 4 }}>
