@@ -26,9 +26,6 @@ export async function fetchRandomCity() {
 
   try {
     const res = await axios.get(url, { headers });
-    if (!res.data || !res.data.length) {
-      throw new Error('No valid city names found.');
-    }
     const results = res.data.results.bindings;
 
     cityCache = results
