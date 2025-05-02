@@ -123,23 +123,17 @@ function HandTracker({ enabled }) {
     operationalStateRef.current = OpsState.IDLE;
 
     // Check for media device support and request access
-    try
-    {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-          .then(stream => {
-            // Stream can be used here if needed
-          })
-          .catch(err => {
-            console.error('Error accessing media devices:', err);
-          });
-      } else {
-        alert('Tu navegador no soporta acceso a la cámara/micrófono.');
+    try {
+      if (!('mediaDevices' in navigator) || typeof navigator.mediaDevices.getUserMedia !== 'function') {
+        setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
+        setOperationalState(OpsState.ERROR);
+        return;
       }
-    } catch(e)
-    {
-      alert('Tu navegador no soporta acceso a la cámara/micrófono.');
-      console.error('Error accessing media devices:', e);
+    } catch (e) {
+      setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
+      setOperationalState(OpsState.ERROR);
+      console.error('Error checking media devices:', e);
+      return;
     }
 
     // Cleanup function executed ONLY on component unmount
@@ -358,7 +352,7 @@ function HandTracker({ enabled }) {
       if (isMountedRef.current &&
           operationalStateRef.current === OpsState.INITIALIZING &&
           instanceIdRef.current === currentInstanceId) {
-        setErrorMessage(`Error al iniciar: ${error.message || 'Desconocido'}.`);
+        setErrorMessage(`Error al iniciar: Ha ocurrido un error inesperado, vuelva a intentarlo más tarde.`);
         setOperationalState(OpsState.ERROR);
       }
     }
@@ -462,7 +456,7 @@ function HandTracker({ enabled }) {
       cleanup(`StateEffect (OpState=${operationalState})`); // Execute cleanup
     } else if (operationalState === OpsState.ERROR) {
       // Optional: Could trigger cleanup on entering ERROR state if desired
-      // cleanup("StateEffect (ERROR)");
+      cleanup("StateEffect (ERROR)");
     }
 
   }, [operationalState, initializeHandTracking, cleanup]); // Dependencies ensure correct functions are called
@@ -486,17 +480,16 @@ function HandTracker({ enabled }) {
 
       {/* Error State Overlay */}
       {showError && (
-         <div style={{ ...styles.loadingOverlay, backgroundColor: 'rgba(150, 0, 0, 0.8)' }}>
-            Error: {errorMessage}
-            {/* Button to acknowledge error and reset state to IDLE */}
+         <div style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', background: 'rgba(150,0,0,0.85)', color: 'white', padding: '10px 20px', borderRadius: 8, zIndex: 12000, fontSize: '1em', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
+            {errorMessage}
             <button
                 onClick={() => {
                     setErrorMessage('');
-                    setOperationalState(OpsState.IDLE); // Allow retry if 'enabled' prop is true
+                    setOperationalState(OpsState.IDLE);
                 }}
-                style={{ marginLeft: '15px', padding: '5px 10px', cursor: 'pointer', border: '1px solid white', background: 'rgba(255,255,255,0.2)', color: 'white' }}
+                style={{ marginLeft: '15px', padding: '5px 10px', cursor: 'pointer', border: 'none', background: 'rgba(255,255,255,0.2)', color: 'white', borderRadius: 4 }}
             >
-                Entendido
+                Cerrar
             </button>
          </div>
       )}
