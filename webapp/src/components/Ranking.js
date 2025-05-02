@@ -83,12 +83,12 @@ const Ranking = () => {
                   <TableCell>
                     <Avatar
                       src={`/profile/${user.profileImage || 'profile_1.gif'}`}
-                      alt={user._id}
+                      alt={user.username}
                       onError={handleImageError}
                       sx={{ width: 40, height: 40 }}
                     />
                   </TableCell>
-                  <TableCell>{user._id}</TableCell>
+                  <TableCell>{user.username}</TableCell>
                   <TableCell align="right">{user.score}</TableCell>
                 </TableRow>
               ))}
