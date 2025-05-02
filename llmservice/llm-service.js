@@ -7,12 +7,12 @@ const port = 8003;
 // Middleware to parse JSON in request body
 app.use(express.json());
 
-const gameSystemInstruction = "Actuarás como un juego de adivinanzas de ciudades. Recibirás mensajes con el siguiente formato: '<Ciudad>:<Mensaje del usuario>'. Tu objetivo es ayudar al usuario a adivinar la ciudad oculta, proporcionando pistas útiles y relevantes basadas en sus preguntas. Bajo ninguna circunstancia debes revelar el nombre de la ciudad. Mantén las respuestas concisas y enfocadas en proporcionar pistas que ayuden al usuario a deducir la ciudad. Si el usuario hace una pregunta que no está relacionada con la adivinanza, responde de forma educada y vuelve a enfocar la conversación en el juego.";
+const gameSystemInstruction = "Actuarás como un juego de adivinanzas de ciudades. Recibirás mensajes con el siguiente formato: '<Ciudad>:<Mensaje del usuario>'. Tu objetivo es ayudar al usuario a adivinar la ciudad oculta, proporcionando pistas útiles y relevantes basadas en sus preguntas. Bajo ninguna circunstancia debes revelar el nombre de la ciudad, tampoco digas el nombre de ninguna ciudad en tus respuestas como al decir \"No no es <Nombre de ciudad>, puesto este mensaje será borrado por el filtro y el jugador descubrira que te pregunto sobre la ciudad correcta. Mantén las respuestas concisas y enfocadas en proporcionar pistas que ayuden al usuario a deducir la ciudad. Si el usuario hace una pregunta que no está relacionada con la adivinanza, responde de forma educada y vuelve a enfocar la conversación en el juego.";
 
 // Define configurations for different LLM APIs
 const llmConfigs = {
   gemini: {
-    url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+    url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     transformRequest: (systemInstruction,question) => ({
       contents: [
         {
@@ -83,19 +83,13 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini',systemInstru
   }
 }
 
-app.post('/ask', async (req, res) => {
-  try {
-    // Check if required fields are present in the request body
-    validateRequiredFields(req, ['question', 'model', 'apiKey']);
-
-    const { question, model, apiKey } = req.body;
-    const answer = await sendQuestionToLLM(question, apiKey);
-    res.json({ answer });
-
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+// Function to check if the response contains the city name
+function validateResponseDoesNotContainCity(response, cityName) {
+  if (response.toLowerCase().includes(cityName.toLowerCase())) {
+    return "Lo siento, tu pregunta ha revelado accidentalmente el nombre de la ciudad, por lo que he tenido que filtrarlo. ¿Tienes otra pregunta?";
   }
-});
+  return response
+}
 
 app.post('/hint', async (req, res) => {
   try {
@@ -107,20 +101,25 @@ app.post('/hint', async (req, res) => {
     console.log('Validation passed.');
 
     const { question, model, apiKey } = req.body;
+    const cityName = question.split(':')[0]; // Extract the city name from the question
     console.log(`Question: ${question}`);
     console.log(`Model: ${model}`);
     console.log(`API Key: ${apiKey}`);
+    console.log(`City Name: ${cityName}`);
 
     console.log('Sending question to LLM...');
-    const answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
+    let answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
     console.log('Received answer from LLM:', answer);
+
+    // Validate that the response does not contain the city name
+    answer = validateResponseDoesNotContainCity(answer, cityName);
 
     res.json({ answer });
     console.log('Response sent.');
 
   } catch (error) {
     console.log('Error occurred:', error.message);
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ error: 'An error occurred while processing your request.' });
   }
 });
 
