@@ -161,19 +161,47 @@ app.get('/api/stats', async (req, res) => {
 });
 
 app.get('/ranking', async (req, res) => {
-  const stats = await GameStats.aggregate([
-    {
-      $group: {
-        _id: '$username',
-        score: { $max: '$score' }
+  try {
+    const rankingData = await GameStats.aggregate([
+      {
+        $group: {
+          _id: '$username',
+          score: { $max: '$score' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: 'username',
+          as: 'userDetails'
+        }
+      },
+      {
+        $unwind: {
+           path: '$userDetails',
+           preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          username: '$_id',
+          score: 1,
+          profileImage: { $ifNull: ['$userDetails.profileImage', 'profile_1.gif'] }
+        }
+      },
+      {
+        $sort: { score: -1 }
       }
-    },
-    {
-      $sort: { score: -1 }
-    }
-  ]);
+    ]);
 
-  res.json(stats);
+    res.json(rankingData);
+
+  } catch (error) {
+    console.error("Error fetching ranking:", error);
+    res.status(500).json({ error: "Failed to fetch ranking data", details: error.message });
+  }
 });
 
 const server = app.listen(port, () => {

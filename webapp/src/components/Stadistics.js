@@ -4,7 +4,7 @@ import { TableContainer, Container, Typography, Table, TableBody, TableCell, Tab
 import axios from 'axios';
 import { PieChart, Pie, Cell } from 'recharts';
 
-const apiEndpoint = process.env.USER_SERVICE_URL || 'http://localhost:8001';
+const apiEndpoint = process.env.REACT_APP_USER_SERVICE_ENDPOINT || 'http://localhost:8001';
 
 const Stadistics = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const Stadistics = () => {
       <Button 
         variant="contained" 
         onClick={handleBackClick}
-        sx={{ marginBottom: 2 }}
+        sx={{ marginBottom: 2, marginTop: "1rem" }}
       >
         Back to Menu
       </Button>

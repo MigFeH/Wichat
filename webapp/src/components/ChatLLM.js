@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
 
-const apiEndpoint = process.env.GATEWAY_SERVICE_URL || 'http://localhost:8000';
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 const apiKey = process.env.REACT_APP_LLM_API_KEY;
 
 const ChatLLM = forwardRef(({ currentCity }, ref) => {

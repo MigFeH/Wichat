@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Polyline, useMapEvents } from 'react-l
 import { getDistance } from 'geolib';
 import { fetchRandomCity } from './MappedCities';
 
+
 function CityGuessMap({ onGuess, disabled }) {
   useMapEvents({
     click(e) {
@@ -58,9 +59,10 @@ export default function CityGuessGame() {
           >
             {/* Cambiar la capa del mapa por una sin etiquetas */}
             <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="© OpenStreetMap"
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
             />
+
 
 
 

@@ -99,23 +99,6 @@ app.post('/adduser', async (req, res) => {
 
 });
 
-// Endpoint para recibir métricas del frontend
-app.post('/frontend-metrics', (req, res) => {
-    const metric = req.body;
-
-    if (metric.name && metric.value !== undefined) {
-        const gauge = webVitalsMetrics[metric.name.toUpperCase()];
-        if (gauge) {
-            gauge.set(metric.value);
-            res.status(200).json({ status: 'Metric updated' });
-        } else {
-            res.status(400).json({ status: 'Unknown metric name' });
-        }
-    } else {
-        res.status(400).json({ status: 'Invalid metric format' });
-    }
-});
-
 app.post('/hint', async (req, res) => {
 
     const llmResponse = await axios.post(llmServiceUrl+'/hint', req.body, {

@@ -1,23 +1,13 @@
 import axios from "axios";
 
-let cityCache = []; // Lista de ciudades cargadas desde Wikidata
-
-
-function getRandom() {
-
-  return Math.random();
-}
-
-
+let cityCache = [];
 
 export async function fetchRandomCity() {
-  // Si ya hay ciudades en caché, elige una al azar
   if (cityCache.length > 0) {
-    const randomIndex = Math.floor(getRandom() * cityCache.length);
+    const randomIndex = Math.floor(Math.random() * cityCache.length); // NOSONAR - Justification: Used for non-security critical random selection in a game.
     return cityCache[randomIndex];
   }
 
-  // Consulta inicial a Wikidata
   const endpoint = "https://query.wikidata.org/sparql";
   const query = `
     SELECT ?city ?cityLabel ?lat ?lon WHERE {
@@ -28,7 +18,6 @@ export async function fetchRandomCity() {
       ?value wikibase:geoLongitude ?lon.
       SERVICE wikibase:label { bd:serviceParam wikibase:language "es,en". }
     }
-    ORDER BY RAND()
     LIMIT 100
   `;
 
@@ -42,24 +31,22 @@ export async function fetchRandomCity() {
     }
     const results = res.data.results.bindings;
 
-    // Filtrar y transformar resultados válidos
     cityCache = results
-        .filter((r) => {
-          const label = r.cityLabel?.value || "";
-          return label && !/^Q\d+$/.test(label); // Descarta códigos como "Q1234"
-        })
-        .map((r) => ({
-          name: r.cityLabel.value,
-          lat: parseFloat(r.lat.value),
-          lng: parseFloat(r.lon.value),
-        }));
+      .filter((r) => {
+        const label = r.cityLabel?.value || "";
+        return label && !/^Q\d+$/.test(label);
+      })
+      .map((r) => ({
+        name: r.cityLabel.value,
+        lat: parseFloat(r.lat.value),
+        lng: parseFloat(r.lon.value),
+      }));
 
     if (cityCache.length === 0) {
-      throw new Error("No se encontraron nombres válidos.");
+      throw new Error("No se encontraron nombres válidos en la primera carga.");
     }
 
-    // Elegir ciudad aleatoria de la caché
-    const randomIndex = Math.floor(getRandom() * cityCache.length);
+    const randomIndex = Math.floor(Math.random() * cityCache.length); // NOSONAR - Justification: Used for non-security critical random selection in a game.
     return cityCache[randomIndex];
   } catch (error) {
     console.error("Error al consultar Wikidata:", error);
@@ -67,11 +54,6 @@ export async function fetchRandomCity() {
   }
 }
 
-// Solo para testing
 export function __setCityCacheForTest(mockedCities) {
   cityCache = mockedCities;
 }
-
-
-
-

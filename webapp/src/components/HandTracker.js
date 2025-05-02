@@ -51,9 +51,9 @@ const OpsState = {
 const styles = {
   video: {
     width: "11%",
-    position: "absolute",
+    position: "fixed",
     top: "5rem",
-    left: "1rem",
+    right: "1rem",
     borderRadius: '8px',
     border: '1px solid gray',
     zIndex: 1000, // Ensure video is behind cursor and overlays
@@ -129,6 +129,19 @@ function HandTracker({ enabled }) {
     isMountedRef.current = true;
     setOperationalState(OpsState.IDLE);
     operationalStateRef.current = OpsState.IDLE;
+
+    // Check for media device support and request access
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          // Stream can be used here if needed
+        })
+        .catch(err => {
+          console.error('Error accessing media devices:', err);
+        });
+    } else {
+      alert('Tu navegador no soporta acceso a la cámara/micrófono.');
+    }
 
     // Cleanup function executed ONLY on component unmount
     return () => {
