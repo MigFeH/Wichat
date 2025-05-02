@@ -139,6 +139,7 @@ function HandTracker({ enabled }) {
     } catch(e)
     {
       alert('Tu navegador no soporta acceso a la cámara/micrófono.');
+      console.error('Error accessing media devices:', e);
     }
 
     // Cleanup function executed ONLY on component unmount
