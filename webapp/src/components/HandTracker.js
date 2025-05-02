@@ -456,7 +456,7 @@ function HandTracker({ enabled }) {
       cleanup(`StateEffect (OpState=${operationalState})`); // Execute cleanup
     } else if (operationalState === OpsState.ERROR) {
       // Optional: Could trigger cleanup on entering ERROR state if desired
-      cleanup("StateEffect (ERROR)");
+      //cleanup("StateEffect (ERROR)");
     }
 
   }, [operationalState, initializeHandTracking, cleanup]); // Dependencies ensure correct functions are called
