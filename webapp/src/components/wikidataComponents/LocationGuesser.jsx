@@ -58,8 +58,8 @@ export default function CityGuessGame() {
 
   return (
       <div style={{ padding: '1rem', position: 'relative' }}>
-        <h1>Encuentra la ciudad</h1>
-        {city && <h2>¿Dónde está {city.name}?</h2>}
+        <h1>Find the city</h1>
+        {city && <h2>¿Where is {city.name}?</h2>}
 
         <div style={{ position: 'relative' }}>
           <MapContainer
