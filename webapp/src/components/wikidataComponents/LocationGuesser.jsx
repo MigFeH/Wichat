@@ -7,6 +7,7 @@ import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { Button } from '@mui/material';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -111,7 +112,7 @@ export default function CityGuessGame() {
         {distance != null && (
             <div style={{ marginTop: '1rem' }}>
               <h3>¡Distance {distance} km from {city.name}!</h3>
-              <button onClick={loadNewCity}>New game</button>
+              <Button variant="contained" onClick={loadNewCity}>New game</Button>
             </div>
         )}
       </div>
