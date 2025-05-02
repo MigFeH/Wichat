@@ -92,14 +92,6 @@ const styles = {
   }
 };
 
-
-/**
- * React component for tracking hands via webcam using MediaPipe Hands,
- * displaying cursors for each hand, and simulating click events based on gestures.
- * Manages a robust lifecycle including initialization, running, cleanup, and error handling.
- * @param {object} props - Component props.
- * @param {boolean} props.enabled - Controls whether the hand tracking is active.
- */
 function HandTracker({ enabled }) {
   // --- Refs for DOM elements, MediaPipe/Camera instances, and state persistence ---
   const videoRef = useRef(null);
@@ -131,15 +123,21 @@ function HandTracker({ enabled }) {
     operationalStateRef.current = OpsState.IDLE;
 
     // Check for media device support and request access
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-          // Stream can be used here if needed
-        })
-        .catch(err => {
-          console.error('Error accessing media devices:', err);
-        });
-    } else {
+    try
+    {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          .then(stream => {
+            // Stream can be used here if needed
+          })
+          .catch(err => {
+            console.error('Error accessing media devices:', err);
+          });
+      } else {
+        alert('Tu navegador no soporta acceso a la cámara/micrófono.');
+      }
+    } catch(e)
+    {
       alert('Tu navegador no soporta acceso a la cámara/micrófono.');
     }
 
