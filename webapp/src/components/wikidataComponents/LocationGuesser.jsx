@@ -103,15 +103,15 @@ export default function CityGuessGame() {
                 borderRadius: '1rem',
                 zIndex: 1000
               }}>
-                Fin del juego
+                End
               </div>
           )}
         </div>
 
         {distance != null && (
             <div style={{ marginTop: '1rem' }}>
-              <h3>¡Estás a {distance} km de {city.name}!</h3>
-              <button onClick={loadNewCity}>Nueva partida</button>
+              <h3>¡Distance {distance} km from {city.name}!</h3>
+              <button onClick={loadNewCity}>New game</button>
             </div>
         )}
       </div>
