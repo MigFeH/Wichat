@@ -116,7 +116,7 @@ describe('HandTracker', () => {
         render(<HandTracker enabled={true} />);
         await waitFor(() => expect(Camera.mockCameraStart).toHaveBeenCalled());
         expect(await screen.findByText(/error al iniciar/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /entendido/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Cerrar/i })).toBeInTheDocument();
     });
 
     test('renderiza cursor cuando hay landmarks', async () => {
@@ -180,7 +180,7 @@ describe('HandTracker', () => {
         // Vuelve a renderizar para disparar el error
         render(<HandTracker enabled={true} />);
         // Espera a que aparezca el overlay de error
-        const errorButton = await screen.findByRole('button', { name: /entendido/i });
+        const errorButton = await screen.findByRole('button', { name: /Cerrar/i });
         expect(errorButton).toBeInTheDocument();
         act(() => {
             errorButton.click();
