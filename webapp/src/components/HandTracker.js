@@ -130,6 +130,19 @@ function HandTracker({ enabled }) {
     setOperationalState(OpsState.IDLE);
     operationalStateRef.current = OpsState.IDLE;
 
+    // Check for media device support and request access
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          // Stream can be used here if needed
+        })
+        .catch(err => {
+          console.error('Error accessing media devices:', err);
+        });
+    } else {
+      alert('Tu navegador no soporta acceso a la cámara/micrófono.');
+    }
+
     // Cleanup function executed ONLY on component unmount
     return () => {
       isMountedRef.current = false;
