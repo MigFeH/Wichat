@@ -122,20 +122,6 @@ function HandTracker({ enabled }) {
     setOperationalState(OpsState.IDLE);
     operationalStateRef.current = OpsState.IDLE;
 
-    // Check for media device support and request access
-    try {
-      if (!('mediaDevices' in navigator) || typeof navigator.mediaDevices.getUserMedia !== 'function') {
-        setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
-        setOperationalState(OpsState.ERROR);
-        return;
-      }
-    } catch (e) {
-      setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
-      setOperationalState(OpsState.ERROR);
-      console.error('Error checking media devices:', e);
-      return;
-    }
-
     // Cleanup function executed ONLY on component unmount
     return () => {
       isMountedRef.current = false;
@@ -429,7 +415,13 @@ function HandTracker({ enabled }) {
     if (!isMountedRef.current) return; // Ignore if unmounted
 
     if (enabled) {
-      // Request INITIALIZING state if currently IDLE or in ERROR
+      // Verificar soporte de cámara/micrófono SOLO al intentar activar el handtracking
+      if (!('mediaDevices' in navigator) || typeof navigator.mediaDevices.getUserMedia !== 'function') {
+        setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
+        setOperationalState(OpsState.ERROR);
+        return;
+      }
+      // Request INITIALIZING state si actualmente IDLE o en ERROR
       if (currentOpState === OpsState.IDLE || currentOpState === OpsState.ERROR) {
         instanceIdRef.current += 1; // Increment instance ID for the new attempt
         setErrorMessage(''); // Clear previous errors
