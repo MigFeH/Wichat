@@ -122,20 +122,6 @@ function HandTracker({ enabled }) {
     setOperationalState(OpsState.IDLE);
     operationalStateRef.current = OpsState.IDLE;
 
-    // Check for media device support and request access
-    try {
-      if (!('mediaDevices' in navigator) || typeof navigator.mediaDevices.getUserMedia !== 'function') {
-        setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
-        setOperationalState(OpsState.ERROR);
-        return;
-      }
-    } catch (e) {
-      setErrorMessage('Tu navegador no soporta acceso a la cámara/micrófono.');
-      setOperationalState(OpsState.ERROR);
-      console.error('Error checking media devices:', e);
-      return;
-    }
-
     // Cleanup function executed ONLY on component unmount
     return () => {
       isMountedRef.current = false;
@@ -429,7 +415,7 @@ function HandTracker({ enabled }) {
     if (!isMountedRef.current) return; // Ignore if unmounted
 
     if (enabled) {
-      // Request INITIALIZING state if currently IDLE or in ERROR
+      // Request INITIALIZING state si actualmente IDLE o en ERROR
       if (currentOpState === OpsState.IDLE || currentOpState === OpsState.ERROR) {
         instanceIdRef.current += 1; // Increment instance ID for the new attempt
         setErrorMessage(''); // Clear previous errors
@@ -456,7 +442,7 @@ function HandTracker({ enabled }) {
       cleanup(`StateEffect (OpState=${operationalState})`); // Execute cleanup
     } else if (operationalState === OpsState.ERROR) {
       // Optional: Could trigger cleanup on entering ERROR state if desired
-      cleanup("StateEffect (ERROR)");
+      //cleanup("StateEffect (ERROR)");
     }
 
   }, [operationalState, initializeHandTracking, cleanup]); // Dependencies ensure correct functions are called
