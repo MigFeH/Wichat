@@ -20,13 +20,21 @@ import { useHandNavigation } from './components/HandNavigationContext';
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
-  },
+    background: {
+      default: '#323441',
+      paper: '#323441'
+    }
+  }
 });
 
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
-  },
+    background: {
+      default: '#fff6eb',
+      paper: '#fff6eb'
+    }
+  }
 });
 
 const AppContent = () => {
