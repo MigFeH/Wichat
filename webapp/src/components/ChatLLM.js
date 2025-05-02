@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef} from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import axios from 'axios';
 
@@ -8,7 +8,6 @@ const apiKey = process.env.REACT_APP_LLM_API_KEY;
 const ChatLLM = forwardRef(({ currentCity }, ref) => {
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
-  //const [isChatVisible, setIsChatVisible] = useState(false); // Estado para controlar la visibilidad del chat
 
   const handleSendMessage = async () => {
     if (!userInput.trim()) return;

@@ -93,29 +93,29 @@ function validateResponseDoesNotContainCity(response, cityName) {
 
 app.post('/hint', async (req, res) => {
   try {
-    //console.log('Received request:', req.body);
+    console.log('Received request:', req.body);
 
     // Check if required fields are present in the request body
-    //console.log('Validating required fields...');
+    console.log('Validating required fields...');
     validateRequiredFields(req, ['question', 'model', 'apiKey']);
-    //console.log('Validation passed.');
+    console.log('Validation passed.');
 
     const { question, model, apiKey } = req.body;
     const cityName = question.split(':')[0]; // Extract the city name from the question
-    //console.log(`Question: ${question}`);
-    //console.log(`Model: ${model}`);
-    //console.log(`API Key: ${apiKey}`);
-    //console.log(`City Name: ${cityName}`);
+    console.log(`Question: ${question}`);
+    console.log(`Model: ${model}`);
+    console.log(`API Key: ${apiKey}`);
+    console.log(`City Name: ${cityName}`);
 
-    //console.log('Sending question to LLM...');
+    console.log('Sending question to LLM...');
     let answer = await sendQuestionToLLM(question, apiKey, model, gameSystemInstruction);
-    //console.log('Received answer from LLM:', answer);
+    console.log('Received answer from LLM:', answer);
 
     // Validate that the response does not contain the city name
     answer = validateResponseDoesNotContainCity(answer, cityName);
 
     res.json({ answer });
-    //console.log('Response sent.');
+    console.log('Response sent.');
 
   } catch (error) {
     console.log('Error occurred:', error.message);
