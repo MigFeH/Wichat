@@ -46,8 +46,8 @@ describe('LocationGuesser en instancia', () => {
             render(<LocationGuesser />);
         });
 
-        expect(screen.getByText(/Encuentra la ciudad/)).toBeInTheDocument();
-        expect(screen.getByText(/¿Dónde está Madrid\?/)).toBeInTheDocument();
+        expect(screen.getByText(/Find the city/)).toBeInTheDocument();
+        expect(screen.getByText(/¿Where is Madrid\?/)).toBeInTheDocument();
         expect(screen.getByTestId('map')).toBeInTheDocument();
     });
 
@@ -60,9 +60,9 @@ describe('LocationGuesser en instancia', () => {
             mockOnGuess({ lat: 41.3874, lng: 2.1686 }); // Barcelona
         });
 
-        expect(await screen.findByText(/Fin del juego/)).toBeInTheDocument();
-        expect(await screen.findByText(/¡Estás a/)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Nueva partida' })).toBeInTheDocument();
+        expect(await screen.findByText(/End/)).toBeInTheDocument();
+        expect(await screen.findByText(/¡Distance/)).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'New game' })).toBeInTheDocument();
     });
 
     test('resets game on "Nueva partida"', async () => {
@@ -74,14 +74,14 @@ describe('LocationGuesser en instancia', () => {
             mockOnGuess({ lat: 41.3874, lng: 2.1686 }); // Guess
         });
 
-        const button = await screen.findByRole('button', { name: 'Nueva partida' });
+        const button = await screen.findByRole('button', { name: 'New game' });
 
         await act(async () => {
             fireEvent.click(button);
         });
 
-        expect(screen.queryByText(/Fin del juego/)).not.toBeInTheDocument();
-        expect(screen.getByText(/¿Dónde está Madrid\?/)).toBeInTheDocument();
+        expect(screen.queryByText(/End/)).not.toBeInTheDocument();
+        expect(screen.getByText(/¿Where is Madrid\?/)).toBeInTheDocument();
     });
 
     test('disables guessing after one click', async () => {
@@ -93,13 +93,13 @@ describe('LocationGuesser en instancia', () => {
             mockOnGuess({ lat: 41.3874, lng: 2.1686 }); // Primera guess
         });
 
-        const prevDistanceText = screen.getByText(/¡Estás a/).textContent;
+        const prevDistanceText = screen.getByText(/¡Distance/).textContent;
 
         act(() => {
             mockOnGuess({ lat: 45.0, lng: 10.0 }); // Segundo intento (no debe tener efecto)
         });
 
-        expect(screen.getByText(/¡Estás a/).textContent).toBe(prevDistanceText);
+        expect(screen.getByText(/¡Distance/).textContent).toBe(prevDistanceText);
     });
 });
 

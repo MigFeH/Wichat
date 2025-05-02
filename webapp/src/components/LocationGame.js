@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container } from '@mui/material';
+import 'leaflet/dist/leaflet.css';
 
 import LocationGuesser from './wikidataComponents/LocationGuesser.jsx';
 

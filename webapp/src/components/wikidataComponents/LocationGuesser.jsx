@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, useMapEvents } from 'react-leaflet';
 import { getDistance } from 'geolib';
+import 'leaflet/dist/leaflet.css';
 import { fetchRandomCity } from './MappedCities';
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 
 function CityGuessMap({ onGuess, disabled }) {
@@ -45,8 +58,8 @@ export default function CityGuessGame() {
 
   return (
       <div style={{ padding: '1rem', position: 'relative' }}>
-        <h1>Encuentra la ciudad</h1>
-        {city && <h2>¿Dónde está {city.name}?</h2>}
+        <h1>Find the city</h1>
+        {city && <h2>¿Where is {city.name}?</h2>}
 
         <div style={{ position: 'relative' }}>
           <MapContainer
@@ -90,15 +103,15 @@ export default function CityGuessGame() {
                 borderRadius: '1rem',
                 zIndex: 1000
               }}>
-                Fin del juego
+                End
               </div>
           )}
         </div>
 
         {distance != null && (
             <div style={{ marginTop: '1rem' }}>
-              <h3>¡Estás a {distance} km de {city.name}!</h3>
-              <button onClick={loadNewCity}>Nueva partida</button>
+              <h3>¡Distance {distance} km from {city.name}!</h3>
+              <button onClick={loadNewCity}>New game</button>
             </div>
         )}
       </div>
