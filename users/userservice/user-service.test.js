@@ -93,7 +93,7 @@ describe('User Service - User Endpoints', () => {
 
     // Test para cubrir el catch de /adduser (error genérico, p.ej., DB save)
     it('should return 400 on database save error', async () => {
-        const newUser = { username: 'dberroruser', password: 'password' };
+        const newUser = { username: 'dberroruser', password: process.env.MYSQL_PASSWORD || 'password' };
         // Simula un error durante el save
         const saveSpy = jest.spyOn(User.prototype, 'save').mockImplementationOnce(() => Promise.reject(new Error('Simulated DB Save Error')));
         const response = await request(app).post('/adduser').send(newUser);
