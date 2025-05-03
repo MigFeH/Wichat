@@ -75,7 +75,6 @@ endif::arc42help[]
 | Performance | The system should respond promptly to user actions, ensuring smooth gameplay.
 | Security    | User authentication and data storage must be handled securely.
 | Scalability | The architecture must support a growing number of users without performance degradation.
-| Accessibility | The application must be accessible to users with different needs, including colorblind-friendly design and screen reader compatibility.
 |===
 
 ifdef::arc42help[]
