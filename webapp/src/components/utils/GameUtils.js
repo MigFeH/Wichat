@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, React } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import QuestionGeneration from "../wikidataComponents/QuestionGeneration";
 
 const useGameLogic = () => {
