@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, React } from 'react';
 import QuestionGeneration from "../wikidataComponents/QuestionGeneration";
-import ChatLLM from '../ChatLLM'; // Importar ChatLLM
 
 const useGameLogic = () => {
     const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -17,26 +16,16 @@ const useGameLogic = () => {
     }, [questionGenerator]);
 
     useEffect(() => {
-        //console.log("Current question:", currentQuestion);
         if (currentQuestion) {
             setCurrentCity(currentQuestion.correct);
         }
     }, [currentQuestion]);
 
-    // Crear el componente ChatLLM
-    const chatComponent = (
-        <ChatLLM 
-            ref={chatRef} 
-            currentCity={currentCity} 
-            data-testid="chat-llm"
-        />
-    );
-
     return {
         currentQuestion,
         questionGenerator,
         currentCity,
-        chatComponent
+        chatRef
     };
 };
 
