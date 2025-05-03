@@ -5,6 +5,7 @@ module.exports = {
   },
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/jest.mock.js',
+    '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/jest.mock.js',
   },
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['js', 'jsx'],
