@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, React } from 'react';
 import QuestionGeneration from "../wikidataComponents/QuestionGeneration";
 import ChatLLM from '../ChatLLM'; // Importar ChatLLM
 

@@ -3,19 +3,19 @@ import { MapContainer, TileLayer, Marker, Polyline, useMapEvents } from 'react-l
 import { getDistance } from 'geolib';
 import 'leaflet/dist/leaflet.css';
 import { fetchRandomCity } from './MappedCities';
-import L from 'leaflet';
+/*import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';*/
 import { Button } from '@mui/material';
 
-delete L.Icon.Default.prototype._getIconUrl;
+/*delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
-});
+});*/
 
 
 function CityGuessMap({ onGuess, disabled }) {
