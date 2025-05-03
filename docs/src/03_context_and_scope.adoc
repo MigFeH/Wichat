@@ -88,9 +88,9 @@ endif::arc42help[]
 
 image::3.2_Technical_Context.png[]
 
-#### **Explanation of technical interfaces** 📃
+#### **Explanation of technical interfaces**
 
-The application follows an **MVC (Model-View-Controller) architectural pattern** using **Node.js** and **MongoDB**, with the following components:
+The application follows a **microservices architecture pattern** using **Node.js** and **MongoDB**, with the following components:
 
 ##### **Agent User (External User)**
 
