@@ -39,13 +39,12 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-=== <Runtime Scenario 1 : Login>
+=== Runtime Scenario 1 : Login
 image::LoginDiagram.png[]
 
-=== <Runtime Scenario 2 SingUp>
+=== Runtime Scenario 2 SingUp
 image::SignInDiagram.png[]
 
 
-=== <Runtime Scenario 3 Game cycle>
+=== Runtime Scenario 3 Game cycle
 image::GameCycleDiagram.png[]
-.
