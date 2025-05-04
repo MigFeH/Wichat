@@ -17,6 +17,7 @@ What follows is a short summary and explanation of the fundamental decisions and
 * **Azure portal** to deploy the application on the internet due to its ease of configuration, following the instructions provided to developers for deployment, and its potential to install Docker for deploying the Docker containers created in continuous deployment.
 
 === High-level decomposition
+[options="header",cols="1,2,2"]
 |===
 | *Quality goal* | *Scenario* | *Solution approach*
 | Usability | A new user quickly understands how to play and how to ask for basic hints. | Intuitive interface, clear design of the interface for interacting with the predefined hint system.
@@ -27,6 +28,7 @@ What follows is a short summary and explanation of the fundamental decisions and
 
 === Approaches to achieve quality objectives
 
+[options="header",cols="1,2,2"]
 |===
 | *Quality goal* | *Scenario* | *Solution approach*
 | Usability | Players on different devices enjoy a consistent experience. | Responsive CSS design, cross-browser and device testing, use of responsive UI frameworks.
