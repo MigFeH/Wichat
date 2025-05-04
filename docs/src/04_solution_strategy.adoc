@@ -18,25 +18,25 @@ What follows is a short summary and explanation of the fundamental decisions and
 
 === High-level decomposition
 |===
-| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
-| Usability | A new user quickly understands how to play and how to ask for basic hints. | Intuitive interface, clear design of the interface for interacting with the predefined hint system. | [Link to UI/UX Documentation]
-| Performance | The game loads images and predefined hints in 1-3 seconds. | Image optimization, predefined hint caching. | [Link to Performance Optimization Documentation]
-| Hint Accuracy | Predefined hints are relevant and help players progress. | Creation of a set of well-designed and reviewed hints for each image, validation with user testing. | [Link to Hint Design Documentation]
-| Testability | Developers can run automated tests to verify game functionality. | Modular code design, implementation of unit and integration tests, use of testing frameworks. | [Link to Testability Documentation]
+| *Quality goal* | *Scenario* | *Solution approach*
+| Usability | A new user quickly understands how to play and how to ask for basic hints. | Intuitive interface, clear design of the interface for interacting with the predefined hint system.
+| Performance | The game loads images and predefined hints in 1-3 seconds. | Image optimization, predefined hint caching.
+| Hint Accuracy | Hints provided by the LLM are coherent with user questions and relevant to players progress. | Creation of well-designed *System Instructions* for the LLM, paired with user testing to ensure the overall validity of the results.
+| Testability | Developers can run automated tests to verify game functionality. | Modular code design, implementation of unit and integration tests, use of testing frameworks.
 |===
 
 === Approaches to achieve quality objectives
 
 |===
-| *Quality goal* | *Scenario* | *Solution approach* | *Link to Details*
-| Usability | Players on different devices enjoy a consistent experience. | Responsive CSS design, cross-browser and device testing, use of responsive UI frameworks. | [Link to Responsive Design Documentation]
-| Performance | The game maintains a smooth experience with multiple concurrent players. | Scalable backend with Docker, load balancing, database query optimization. | [Link to Scalability Documentation]
-| Hint Accuracy | Predefined hints are clear and do not generate confusion. | Careful wording of hints, usability testing with real players, feedback system to improve hints. | [Link to Hint Design Documentation]
-| Testability | Code changes do not introduce regressions. | Continuous integration with automated testing, adequate code coverage, test documentation. | [Link to Automated Testing Documentation]
+| *Quality goal* | *Scenario* | *Solution approach*
+| Usability | Players on different devices enjoy a consistent experience. | Responsive CSS design, cross-browser and device testing, use of responsive UI frameworks.
+| Performance | The game maintains a smooth experience with multiple concurrent players. | Scalable backend with Docker, load balancing, database query optimization.
+| Hint Accuracy | Hints provided for the LLM are clear, don't confuse the user or give them the straight answer. | Careful wording of instructions, testing to ensure this scenarios are minimal and fallback mechanisms to stop malfunctions interferencing with the game.
+| Testability | Code changes do not introduce regressions. | Continuous integration with automated testing, adequate code coverage, test documentation.
 |===
 
 === Relevant organizational decisions
-Currently, we have been meeting once a week, although this may change in the future depending on the team's needs to address different topics during development.
+We have been meeting once a week, although this may change in the future depending on the team's needs to address different topics during development.
 
 In most meetings, if not all, all group members participate, and we discuss opinions on different designs and implementations of the application.
 
