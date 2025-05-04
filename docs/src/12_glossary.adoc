@@ -7,7 +7,16 @@ ifndef::imagesdir[:imagesdir: ../images]
 [cols="e,2e" options="header"]
 |===
 |Term |Definition
-|WiChat | The name of our project
-|Question Generator (QG) |A module of the application responsible for querying Wikidata, creating the questions and storing them
-|Large Language Models (LLM) |very large deep learning models that are pre-trained on vast amounts of data
+|WiChat | The name of our project and application.
+|Question Generator (QG) |A module of the application responsible for querying Wikidata, creating the questions and storing them.
+|Wikidata | A free knowledge base that can be read and edited by both humans and machines. It is used to obtain the questions and their validity.
+| Microservice | A software development technique that structures an application as a collection of small autonomous services, modeled around a business domain.
+| Grafana | An open-source platform for monitoring and observability, used to visualize and analyze data from various sources.
+| Prometheus | An open-source systems monitoring and alerting toolkit, used to collect and store metrics data.
+| MongoDB | A NoSQL database that uses a document-oriented data model, used to store user profiles and game-related data.
+| Azure | A cloud computing service created by Microsoft for building, testing, deploying, and managing applications and services through Microsoft-managed data centers.
+| Docker | A platform that enables developers to automate the deployment of applications inside lightweight, portable containers.
+| React | A JavaScript library for building user interfaces, used to develop the front-end of the application.
+| Node.js | A JavaScript runtime built on Chrome's V8 JavaScript engine, used to develop the back-end of the application.
+|Large Language Models (LLM) | The name via which we refer to the AI models that are trained on large pools of data for text generation and we  useto generate hints for the game.
 |===
