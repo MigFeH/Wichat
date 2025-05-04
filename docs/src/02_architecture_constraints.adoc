@@ -20,7 +20,7 @@ The application must be developed according to some constraints that were define
 | *Constraint* | *Description* 
 | Meetings | The team is due to an obligatory meeting per week at the time of Software Architecture class
 | Deliveries | There are three separate times where the project will be presented and those times are set.
-| Github | The use of Issues and Pull Requests for the proyects organization is highly sought to the point of necesity
+| Github | The use of Issues and Pull Requests for the proyects organization is highly sought to the point of necessity
 |===
 
 *Conventional constraints*
