@@ -88,43 +88,34 @@ endif::arc42help[]
 
 image::3.2_Technical_Context.png[]
 
-#### **Explanation of technical interfaces**
+[cols="1,3", options="header"]
+|===
+| Component | Description
 
-The application follows a **microservices architecture pattern** using **Node.js** and **MongoDB**, with the following components:
+| **Agent User (External User)** 
+| Interacts with the Web App, serving as the system’s end user.
 
-##### **Agent User (External User)**
+| **Web App (View Layer - Frontend)** 
+| Sends requests to and receives responses from the Backend. Acts as a bridge between the external user and backend services.
 
-- The user interacts with the **Web App**, which serves as the frontend interface.
+| **Backend (Controller Layer - Node.js API)** 
+| Serves as the central hub that manages communication between components. Handles authentication, user management, and external interactions. Routes requests to the appropriate services in the Service Layer.
 
-##### **Web App (View Layer - Frontend)**
+| **Service Layer (Business Logic)** 
+| Contains core business logic. Processes requests from the Controller Layer and interfaces with the Model Layer to access data.
 
-- Sends **requests** to and receives **responses** from the **Backend (Controller Layer)**.
-- Acts as a bridge between the external user and the backend services.
+| **Model Layer (Database & Data Access Layer)** 
+| Uses Mongoose ORM to interact with MongoDB. Defines schemas and performs all database operations.
+|===
 
-##### **Backend (Controller Layer - Node.js API)**
 
-- Central hub that manages communication between different components.
-- Handles authentication, user management, and interaction with external components.
-- Routes requests and calls appropriate services in the **Service Layer**.
-
-##### **Service Layer (Business Logic)**
-
-- Contains core business logic.
-- Processes requests received from the **Controller Layer**.
-- Interfaces with the **Model Layer** to retrieve or store data.
-
-##### **Model Layer (Database & Data Access Layer)**
-
-- Uses **Mongoose ORM** to interact with the **MongoDB database**.
-- Defines schemas and handles database operations.
-
-##### **Technical Interfaces**
-- **Web App & Backend**: HTTP Requests/Responses (REST API).
+#### Technical Interfaces
+- **Web App & Backend**: HTTP Requests/Responses.
 - **Backend & Service Layer**: Internal function calls.
 - **Service Layer & Model Layer**: Database queries.
 - **Model Layer & MongoDB**: Data storage and retrieval.
 
-**<Mapping Input/Output to Channels>**
+##### Mapping Input/Output to Channels
 [cols="3", options="header"]
 |===
 | Component | Input | Output
