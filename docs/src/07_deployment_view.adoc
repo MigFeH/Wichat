@@ -56,5 +56,67 @@ endif::arc42help[]
 | _MongoDB_ | The database management system, serves as the backend storage for the application's functionality. It stores user data, generated questions and other game-related information.
 |===
 
-image::InfraestructuraASW.png[]
+[plantuml, format="svg"]
+----
+@startuml
+left to right direction
+
+actor Cliente
+
+node "Azure" {
+  node "Ubuntu" {
+    node "Docker" {
+
+      node "WebApp" {
+        component "React-App"
+      }
+
+      node "GatewayService" {
+        component "Api"
+      }
+
+      node "AuthService" {
+        component "AuthService "
+      }
+
+      node "UserService" {
+        component "UserService "
+      }
+
+      node "LLMService" {
+        component "LLMService "
+      }
+
+      component "Grafana"
+      component "Prometheus"
+      database "MongoDB"
+    }
+  }
+}
+
+database "Wikidata"
+component "LLM-Api"
+
+Cliente --> "WebApp"
+Cliente --> "GatewayService"
+Cliente --> Grafana
+
+"WebApp" --> "AuthService"
+"WebApp" --> "UserService"
+"WebApp" --> "GatewayService"
+"WebApp" --> "LLMService"
+
+"GatewayService" --> "AuthService"
+"GatewayService" --> "UserService"
+"GatewayService" --> "LLMService"
+
+"AuthService" --> MongoDB
+"UserService" --> MongoDB
+"WebApp" --> Wikidata
+"LLMService" --> "LLM-Api"
+
+Grafana --> Prometheus
+@enduml
+
+----
 
