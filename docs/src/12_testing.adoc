@@ -1,22 +1,35 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-glossary]]
-== Glossary
+[[section-testing]]
+== Testing
 
+Software quality is a critical aspect of the development lifecycle. To ensure this quality, a combination of automated testing strategies and static code analysis has been implemented. This section outlines the unit tests, code coverage, security hotspots, and provides an introduction to end-to-end (E2E) testing.
 
-[cols="e,2e" options="header"]
-|===
-|Term |Definition
-|WiChat | The name of our project and application.
-|Question Generator (QG) |A module of the application responsible for querying Wikidata, creating the questions and storing them.
-|Wikidata | A free knowledge base that can be read and edited by both humans and machines. It is used to obtain the questions and their validity.
-| Microservice | A software development technique that structures an application as a collection of small autonomous services, modeled around a business domain.
-| Grafana | An open-source platform for monitoring and observability, used to visualize and analyze data from various sources.
-| Prometheus | An open-source systems monitoring and alerting toolkit, used to collect and store metrics data.
-| MongoDB | A NoSQL database that uses a document-oriented data model, used to store user profiles and game-related data.
-| Azure | A cloud computing service created by Microsoft for building, testing, deploying, and managing applications and services through Microsoft-managed data centers.
-| Docker | A platform that enables developers to automate the deployment of applications inside lightweight, portable containers.
-| React | A JavaScript library for building user interfaces, used to develop the front-end of the application.
-| Node.js | A JavaScript runtime built on Chrome's V8 JavaScript engine, used to develop the back-end of the application.
-|Large Language Models (LLM) | The name via which we refer to the AI models that are trained on large pools of data for text generation and we  useto generate hints for the game.
-|===
+=== Unit Tests, Code Coverage & Security Hotspots
+
+To verify the correct behavior of individual modules, unit tests have been developed using tools appropriate for the project's technology stack. These tests cover both business logic and key utility functions.
+
+Code coverage and static analysis were performed using SonarQube, with the following results:
+
+* **Code coverage:** 89.9% on 952 lines of code.
+* **Security hotspots:** 18 identified, pending review and classification.
+* **Code duplication:** 0.3%, indicating a very low level of redundancy.
+* **Code quality:** The project passed the *Quality Gate* with an "A" rating in security, reliability, and maintainability.
+
+image::12.Testing_SonarQube.png[SonarQube Results, align=center]
+
+This level of coverage and quality provides high confidence in the stability of the system's components.
+
+=== E2E Tests
+
+In addition to unit testing, end-to-end (E2E) tests are being developed to validate complete user flows—from the user interface through to the backend. These tests aim to ensure that all components of the system integrate properly and behave as expected under various usage conditions.
+
+image::12.E2e_Tests.png[Implemented e2e tests, align=center]
+
+=== Stability Testing
+
+Stability is a critical aspect of the development process, ensuring that the system can handle expected loads and perform reliably over time. This includes testing for memory leaks, performance under stress, and overall system resilience.
+
+Here we can see the results of the stability tests performed on the system over time:
+
+image::12.Stability_Testing.jpg[Results of testing for the app stablity, align=center]
