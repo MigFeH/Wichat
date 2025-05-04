@@ -19,4 +19,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 | React | A JavaScript library for building user interfaces, used to develop the front-end of the application.
 | Node.js | A JavaScript runtime built on Chrome's V8 JavaScript engine, used to develop the back-end of the application.
 |Large Language Models (LLM) | The name via which we refer to the AI models that are trained on large pools of data for text generation and we  useto generate hints for the game.
+| E2E Tests | End-to-end tests that validate complete user flows, ensuring that all components of the system integrate properly and behave as expected.
+| SonarQube | An open-source platform for continuous inspection of code quality, used to perform static analysis and code coverage.
+| Quality Gate | A set of conditions that a project must meet to be considered of acceptable quality, as defined by SonarQube.
 |===
