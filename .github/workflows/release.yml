@@ -22,10 +22,6 @@ jobs:
     - run: npm --prefix llmservice test -- --coverage
     - run: npm --prefix gatewayservice test -- --coverage
     - run: npm --prefix webapp test -- --coverage
-    - name: Analyze with SonarCloud
-      uses: SonarSource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   e2e-tests:
     needs: [unit-tests]
     runs-on: ubuntu-latest
@@ -41,6 +37,7 @@ jobs:
     - run: npm --prefix webapp install
     - run: npm --prefix webapp run build
     - run: npm --prefix webapp run test:e2e
+    
   docker-push-webapp:
     name: Push webapp Docker Image to GitHub Packages
     runs-on: ubuntu-latest
@@ -64,6 +61,7 @@ jobs:
           registry: ghcr.io
           workdir: webapp
           buildargs: API_URI,LLM_API_KEY,USER_SERVICE_URI,BASE_URI
+          
   docker-push-authservice:
     name: Push auth service Docker Image to GitHub Packages
     runs-on: ubuntu-latest
