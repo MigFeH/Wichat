@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arquisoft/wichat_es2b.git"
+    "url": "git+https://github.com/MigFeH/Wichat.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/arquisoft/wichat_es2b/issues"
+    "url": "https://github.com/MigFeH/Wichat/issues"
   },
-  "homepage": "https://github.com/arquisoft/wichat_es2b#readme",
+  "homepage": "https://github.com/MigFeH/Wichat#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "bcrypt": "^5.1.1",
