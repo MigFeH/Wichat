@@ -1,4 +1,4 @@
-name: CI for wichat_es2b
+name: CI for Wichat
 
 on:
   release:
@@ -55,7 +55,7 @@ jobs:
         USER_SERVICE_URI: http://${{ secrets.DEPLOY_HOST }}:8001
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
       with:
-          name: arquisoft/wichat_es2b/webapp
+          name: migfeh/wichat/webapp
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
@@ -76,7 +76,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-          name: arquisoft/wichat_es2b/authservice
+          name: migfeh/wichat/authservice
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
@@ -97,7 +97,7 @@ jobs:
       env:
         BASE_URI: http://${{ secrets.DEPLOY_HOST }}:3000
       with:
-        name: arquisoft/wichat_es2b/userservice
+        name: migfeh/wichat/userservice
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
@@ -116,7 +116,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: arquisoft/wichat_es2b/llmservice
+        name: migfeh/wichat/llmservice
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
@@ -138,7 +138,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: arquisoft/wichat_es2b/gatewayservice
+        name: migfeh/wichat/gatewayservice
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
@@ -156,7 +156,7 @@ jobs:
         user: ${{ secrets.DEPLOY_USER }}
         key: ${{ secrets.DEPLOY_KEY }}
         command: |
-          wget https://raw.githubusercontent.com/arquisoft/wichat_es2b/master/docker-compose.yml -O docker-compose.yml
+          wget https://raw.githubusercontent.com/migfeh/wichat/master/docker-compose.yml -O docker-compose.yml
           export LLM_API_KEY=${{ secrets.LLM_API_KEY }}
           docker compose --profile prod down
           docker compose --profile prod up -d --pull always

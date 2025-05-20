@@ -1,6 +1,6 @@
 services:
   mongodb:
-    container_name: mongodb-wichat_es2b
+    container_name: mongodb-wichat
     image: mongo
     profiles: ["dev", "prod"]
     volumes:
@@ -11,8 +11,8 @@ services:
       - mynetwork
 
   authservice:
-    container_name: authservice-wichat_es2b
-    image: ghcr.io/arquisoft/wichat_es2b/authservice:latest
+    container_name: authservice-wichat
+    image: ghcr.io/migfeh/wichat/authservice:latest
     profiles: ["dev", "prod"]
     build: ./users/authservice
     depends_on:
@@ -25,8 +25,8 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/userdb
 
   userservice:
-    container_name: userservice-wichat_es2b
-    image: ghcr.io/arquisoft/wichat_es2b/userservice:latest
+    container_name: userservice-wichat
+    image: ghcr.io/migfeh/wichat/userservice:latest
     profiles: ["dev", "prod"]
     build: ./users/userservice
     depends_on:
@@ -39,8 +39,8 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/userdb
 
   llmservice:
-    container_name: llmservice-wichat_es2b
-    image: ghcr.io/arquisoft/wichat_es2b/llmservice:latest
+    container_name: llmservice-wichat
+    image: ghcr.io/migfeh/wichat/llmservice:latest
     profiles: ["dev", "prod"]
     build: ./llmservice
     ports:
@@ -50,8 +50,8 @@ services:
 
   
   gatewayservice:
-    container_name: gatewayservice-wichat_es2b
-    image: ghcr.io/arquisoft/wichat_es2b/gatewayservice:latest
+    container_name: gatewayservice-wichat
+    image: ghcr.io/migfeh/wichat/gatewayservice:latest
     profiles: ["dev", "prod"]
     build: ./gatewayservice
     depends_on:
@@ -70,8 +70,8 @@ services:
       GAME_SERVICE_URL: http://gameservice:8004
 
   webapp:
-    container_name: webapp-wichat_es2b
-    image: ghcr.io/arquisoft/wichat_es2b/webapp:latest
+    container_name: webapp-wichat
+    image: ghcr.io/migfeh/wichat/webapp:latest
     profiles: ["dev", "prod"]
     build: 
       context: ./webapp
@@ -87,7 +87,7 @@ services:
 
   prometheus:
     image: prom/prometheus
-    container_name: prometheus-wichat_es2b
+    container_name: prometheus-wichat
     profiles: ["dev"]
     networks:
       - mynetwork
@@ -101,7 +101,7 @@ services:
       
   grafana:
     image: grafana/grafana
-    container_name: grafana-wichat_es2b
+    container_name: grafana-wichat
     profiles: ["dev"]
     networks:
       - mynetwork
