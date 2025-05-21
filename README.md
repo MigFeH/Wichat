@@ -19,5 +19,5 @@ Both the user and auth service share a Mongo database that is accessed with mong
 You can check the patch notes history on the project wiki or by visiting the following link 👉 https://github.com/MigFeH/Wichat/wiki
 
 ---
-# Documentation 🖊️
+# Documentation 🖋️
 You can view the project documentation (WIP) by visiting the following link 👉 https://deepwiki.com/MigFeH/Wichat
